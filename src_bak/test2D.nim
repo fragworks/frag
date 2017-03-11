@@ -1,4 +1,4 @@
-import glm, opengl, sdl2, model
+import glm, nvg, opengl, sdl2, model
 
 import 
   asset
@@ -7,12 +7,12 @@ import
   , event
   , graphics
   , game
-  #, gui/types
-  #, gui/widgets
+  , gui/types
+  , gui/widgets
   , gui
   , log
   , spritebatch
-  , soloud_c
+  #, soloud_c
   , texture
 
 type
@@ -20,14 +20,14 @@ type
     batch: SpriteBatch
     deltaTime: float
 
-#var label : Label
+var label : Label
 var anim: Animation
 var stateTime: float
-var test: WavStream
-var soloud : SoLoud
+#var test: WavStream
+#var soloud : SoLoud
 
 var originalWidth, originalHeight : int
-#[
+
 proc gameWindowResized(event: Event) : bool =
   case event.window.event
   of WindowEvent_Resized:
@@ -38,7 +38,7 @@ proc gameWindowResized(event: Event) : bool =
     Widget(label).moveLabelTo(getWidth() / 2 - (labelWidth / 2), getHeight() / 2 + ((bounds[3] - bounds[1]) / 2))
   else:
     discard
-]#
+
 
 var derelict : Derelict
 
@@ -47,10 +47,10 @@ proc listenForInputEvent(event: Event) : bool =
 
 proc init*(derelict: Derelict) =
   logInfo("Initializing derelict...")
-  soloud = Soloud_create()
-  discard Soloud_init(cast[ptr Soloud](soloud))
-  test = WavStream_create()
-  discard WavStream_load(cast[ptr Wav](test), "assets/sounds/test.ogg")
+  #soloud = Soloud_create()
+  #discard Soloud_init(cast[ptr Soloud](soloud))
+  #test = WavStream_create()
+  #discard WavStream_load(cast[ptr Wav](test), "assets/sounds/test.ogg")
   
 
   derelict.batch = newSpriteBatch(1000, nil)
@@ -67,13 +67,13 @@ proc init*(derelict: Derelict) =
   let position = vec2f(getWidth()/2, getHeight()/2)
   let text = "dEngine"
 
-  #discard registerFont("orbitron", "assets/fonts/orbitron/Orbitron Bold.ttf")
+  discard registerFont("orbitron", "assets/fonts/orbitron/Orbitron Bold.ttf")
 
-  #var bounds = @[cfloat 0.0, cfloat 0.0, cfloat 0.0, cfloat 0.0]
-  #nvgFontFace(getContext(), "orbitron")
-  #nvgFontSize(getContext(), 72.0)
-  #let labelWidth = nvgTextBounds(getContext(), position.x, position.y, text, nil, addr bounds[0])
-#[
+  var bounds = @[cfloat 0.0, cfloat 0.0, cfloat 0.0, cfloat 0.0]
+  nvgFontFace(getContext(), "orbitron")
+  nvgFontSize(getContext(), 72.0)
+  let labelWidth = nvgTextBounds(getContext(), position.x, position.y, text, nil, addr bounds[0])
+
   label = newLabel(
     text
     , "orbitron"
@@ -155,11 +155,11 @@ proc init*(derelict: Derelict) =
   registerEventListener(listenForInputEvent, @[KeyDown, KeyUp])
 
   layoutGUI()
-]#
+
   originalWidth = getWidth()
   originalHeight = getHeight()
 
-  discard Soloud_play(cast[ptr Soloud](soloud), cast[ptr Wav](test))
+  #discard Soloud_play(cast[ptr Soloud](soloud), cast[ptr Wav](test))
   
 proc update(derelict: Derelict, deltaTime: float) =
   discard
@@ -193,4 +193,3 @@ proc toDerelict*(derelict: Derelict) : IGame =
 derelict = newGame()
 let engine = newDEngine(toDerelict(derelict), false)
 engine.start()
-
