@@ -1,0 +1,7 @@
+*
+!/**/
+!*.*
+nimcache/
+*.swp
+*.log
+.DS_store
