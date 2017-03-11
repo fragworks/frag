@@ -6,6 +6,7 @@ import
   sdl2 as sdl
 
 import
+  graphics/color,
   graphics/window
 
 type
@@ -66,3 +67,21 @@ proc init*(
   loadExtensions()
 
   return true
+
+proc clear*(graphics: Graphics, clearFlags: GLbitfield) =
+  glClear(clearFlags)
+
+proc clearColor*(graphics: Graphics, color: color.Color) =
+  glClearColor(color.r, color.g, color.b, color.a)  
+
+proc swap*(graphics: Graphics) =
+  glSwapWindow(graphics.rootWindow.handle)
+
+proc shutdown*(graphics: Graphics) =
+  if graphics.rootWindow.isNil:
+    return
+  elif graphics.rootWindow.handle.isNil:
+    sdl.quit()
+  else:
+    sdl.destroyWindow(graphics.rootWindow.handle)
+    sdl.quit()

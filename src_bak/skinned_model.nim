@@ -182,7 +182,7 @@ proc boneTransform*(model: var Model, timeInSeconds: float, transforms: var seq[
   var timeInTicks = timeInSeconds * ticksPerSecond
   var animationTime = fmod(timeInTicks,  float(model.scene.animations[0].duration))
 
-  readNodeHierarchy(model, animationTime, model.scene.rootNode, mat4f())
+  readNodeHierarchy(model, animationTime, model.scene.rootNode, mat4f(1.0))
 
   transforms = newSeq[Mat4f](model.numBones)
 
@@ -236,7 +236,7 @@ proc initBones*(index: int, model: var Model, mesh: PMesh) =
       boneIndex = model.boneMapping[boneName]
 
     for j in 0..<mesh.bones[i].numWeights:
-      let vertexId = model.entries[index].baseVertex + mesh.bones[i].weights[j].vertexID
+      let vertexId = model.entries[index].baseVertex + int mesh.bones[i].weights[j].vertexID
       let weight = mesh.bones[i].weights[j].weight
       model.bones[vertexId].addBoneData(boneIndex, weight)
 
