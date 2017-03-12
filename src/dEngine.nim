@@ -118,6 +118,7 @@ proc startdEngine*[App](config: dEngineConfig) =
         runGame = false
         break
       else:
+        var event = SDLEvent(sdlEventData:event)
         ctx.events.dispatch(event)
 
     app.render(ctx)

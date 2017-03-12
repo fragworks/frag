@@ -17,31 +17,25 @@ type
 proc registerEventHandler*(
   eventBus: EventBus
   , eventHandler: event.EventHandler
-  , eventType: SDLEventType
-) =
-  events.on(eventBus.eventEmitter, $eventType, eventHandler)
-
-proc registerEventHandler*(
-  eventBus: EventBus
-  , eventHandler: event.EventHandler
   , eventType: dEngineEventType
 ) =
   events.on(eventBus.eventEmitter, $eventType, eventHandler)
 
-proc dispatch*(eventBus: EventBus, e: var dEngineEvent) =  
-  case e.eventType
-  of LOAD_ASSET:
-    e.assetManager = eventBus.assetManager
-    let eventMessage = dEngineEventMessage(event: e)
-    eventBus.eventEmitter.emit($e.eventType, eventMessage)
-
-proc dispatch*(eventBus: EventBus, e: sdl.Event) =  
-  case e.kind
-  of sdl.WindowEvent:
-    let eventMessage  = SDLEventMessage(event: e)
-    eventBus.eventEmitter.emit($e.window.event, eventMessage)
+proc dispatch*(eventBus: EventBus, e: var dEngineEvent) =
+  if e of SDLEvent:
+    var sdlEvent = SDLEvent(e).sdlEventData
+    case sdlEvent.kind
+    of sdl.WindowEvent:
+      let eventMessage  = SDLEventMessage(event: sdlEvent)
+      eventBus.eventEmitter.emit($sdlEvent.window.event, eventMessage)
+    else:
+      warn "Unable to dispatch event with unknown type : " & $sdlEvent.kind
   else:
-    warn "Unable to dispatch event with unknown type : " & $e.kind
+    case e.eventType
+    of LOAD_ASSET:
+      e.assetManager = eventBus.assetManager
+      let eventMessage = dEngineEventMessage(event: e)
+      eventBus.eventEmitter.emit($e.eventType, eventMessage)
 
 proc registerAssetManager*(eventBus: EventBus, assetManager: AssetManager) =
   eventBus.assetManager = assetManager

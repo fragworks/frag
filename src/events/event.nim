@@ -2,7 +2,7 @@ import
   events
 
 import 
-  sdl2
+  sdl2 as sdl
 
 import
   ../assets,
@@ -15,17 +15,20 @@ type
   SDLEventType* = enum
     WINDOW_RESIZE = "WindowEvent_Resized"
 
-  dEngineEvent* = object
+  dEngineEvent* = object of RootObj
     case eventType*: dEngineEventType
     of LOAD_ASSET:
       filename*: string
       assetManager*: AssetManager
       assetType*: AssetType
 
+  SDLEvent* = object of dEngineEvent
+    sdlEventData*: sdl.Event
+
   dEngineEventMessage* = object of EventArgs
     event*: dEngineEvent
 
   SDLEventMessage* = object of EventArgs
-    event*: sdl2.Event
+    event*: sdl.Event
 
   EventHandler* = proc(e: EventArgs)
