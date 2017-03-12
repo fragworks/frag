@@ -1,4 +1,5 @@
 import
+  freetype,
   opengl,
   sdl2 as sdl
 
@@ -15,4 +16,4 @@ type
       width*: int
       height*: int
     of TTF:
-      discard
+      fontFace*: Face

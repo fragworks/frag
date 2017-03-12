@@ -1,12 +1,16 @@
 import 
-  hashes
-  , logging
-  , os
-  , tables
+  events,
+  hashes,
+  logging,
+  os,
+  tables
 
 import 
   assets/asset
   , assets/ttf_loader
+  , event_bus
+  , events/event
+  , graphics/text/ttf
   , graphics/two_d/texture
 
 type
@@ -40,7 +44,6 @@ proc unload*(assetManager: AssetManager, filename: string) =
     
   assetManager.dispose(id)
   
-
 proc load*(assetManager: AssetManager, filename: string, assetType: AssetType) : Hash =
   let filepath = assetManager.assetSearchPath & filename
   if not fileExists(filepath):
@@ -57,11 +60,16 @@ proc load*(assetManager: AssetManager, filename: string, assetType: AssetType) :
       var texture = texture.load(filepath)
       assetManager.assets.add(id, texture)
     of AssetType.TTF:
-      if assetManager.ttfSupport:
-        discard 
+      if not assetManager.ttfSupport:
+        warn "TrueType font loading is not enabled."
+      let fontFace = assetManager.ttfLoader.loadFontFace(filepath)
+      var ttf = ttf.load(fontFace)
   return id
 
-proc init*(assetManager: AssetManager, assetRoot: string) =
+proc handleLoadAssetEvent(e: EventArgs) =
+  echo repr e
+
+proc init*(assetManager: AssetManager, events: EventBus, assetRoot: string) =
   assetManager.assets = initTable[Hash, ref Asset]()
   assetManager.assetSearchPath = getAppDir() & DirSep & assetRoot & DirSep
   
@@ -71,6 +79,7 @@ proc init*(assetManager: AssetManager, assetRoot: string) =
     error "Error initializing TrueType font loader. TrueType font support disabled."
     assetManager.ttfSupport = false
 
+  events.registerEventHandler(handleLoadAssetEvent, LOAD_ASSET)
 
 proc shutdown*(assetManager: AssetManager) =
   for id, _ in assetManager.assets:

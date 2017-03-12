@@ -6,15 +6,19 @@ import
 
 import
   assets,
-  config, 
+  config,
+  debug,
+  event_bus,
   framerate/framerate,
   globals,
   graphics
 
 type
   dEngine* = ref object
-    graphics*: Graphics
     assets*: AssetManager
+    debug*: Debug
+    events: EventBus
+    graphics*: Graphics
 
 var consoleLogger : ConsoleLogger
 var fileLogger : FileLogger
@@ -46,6 +50,11 @@ proc init(ctx: dEngine, config: dEngineConfig) =
 
   debug "Logging subsystem initialized."
 
+  debug "Initializing events subsystem..."
+  ctx.events = EventBus()
+  ctx.events.init()
+  debug "Events subsystem initialized."
+
   debug "Initializing graphics subsystem..."
   ctx.graphics = Graphics()
   if not ctx.graphics.init(
@@ -60,8 +69,13 @@ proc init(ctx: dEngine, config: dEngineConfig) =
 
   debug "Initializing asset management subsystem..."
   ctx.assets = AssetManager()
-  ctx.assets.init(config.assetRoot)
+  ctx.assets.init(ctx.events, config.assetRoot)
   debug "Asset management subsystem initialized."
+
+  debug "Initializing debug subsystem..."
+  ctx.debug = Debug()
+  ctx.debug.init(ctx.events)
+  debug "Debug subsystem initialized."
 
   info "dEngine initialized."
 
@@ -94,8 +108,7 @@ proc startdEngine*[App](config: dEngineConfig) =
         runGame = false
         break
       else:
-        #engine.eventBus.dispatch(event)
-        discard
+        ctx.events.dispatch(event)
 
     app.render(ctx)
 

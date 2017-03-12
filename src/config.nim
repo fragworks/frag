@@ -1,4 +1,5 @@
 import
+  debug,
   graphics/window
 
 type
@@ -9,3 +10,4 @@ type
     rootWindowFlags*: window.WindowFlags
     logFileName*: string
     assetRoot*: string
+    debugMode*: DebugMode

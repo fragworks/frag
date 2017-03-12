@@ -5,10 +5,11 @@ import
   opengl
 
 import
-  ../../src/config
-  , ../../src/dEngine
-  , ../../src/graphics
-  , ../../src/graphics/window
+  ../../src/config,
+  ../../src/debug,
+  ../../src/dEngine,
+  ../../src/graphics,
+  ../../src/graphics/window
 
 type
   App = ref object
@@ -31,5 +32,6 @@ startdEngine[App](dEngineConfig(
   rootWindowWidth: 960, rootWindowHeight: 540,
   rootWindowFlags: window.WindowFlags.Default,
   logFileName: "example-00.log",
-  assetRoot: "../assets"
+  assetRoot: "../assets",
+  debugMode: DebugMode.TEXT
 ))
