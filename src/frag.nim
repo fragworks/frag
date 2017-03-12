@@ -17,7 +17,7 @@ import
   graphics
 
 type
-  dEngine* = ref object
+  Frag* = ref object
     assets*: AssetManager
     debug*: Debug
     events: EventBus
@@ -26,8 +26,8 @@ type
 var consoleLogger : ConsoleLogger
 var fileLogger : FileLogger
 
-proc shutdown(ctx: dEngine, exitCode: int) =
-  info "Shutting down dEngine..."
+proc shutdown(ctx: Frag, exitCode: int) =
+  info "Shutting down Frag..."
   
   debug "Shutting down graphics subsystem..."
   ctx.graphics.shutdown()
@@ -37,14 +37,14 @@ proc shutdown(ctx: dEngine, exitCode: int) =
   ctx.assets.shutdown()
   debug "Asset management subsystem shutdown."
 
-  info "dEngine shut down. Goodbye."
+  info "Frag shut down. Goodbye."
   quit(exitCode)
 
-proc registerEventHandlers(ctx: dEngine) = 
+proc registerEventHandlers(ctx: Frag) = 
   ctx.events.registerEventHandler(handleLoadAssetEvent, LOAD_ASSET)
 
-proc init(ctx: dEngine, config: dEngineConfig) =
-  echo "Initializing dEngine - " & globals.version & "..."
+proc init(ctx: Frag, config: FragConfig) =
+  echo "Initializing Frag - " & globals.version & "..."
 
   echo "Initializing logging subsystem..."
 
@@ -87,14 +87,14 @@ proc init(ctx: dEngine, config: dEngineConfig) =
   ctx.debug.init(ctx.events)
   debug "Debug subsystem initialized."
 
-  info "dEngine initialized."
+  info "Frag initialized."
 
 var last = 0'u64
 var deltaTime = 0'f64
 var now = sdl.getPerformanceCounter()
 
-proc startdEngine*[App](config: dEngineConfig) =
-  var ctx = dEngine()
+proc startFrag*[App](config: FragConfig) =
+  var ctx = Frag()
 
   ctx.init(config)
   

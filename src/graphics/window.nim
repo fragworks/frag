@@ -23,7 +23,7 @@ const posUndefined* = sdl.SDL_WINDOWPOS_UNDEFINED
 
 proc init*(
   window: Window,
-  title: string = "dEngine - " & globals.version,
+  title: string = "FRAG - " & globals.version,
   windowPosX, windowPosY: int,
   width, height: int,
   flags: uint32

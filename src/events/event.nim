@@ -9,24 +9,24 @@ import
   ../assets/asset
 
 type
-  dEngineEventType* = enum
+  FragEventType* = enum
     LOAD_ASSET
 
   SDLEventType* = enum
     WINDOW_RESIZE = "WindowEvent_Resized"
 
-  dEngineEvent* = object of RootObj
-    case eventType*: dEngineEventType
+  FragEvent* = object of RootObj
+    case eventType*: FragEventType
     of LOAD_ASSET:
       filename*: string
       assetManager*: AssetManager
       assetType*: AssetType
 
-  SDLEvent* = object of dEngineEvent
+  SDLEvent* = object of FragEvent
     sdlEventData*: sdl.Event
 
-  dEngineEventMessage* = object of EventArgs
-    event*: dEngineEvent
+  FragEventMessage* = object of EventArgs
+    event*: FragEvent
 
   SDLEventMessage* = object of EventArgs
     event*: sdl.Event

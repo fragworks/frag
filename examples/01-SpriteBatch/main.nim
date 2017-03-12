@@ -7,14 +7,14 @@ import
 import
   ../../src/config,
   ../../src/debug,
-  ../../src/dEngine,
+  ../../src/Frag,
   ../../src/graphics,
   ../../src/graphics/window
 
 type
   App = ref object
 
-proc initialize*(app: App, ctx: dEngine) =
+proc initialize*(app: App, ctx: Frag) =
   debug "Initializing app..."
 
   debug "Loading assets..."
@@ -22,7 +22,7 @@ proc initialize*(app: App, ctx: dEngine) =
 
   debug "App initialized."
 
-proc shutdown*(app: App, ctx: dEngine) =
+proc shutdown*(app: App, ctx: Frag) =
   debug "Shutting down app..."
 
   debug "Unloading assets..."
@@ -30,12 +30,12 @@ proc shutdown*(app: App, ctx: dEngine) =
 
   debug "App shut down..."
 
-proc render*(app: App, ctx: dEngine) =
+proc render*(app: App, ctx: Frag) =
   ctx.graphics.clearColor((0.18, 0.18, 0.18, 1.0))
   ctx.graphics.clear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-startdEngine[App](dEngineConfig(
-  rootWindowTitle: "dEngine Example 01-SpriteBatch", 
+startFrag[App](FragConfig(
+  rootWindowTitle: "Frag Example 01-SpriteBatch", 
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
   rootWindowFlags: window.WindowFlags.Default,

@@ -10,7 +10,7 @@ type
   Debug* = ref object
 
 proc init*(debug: Debug, events: EventBus) =
-  var loadDebugFontEvent = dEngineEvent(
+  var loadDebugFontEvent = FragEvent(
       eventType: LOAD_ASSET,
       filename: "Testing Event Emission...",
       assetType: TTF
