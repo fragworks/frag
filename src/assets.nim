@@ -14,6 +14,7 @@ import
 type
   AssetManager* = ref object
     assetSearchPath: string
+    internalSearchPath: string
     assets: Table[Hash, ref Asset]
     ttfLoader: TTFLoader
     ttfSupport: bool
@@ -42,8 +43,13 @@ proc unload*(assetManager: AssetManager, filename: string) =
     
   assetManager.dispose(id)
   
-proc load*(assetManager: AssetManager, filename: string, assetType: AssetType) : Hash =
-  let filepath = assetManager.assetSearchPath & filename
+proc load*(assetManager: AssetManager, filename: string, assetType: AssetType, internal: bool = false) : Hash =
+  var filepath : string
+  if not internal:
+    filepath = assetManager.assetSearchPath & filepath
+  else:
+    filepath = assetManager.internalSearchPath & filename
+
   if not fileExists(filepath):
     warn "File with filepath : " & filepath & " does not exist."
     return
@@ -64,9 +70,10 @@ proc load*(assetManager: AssetManager, filename: string, assetType: AssetType) :
       var ttf = ttf.load(fontFace)
   return id
 
-proc init*(assetManager: AssetManager, assetRoot: string) =
+proc init*(assetManager: AssetManager, engineAssetRoot, assetRoot: string) =
   assetManager.assets = initTable[Hash, ref Asset]()
   assetManager.assetSearchPath = getAppDir() & DirSep & assetRoot & DirSep
+  assetManager.internalSearchPath = getAppDir() & DirSep & engineAssetRoot & DirSep
   
   assetManager.ttfSupport = true
   assetManager.ttfLoader = TTFLoader()

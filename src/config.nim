@@ -10,4 +10,5 @@ type
     rootWindowFlags*: window.WindowFlags
     logFileName*: string
     assetRoot*: string
+    engineAssetRoot*: string
     debugMode*: DebugMode

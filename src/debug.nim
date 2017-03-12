@@ -12,7 +12,7 @@ type
 proc init*(debug: Debug, events: EventBus) =
   var loadDebugFontEvent = FragEvent(
       eventType: LOAD_ASSET,
-      filename: "Testing Event Emission...",
+      filename: "fonts/FiraCode/distr/ttf/FiraCode-Regular.ttf",
       assetType: TTF
     )
   events.dispatch(
