@@ -4,20 +4,26 @@ import
 import 
   sdl2
 
+import
+  ../assets,
+  ../assets/asset
+
 type
-  DEngineEventType* = enum
+  dEngineEventType* = enum
     LOAD_ASSET
 
   SDLEventType* = enum
     WINDOW_RESIZE = "WindowEvent_Resized"
 
-  DEngineEvent* = object
-    case eventType*: DEngineEventType
+  dEngineEvent* = object
+    case eventType*: dEngineEventType
     of LOAD_ASSET:
       filename*: string
+      assetManager*: AssetManager
+      assetType*: AssetType
 
-  DEngineEventMessage* = object of EventArgs
-    event*: DEngineEvent
+  dEngineEventMessage* = object of EventArgs
+    event*: dEngineEvent
 
   SDLEventMessage* = object of EventArgs
     event*: sdl2.Event

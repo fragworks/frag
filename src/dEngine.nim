@@ -6,9 +6,12 @@ import
 
 import
   assets,
+  assets/asset,
   config,
   debug,
   event_bus,
+  events/event,
+  events/event_handlers,
   framerate/framerate,
   globals,
   graphics
@@ -36,6 +39,9 @@ proc shutdown(ctx: dEngine, exitCode: int) =
 
   info "dEngine shut down. Goodbye."
   quit(exitCode)
+
+proc registerEventHandlers(ctx: dEngine) = 
+  ctx.events.registerEventHandler(handleLoadAssetEvent, LOAD_ASSET)
 
 proc init(ctx: dEngine, config: dEngineConfig) =
   echo "Initializing dEngine - " & globals.version & "..."
@@ -69,8 +75,12 @@ proc init(ctx: dEngine, config: dEngineConfig) =
 
   debug "Initializing asset management subsystem..."
   ctx.assets = AssetManager()
-  ctx.assets.init(ctx.events, config.assetRoot)
+  ctx.assets.init(config.assetRoot)
   debug "Asset management subsystem initialized."
+
+  ctx.events.registerAssetManager(ctx.assets)
+
+  ctx.registerEventHandlers()
 
   debug "Initializing debug subsystem..."
   ctx.debug = Debug()

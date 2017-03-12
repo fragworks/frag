@@ -1,4 +1,5 @@
 import
+  assets/asset,
   event_bus,
   events/event
 
@@ -9,9 +10,11 @@ type
   Debug* = ref object
 
 proc init*(debug: Debug, events: EventBus) =
-  events.dispatch(
-    DEngineEvent(
+  var loadDebugFontEvent = dEngineEvent(
       eventType: LOAD_ASSET,
-      filename: "Testing Event Emission..."
+      filename: "Testing Event Emission...",
+      assetType: TTF
     )
+  events.dispatch(
+    loadDebugFontEvent
   )

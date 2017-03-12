@@ -6,12 +6,10 @@ import
   tables
 
 import 
-  assets/asset
-  , assets/ttf_loader
-  , event_bus
-  , events/event
-  , graphics/text/ttf
-  , graphics/two_d/texture
+  assets/asset,
+  assets/ttf_loader,
+  graphics/text/ttf,
+  graphics/two_d/texture
 
 type
   AssetManager* = ref object
@@ -66,10 +64,7 @@ proc load*(assetManager: AssetManager, filename: string, assetType: AssetType) :
       var ttf = ttf.load(fontFace)
   return id
 
-proc handleLoadAssetEvent(e: EventArgs) =
-  echo repr e
-
-proc init*(assetManager: AssetManager, events: EventBus, assetRoot: string) =
+proc init*(assetManager: AssetManager, assetRoot: string) =
   assetManager.assets = initTable[Hash, ref Asset]()
   assetManager.assetSearchPath = getAppDir() & DirSep & assetRoot & DirSep
   
@@ -78,8 +73,6 @@ proc init*(assetManager: AssetManager, events: EventBus, assetRoot: string) =
   if not assetManager.ttfLoader.init():
     error "Error initializing TrueType font loader. TrueType font support disabled."
     assetManager.ttfSupport = false
-
-  events.registerEventHandler(handleLoadAssetEvent, LOAD_ASSET)
 
 proc shutdown*(assetManager: AssetManager) =
   for id, _ in assetManager.assets:
