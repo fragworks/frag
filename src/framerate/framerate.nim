@@ -10,4 +10,4 @@ proc limitFrameRate*() =
   let now = sdl.getTicks()
   if frameTime > now:
     sdl.delay(frameTime - now) # Delay to maintain steady frame rate
-  frameTime += targetFrameMS
+  frameTime += targetFrameMs

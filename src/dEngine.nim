@@ -5,21 +5,32 @@ import
   sdl2 as sdl
 
 import
-  config
-  , framerate/framerate
-  , globals
-  , graphics
+  assets,
+  config, 
+  framerate/framerate,
+  globals,
+  graphics
 
 type
-  dEngine* = ref TDEngine
-  TDEngine* = object
+  dEngine* = ref object
     graphics*: Graphics
+    assets*: AssetManager
 
 var consoleLogger : ConsoleLogger
 var fileLogger : FileLogger
 
 proc shutdown(ctx: dEngine, exitCode: int) =
+  info "Shutting down dEngine..."
+  
+  debug "Shutting down graphics subsystem..."
   ctx.graphics.shutdown()
+  debug "Graphics subsystem shutdown."
+  
+  debug "Shutting down asset management subsystem..."
+  ctx.assets.shutdown()
+  debug "Asset management subsystem shutdown."
+
+  info "dEngine shut down. Goodbye."
   quit(exitCode)
 
 proc init(ctx: dEngine, config: dEngineConfig) =
@@ -33,9 +44,9 @@ proc init(ctx: dEngine, config: dEngineConfig) =
   logging.addHandler(consoleLogger)
   logging.addHandler(fileLogger)
 
-  info "Logging subsystem initialized."
+  debug "Logging subsystem initialized."
 
-  info "Initializing graphics subsystem..."
+  debug "Initializing graphics subsystem..."
   ctx.graphics = Graphics()
   if not ctx.graphics.init(
     config.rootWindowTitle, 
@@ -45,7 +56,14 @@ proc init(ctx: dEngine, config: dEngineConfig) =
   ):
     fatal "Error initializing graphics subsystem."
     ctx.shutdown(QUIT_FAILURE)
-  info "Graphics subsystem initialized."
+  debug "Graphics subsystem initialized."
+
+  debug "Initializing asset management subsystem..."
+  ctx.assets = AssetManager()
+  ctx.assets.init(config.assetRoot)
+  debug "Asset management subsystem initialized."
+
+  info "dEngine initialized."
 
 var last = 0'u64
 var deltaTime = 0'f64
@@ -84,3 +102,7 @@ proc startdEngine*[App](config: dEngineConfig) =
     ctx.graphics.swap()
 
     limitFramerate()
+  
+  app.shutdown(ctx)
+  
+  ctx.shutdown(QUIT_SUCCESS)

@@ -8,4 +8,4 @@ type
     rootWindowWidth*, rootWindowHeight*: int
     rootWindowFlags*: window.WindowFlags
     logFileName*: string
-  
+    assetRoot*: string
