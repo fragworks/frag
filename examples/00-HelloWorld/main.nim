@@ -17,7 +17,7 @@ proc render*(app: App, ctx: dEngine) =
   ctx.graphics.clearColor((0.18, 0.18, 0.18, 1.0))
   ctx.graphics.clear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-startdEngine[App]((
+startdEngine[App](dEngineConfig(
   rootWindowTitle: "dEngine Example 00-HelloWorld", 
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,

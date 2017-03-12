@@ -10,8 +10,7 @@ import
   graphics/window
 
 type
-  Graphics* = ref TGraphics
-  TGraphics* = object
+  Graphics* = ref object
     rootWindow*: window.Window
     rootGLContext: sdl.GLContextPtr
 

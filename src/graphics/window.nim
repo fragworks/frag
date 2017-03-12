@@ -5,8 +5,7 @@ import
   ../globals
 
 type
-  Window* = ref TWindow
-  TWindow* = object
+  Window* = ref object
     handle*: sdl.WindowPtr
 
 type
