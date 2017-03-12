@@ -17,11 +17,11 @@ type
 proc registerEventHandler*(
   eventBus: EventBus
   , eventHandler: event.EventHandler
-  , eventType: dEngineEventType
+  , eventType: FragEventType
 ) =
   events.on(eventBus.eventEmitter, $eventType, eventHandler)
 
-proc dispatch*(eventBus: EventBus, e: var dEngineEvent) =
+proc dispatch*(eventBus: EventBus, e: var FragEvent) =
   if e of SDLEvent:
     var sdlEvent = SDLEvent(e).sdlEventData
     case sdlEvent.kind
@@ -34,7 +34,7 @@ proc dispatch*(eventBus: EventBus, e: var dEngineEvent) =
     case e.eventType
     of LOAD_ASSET:
       e.assetManager = eventBus.assetManager
-      let eventMessage = dEngineEventMessage(event: e)
+      let eventMessage = FragEventMessage(event: e)
       eventBus.eventEmitter.emit($e.eventType, eventMessage)
 
 proc registerAssetManager*(eventBus: EventBus, assetManager: AssetManager) =
