@@ -7,7 +7,7 @@ import
 import
   ../../src/config,
   ../../src/debug,
-  ../../src/Frag,
+  ../../src/frag,
   ../../src/graphics,
   ../../src/graphics/window
 
@@ -35,7 +35,7 @@ proc render*(app: App, ctx: Frag) =
   ctx.graphics.clear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
 startFrag[App](FragConfig(
-  rootWindowTitle: "Frag Example 01-SpriteBatch", 
+  rootWindowTitle: "Frag Example 01-SpriteBatch",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
   rootWindowFlags: window.WindowFlags.Default,

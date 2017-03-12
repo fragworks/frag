@@ -7,7 +7,7 @@ import
 import
   ../../src/config,
   ../../src/debug,
-  ../../src/Frag,
+  ../../src/frag,
   ../../src/graphics,
   ../../src/graphics/window
 
@@ -27,7 +27,7 @@ proc shutdown*(app: App, ctx: Frag) =
   debug "App shut down."
 
 startFrag[App](FragConfig(
-  rootWindowTitle: "Frag Example 00-HelloWorld", 
+  rootWindowTitle: "Frag Example 00-HelloWorld",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
   rootWindowFlags: window.WindowFlags.Default,
