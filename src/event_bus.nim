@@ -2,11 +2,18 @@ import
   events,
   logging
 
-import 
+import
   sdl2 as sdl
 
 import
-  events/event
+  events/event,
+  events/event_handlers,
+  events/sdl_event
+
+export
+  event,
+  event_handlers,
+  sdl_event
 
 proc registerEventHandler*(
   eventBus: EventBus

@@ -1,9 +1,6 @@
-import 
+import
   events,
   hashes
-
-import 
-  sdl2 as sdl
 
 import
   ../assets,
@@ -20,12 +17,9 @@ type
     UnloadAsset
     GetAsset
 
-  SDLEventType* = enum
-    WindowResize = "WindowEvent_Resized"
-
   EventProducerType* = enum
     Debug
-  
+
   EventProducer* = object
     initialized*: bool
     case eventProducerType*: EventProducerType
@@ -44,15 +38,9 @@ type
       assetId*: Hash
       loadAssetCallback*: proc(producer: ref EventProducer, eventBus: EventBus, assetId: Hash)
       getAssetCallback*: proc(producer: ref EventProducer, asset: ref Asset)
-      
-  SDLEvent* = object of FragEvent
-    sdlEventData*: sdl.Event
 
   FragEventMessage* = object of EventArgs
     event*: FragEvent
-
-  SDLEventMessage* = object of EventArgs
-    event*: sdl.Event
 
   EventHandler* = proc(e: EventArgs)
 
