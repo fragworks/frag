@@ -79,7 +79,7 @@ proc init(ctx: Frag, config: FragConfig) =
 
   debug "Initializing asset management subsystem..."
   ctx.assets = AssetManager()
-  ctx.assets.init(config.gameAssetRoot)
+  ctx.assets.init(config.assetRoot)
   debug "Asset management subsystem initialized."
 
   ctx.events.registerAssetManager(ctx.assets)

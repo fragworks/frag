@@ -40,6 +40,6 @@ startFrag[App](FragConfig(
   rootWindowWidth: 960, rootWindowHeight: 540,
   rootWindowFlags: window.WindowFlags.Default,
   logFileName: "example-01.log",
-  gameAssetRoot: "../assets",
+  assetRoot: "../assets",
   debugMode: DebugMode.TEXT
 ))
