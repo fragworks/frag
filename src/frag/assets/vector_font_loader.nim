@@ -1,6 +1,6 @@
 import
-  logging
-  , os
+  logging,
+  os
 
 import
   freetype
