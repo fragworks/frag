@@ -6,9 +6,9 @@ import
 
 import
   ../../src/frag/config,
-  ../../src/frag/debug,
   ../../src/frag,
   ../../src/frag/graphics,
+  ../../src/frag/graphics/debug,
   ../../src/frag/graphics/window
 
 type
