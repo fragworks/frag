@@ -1,5 +1,5 @@
 import
-  hashes
+  logging
 
 import
   assets/asset,
@@ -12,9 +12,9 @@ type
 
   Debug* = ref object
 
-proc init*(debug: Debug, events: EventBus) =
+proc init*(debug: Debug, events: EventBus) =  
   var loadDebugFontEvent = FragEvent(
-      eventType: LOAD_ASSET,
+      eventType: LoadAsset,
       filename: "fonts/FiraCode/distr/ttf/FiraCode-Regular.ttf",
       assetType: TTF
     )
@@ -26,4 +26,7 @@ proc shutdown*(debug: Debug, events: EventBus) =
   var unloadDebugFontEvent = FragEvent(
     eventType: UNLOAD_ASSET,
     filename: "fonts/FiraCode/distr/ttf/FiraCode-Regular.ttf"
+  )
+  events.dispatch(
+    unloadDebugFontEvent
   )

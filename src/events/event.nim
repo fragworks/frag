@@ -10,15 +10,16 @@ import
 
 type
   FragEventType* = enum
-    LOAD_ASSET
-    UNLOAD_ASSET
+    LoadAsset
+    UnloadAsset
+    GetAsset    
 
   SDLEventType* = enum
-    WINDOW_RESIZE = "WindowEvent_Resized"
+    WindowResize = "WindowEvent_Resized"
 
   FragEvent* = object of RootObj
     case eventType*: FragEventType
-    of LOAD_ASSET, UNLOAD_ASSET:
+    of LoadAsset, UnloadAsset, GetAsset:
       filename*: string
       assetManager*: AssetManager
       assetType*: AssetType

@@ -32,7 +32,7 @@ proc dispatch*(eventBus: EventBus, e: var FragEvent) =
       warn "Unable to dispatch event with unknown type : " & $sdlEvent.kind
   else:
     case e.eventType
-    of LOAD_ASSET, UNLOAD_ASSET:
+    of LoadAsset, UnloadAsset, GetAsset:
       e.assetManager = eventBus.assetManager
       let eventMessage = FragEventMessage(event: e)
       eventBus.eventEmitter.emit($e.eventType, eventMessage)

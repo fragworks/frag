@@ -24,6 +24,9 @@ proc dispose(assetManager: AssetManager, id: Hash) =
     of AssetType.TEXTURE:
       texture.unload(assetManager.assets[id])
       assetManager.assets.del(id)
+    of AssetType.TTF:
+      ttf.unload(assetManager.assets[id])
+      assetManager.assets.del(id)
     else:
       warn "Unable to unload asset with unknown type."
 
@@ -35,7 +38,12 @@ proc unload*(assetManager: AssetManager, id: Hash) =
   assetManager.dispose(id)
 
 proc unload*(assetManager: AssetManager, filename: string, internal: bool = false) =
-  let filepath = assetManager.assetSearchPath & filename
+  var filepath : string
+  if not internal:
+    filepath = assetManager.assetSearchPath & filepath
+  else:
+    filepath = assetManager.internalSearchPath & filename
+
   let id = hash(filepath)
   if not assetManager.assets.contains(id):
     warn "Asset with filepath : " & filepath & " not loaded."
@@ -68,6 +76,7 @@ proc load*(assetManager: AssetManager, filename: string, assetType: AssetType, i
         warn "TrueType font loading is not enabled."
       let fontFace = assetManager.ttfLoader.loadFontFace(filepath)
       var ttf = ttf.load(fontFace)
+      assetManager.assets.add(id, ttf)
   return id
 
 proc init*(assetManager: AssetManager, engineAssetRoot, assetRoot: string) =
@@ -84,3 +93,5 @@ proc init*(assetManager: AssetManager, engineAssetRoot, assetRoot: string) =
 proc shutdown*(assetManager: AssetManager) =
   for id, _ in assetManager.assets:
     assetManager.dispose(id)
+  
+  assetManager.ttfLoader.shutdown()

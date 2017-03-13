@@ -33,8 +33,11 @@ proc loadFontFace*(ttfLoader: TTFLoader, filepath: string, ): Face =
     return
 
   var face : Face
-  if not newFace(ttfLoader.ft, filepath, 0, addr face) == 0:
+  if not freetype.newFace(ttfLoader.ft, filepath, 0, addr face) == 0:
     warn "Failed loading TrueType font file at: " & filepath
     return
   
   return face
+
+proc shutdown*(ttfLoader: TTFLoader) =
+  discard freeType.doneLibrary(ttfLoader.ft)
