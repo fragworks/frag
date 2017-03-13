@@ -9,6 +9,6 @@ type
     rootWindowWidth*, rootWindowHeight*: int
     rootWindowFlags*: window.WindowFlags
     logFileName*: string
-    assetRoot*: string
-    engineAssetRoot*: string
+    gameAssetRoot*: string
+    fragAssetRoot*: string
     debugMode*: DebugMode
