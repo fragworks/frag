@@ -19,7 +19,7 @@ import
 type
   Frag* = ref object
     assets*: AssetManager
-    debug*: Debug
+    debug*: debug.Debug
     events: EventBus
     graphics*: Graphics
 
@@ -29,19 +29,25 @@ var fileLogger : FileLogger
 proc shutdown(ctx: Frag, exitCode: int) =
   info "Shutting down Frag..."
   
+  debug "Shutting down debug subsystem..."
+  ctx.debug.shutdown(ctx.events)
+  debug "Debug subsystem shut down."
+
   debug "Shutting down graphics subsystem..."
   ctx.graphics.shutdown()
-  debug "Graphics subsystem shutdown."
+  debug "Graphics subsystem shut down."
   
   debug "Shutting down asset management subsystem..."
   ctx.assets.shutdown()
-  debug "Asset management subsystem shutdown."
+  debug "Asset management subsystem shut down."
 
   info "Frag shut down. Goodbye."
   quit(exitCode)
 
 proc registerEventHandlers(ctx: Frag) = 
-  ctx.events.registerEventHandler(handleLoadAssetEvent, LOAD_ASSET)
+  ctx.events.registerEventHandler(handleLoadAssetEvent, LoadAsset)
+  ctx.events.registerEventHandler(handleUnloadAssetEvent, UnloadAsset)
+  ctx.events.registerEventHandler(handleGetAssetEvent, GetAsset)
 
 proc init(ctx: Frag, config: FragConfig) =
   echo "Initializing Frag - " & globals.version & "..."
@@ -75,7 +81,7 @@ proc init(ctx: Frag, config: FragConfig) =
 
   debug "Initializing asset management subsystem..."
   ctx.assets = AssetManager()
-  ctx.assets.init(config.assetRoot)
+  ctx.assets.init(config.fragAssetRoot, config.gameAssetRoot)
   debug "Asset management subsystem initialized."
 
   ctx.events.registerAssetManager(ctx.assets)
@@ -83,7 +89,7 @@ proc init(ctx: Frag, config: FragConfig) =
   ctx.registerEventHandlers()
 
   debug "Initializing debug subsystem..."
-  ctx.debug = Debug()
+  ctx.debug = debug.Debug()
   ctx.debug.init(ctx.events)
   debug "Debug subsystem initialized."
 

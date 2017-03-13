@@ -80,7 +80,11 @@ proc shutdown*(graphics: Graphics) =
   if graphics.rootWindow.isNil:
     return
   elif graphics.rootWindow.handle.isNil:
+    debug "Shutting down SDL..."
     sdl.quit()
+    debug "SDL shut down."
   else:
+    debug "Destroying root window and shutting down SDL..."
     sdl.destroyWindow(graphics.rootWindow.handle)
     sdl.quit()
+    debug "SDL shut down."
