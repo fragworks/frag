@@ -1,11 +1,11 @@
-import 
+import
   events,
   hashes,
   logging,
   os,
   tables
 
-import 
+import
   assets/asset,
   assets/ttf_loader,
   graphics/text/ttf,
@@ -23,7 +23,7 @@ proc get*(assetManager: AssetManager, id: Hash): ref Asset =
   if not assetManager.assets.contains(id):
     warn "Asset with filename : " & $id & " not loaded."
     return
-  
+
   return assetManager.assets[id]
 
 proc dispose(assetManager: AssetManager, id: Hash) =
@@ -41,7 +41,7 @@ proc unload*(assetManager: AssetManager, id: Hash) =
   if not assetManager.assets.contains(id):
     warn "Asset with filename : " & $id & " not loaded."
     return
-    
+
   assetManager.dispose(id)
 
 proc unload*(assetManager: AssetManager, filename: string, internal: bool = false) =
@@ -55,9 +55,9 @@ proc unload*(assetManager: AssetManager, filename: string, internal: bool = fals
   if not assetManager.assets.contains(id):
     warn "Asset with filepath : " & filepath & " not loaded."
     return
-    
+
   assetManager.dispose(id)
-  
+
 proc load*(assetManager: AssetManager, filename: string, assetType: AssetType, internal: bool = false) : Hash =
   var filepath : string
   if not internal:
@@ -68,12 +68,12 @@ proc load*(assetManager: AssetManager, filename: string, assetType: AssetType, i
   if not fileExists(filepath):
     warn "File with filepath : " & filepath & " does not exist."
     return
-  
+
   let id = hash(filepath)
   if assetManager.assets.contains(id):
     warn "Asset with filepath : " & filepath & " already loaded."
     return
-    
+
   case assetType
     of AssetType.TEXTURE:
       var texture = texture.load(filepath)
@@ -86,11 +86,12 @@ proc load*(assetManager: AssetManager, filename: string, assetType: AssetType, i
       assetManager.assets.add(id, ttf)
   return id
 
-proc init*(assetManager: AssetManager, engineAssetRoot, assetRoot: string) =
+const engineAssetRoot = "../../assets"
+proc init*(assetManager: AssetManager, assetRoot: string) =
   assetManager.assets = initTable[Hash, ref Asset]()
   assetManager.assetSearchPath = getAppDir() & DirSep & assetRoot & DirSep
   assetManager.internalSearchPath = getAppDir() & DirSep & engineAssetRoot & DirSep
-  
+
   assetManager.ttfSupport = true
   assetManager.ttfLoader = TTFLoader()
   if not assetManager.ttfLoader.init():
@@ -100,5 +101,5 @@ proc init*(assetManager: AssetManager, engineAssetRoot, assetRoot: string) =
 proc shutdown*(assetManager: AssetManager) =
   for id, _ in assetManager.assets:
     assetManager.dispose(id)
-  
+
   assetManager.ttfLoader.shutdown()

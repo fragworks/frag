@@ -10,5 +10,4 @@ type
     rootWindowFlags*: window.WindowFlags
     logFileName*: string
     gameAssetRoot*: string
-    fragAssetRoot*: string
     debugMode*: DebugMode
