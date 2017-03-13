@@ -1,5 +1,9 @@
 import
+  tables
+
+import
   freetype,
+  glm,
   opengl,
   sdl2 as sdl
 
@@ -7,6 +11,12 @@ type
   AssetType* = enum
     TEXTURE, TTF
   
+  Character* = object
+    textureID: GLuint
+    size: Vec2i
+    bearing: Vec2i
+    advance: GLuint
+
   Asset* = object
     case assetType*: AssetType
     of TEXTURE:
@@ -17,3 +27,4 @@ type
       height*: int
     of TTF:
       fontFace*: Face
+      characters*: Table[GLchar, Character]
