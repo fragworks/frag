@@ -10,10 +10,14 @@ import
   ../assets/asset
 
 type
+  EventBus* = ref object
+    eventEmitter*: EventEmitter
+    assetManager*: AssetManager
+
   FragEventType* = enum
     LoadAsset
     UnloadAsset
-    GetAsset    
+    GetAsset
 
   SDLEventType* = enum
     WindowResize = "WindowEvent_Resized"
@@ -27,14 +31,16 @@ type
       debugFontAssetId*: Hash
 
   FragEvent* = object of RootObj
+    eventBus*: EventBus
     producer*: ref EventProducer
     case eventType*: FragEventType
     of LoadAsset, UnloadAsset, GetAsset:
       filename*: string
       assetManager*: AssetManager
       assetType*: AssetType
-      loadAssetCallback*: proc(producer: ref EventProducer, assetId: Hash)
-      getAssetCallback*: proc(producer: ref EventProducer, asset: Asset)
+      assetId*: Hash
+      loadAssetCallback*: proc(producer: ref EventProducer, eventBus: EventBus, assetId: Hash)
+      getAssetCallback*: proc(producer: ref EventProducer, asset: ref Asset)
       
 
   SDLEvent* = object of FragEvent
@@ -47,3 +53,6 @@ type
     event*: sdl.Event
 
   EventHandler* = proc(e: EventArgs)
+
+proc registerAssetManager*(eventBus: EventBus, assetManager: AssetManager) =
+  eventBus.assetManager = assetManager

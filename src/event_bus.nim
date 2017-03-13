@@ -6,13 +6,7 @@ import
   sdl2 as sdl
 
 import
-  assets,
   events/event
-
-type
-  EventBus* = ref object
-    eventEmitter: EventEmitter
-    assetManager: AssetManager
 
 proc registerEventHandler*(
   eventBus: EventBus
@@ -36,9 +30,6 @@ proc dispatch*(eventBus: EventBus, e: var FragEvent) =
       e.assetManager = eventBus.assetManager
       let eventMessage = FragEventMessage(event: e)
       eventBus.eventEmitter.emit($e.eventType, eventMessage)
-
-proc registerAssetManager*(eventBus: EventBus, assetManager: AssetManager) =
-  eventBus.assetManager = assetManager
 
 proc init*(eventBus: EventBus) =
   eventBus.eventEmitter = initEventEmitter()

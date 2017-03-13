@@ -19,6 +19,13 @@ type
     ttfLoader: TTFLoader
     ttfSupport: bool
 
+proc get*(assetManager: AssetManager, id: Hash): ref Asset =
+  if not assetManager.assets.contains(id):
+    warn "Asset with filename : " & $id & " not loaded."
+    return
+  
+  return assetManager.assets[id]
+
 proc dispose(assetManager: AssetManager, id: Hash) =
   case assetManager.assets[id].assetType
     of AssetType.TEXTURE:

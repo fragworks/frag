@@ -45,8 +45,9 @@ proc shutdown(ctx: Frag, exitCode: int) =
   quit(exitCode)
 
 proc registerEventHandlers(ctx: Frag) = 
-  ctx.events.registerEventHandler(handleLoadAssetEvent, LOAD_ASSET)
-  ctx.events.registerEventHandler(handleUnloadAssetEvent, UNLOAD_ASSET)
+  ctx.events.registerEventHandler(handleLoadAssetEvent, LoadAsset)
+  ctx.events.registerEventHandler(handleUnloadAssetEvent, UnloadAsset)
+  ctx.events.registerEventHandler(handleGetAssetEvent, GetAsset)
 
 proc init(ctx: Frag, config: FragConfig) =
   echo "Initializing Frag - " & globals.version & "..."
