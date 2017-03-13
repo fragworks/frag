@@ -29,10 +29,10 @@ proc get*(assetManager: AssetManager, id: Hash): ref Asset =
 
 proc dispose(assetManager: AssetManager, id: Hash) =
   case assetManager.assets[id].assetType
-    of AssetType.TEXTURE:
+    of AssetType.Texture:
       texture.unload(assetManager.assets[id])
       assetManager.assets.del(id)
-    of AssetType.VECTOR_FONT:
+    of AssetType.VectorFont:
       vectorFont.unload(assetManager.assets[id])
       assetManager.assets.del(id)
     else:
@@ -76,10 +76,10 @@ proc load*(assetManager: AssetManager, filename: string, assetType: AssetType, i
     return
 
   case assetType
-    of AssetType.TEXTURE:
+    of AssetType.Texture:
       var texture = texture.load(filepath)
       assetManager.assets.add(id, texture)
-    of AssetType.VECTOR_FONT:
+    of AssetType.VectorFont:
       if not assetManager.vectorFontSupport:
         warn "TrueType font loading is not enabled."
       let fontFace = assetManager.vectorFontLoader.loadFontFace(filepath)

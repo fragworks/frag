@@ -67,7 +67,7 @@ proc init*(debug: Debug, events: EventBus, width, height: int) =
       producer: debug,
       eventType: LoadAsset,
       filename: fontPath,
-      assetType: AssetType.VECTOR_FONT,
+      assetType: AssetType.VectorFont,
       loadAssetCallback: debugFontLoaded
     )
 

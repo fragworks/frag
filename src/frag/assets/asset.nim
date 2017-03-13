@@ -12,7 +12,7 @@ import
 
 type
   AssetType* = enum
-    TEXTURE, VECTOR_FONT
+    Texture, VectorFont
 
   Character* = object
     textureID*: GLuint
@@ -22,13 +22,13 @@ type
 
   Asset* = object
     case assetType*: AssetType
-    of TEXTURE:
+    of Texture:
       handle*: GLuint
       filename*: string
       data*: sdl.SurfacePtr
       width*: int
       height*: int
-    of VECTOR_FONT:
+    of VectorFont:
       fontFace*: Face
       characters*: Table[GLchar, Character]
       vao*, vbo*: GLuint

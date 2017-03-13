@@ -109,7 +109,7 @@ proc initializeFont(font: VectorFont, fontSize: FontSize) =
   font.shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource)
 
 proc load*(fontFace: Face, fontSize: FontSize = defaultFontSize): VectorFont =
-  result = VectorFont(assetType: AssetType.VECTOR_FONT)
+  result = VectorFont(assetType: AssetType.VectorFont)
   result.fontFace = fontFace
 
   result.characters = initTable[GLchar, Character](128)
