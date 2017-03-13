@@ -8,6 +8,7 @@ import
 import
   assets/asset,
   assets/ttf_loader,
+  globals,
   graphics/text/ttf,
   graphics/two_d/texture
 
@@ -86,7 +87,6 @@ proc load*(assetManager: AssetManager, filename: string, assetType: AssetType, i
       assetManager.assets.add(id, ttf)
   return id
 
-const engineAssetRoot = "../../assets"
 proc init*(assetManager: AssetManager, assetRoot: string) =
   assetManager.assets = initTable[Hash, ref Asset]()
   assetManager.assetSearchPath = getAppDir() & DirSep & assetRoot & DirSep
