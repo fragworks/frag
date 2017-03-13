@@ -19,7 +19,7 @@ type
     width, height: uint32
   ]
 
-const defaultFontSize : FontSize = (width: 0u32, height: 18u32)
+const defaultFontSize : FontSize = (width: 0u32, height: 12u32)
 
 const vertexShaderSource = """
   #version 330 core
@@ -44,7 +44,7 @@ const fragmentShaderSource = """
   uniform vec4 textColor;
 
   void main()
-  {    
+  {
       vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);
       color = textColor * sampled;
   }  
@@ -134,19 +134,20 @@ proc render*(ttf: TTF, text: string, x, y, scale: float, color: Color, shaderBeg
     let ch = ttf.characters[c]
     
     let xpos : GLfloat = xd + GLfloat(ch.bearing.x) * scale
-    let ypos : GLfloat = y - GLfloat(ch.size.y - ch.bearing.y) * scale
+    let ypos : GLfloat = y + GLfloat(ttf.characters['H'].bearing.y - ch.bearing.y) * scale
 
     let w : GLfloat = GLfloat(ch.size.x) * scale
     let h : GLfloat = GLfloat(ch.size.y) * scale
 
     var vertices: array[6, array[4, GLfloat]] = 
       [
-        [xpos, ypos + h, 0.0, 0.0],
-        [xpos, ypos, 0.0, 1.0],
-        [xpos + w, ypos, 1.0, 1.0],
-        [xpos, ypos + h, 0.0, 0.0],
-        [xpos + w, ypos, 1.0, 1.0],
-        [xpos + w, ypos + h, 1.0, 0.0]
+        [xpos, ypos + h, 0.0, 1.0],
+        [xpos + w, ypos, 1.0, 0.0],
+        [xpos, ypos, 0.0, 0.0],
+
+        [xpos, ypos + h, 0.0, 1.0],
+        [xpos + w, ypos + h, 1.0, 1.0],
+        [xpos + w, ypos, 1.0, 0.0]
       ]
     
     glBindTexture(GL_TEXTURE_2D, ch.textureID)

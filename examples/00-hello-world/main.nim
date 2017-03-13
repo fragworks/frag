@@ -22,7 +22,6 @@ proc initialize*(app: App, ctx: Frag) =
 proc render*(app: App, ctx: Frag) =
   ctx.graphics.clearColor((0.18, 0.18, 0.18, 1.0))
   ctx.graphics.clear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
-  ctx.graphics.drawDebugText("This is sample text", 20.0, 20.0, 1.0, (1.0, 0.0, 0.0, 1.0))
 
 proc shutdown*(app: App, ctx: Frag) =
   debug "Shutting down app..."

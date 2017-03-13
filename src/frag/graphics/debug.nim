@@ -23,7 +23,7 @@ proc debugFontRetrieved*(producer: ref EventProducer, debugFont: ref Asset) =
   let debug = cast[Debug](producer)
   debug.debugFont = debugFont
 
-  debug.debugFont.setSize((width: 0u32, height: 18u32))
+  debug.debugFont.setSize((width: 0u32, height: 12u32))
 
   debug.initialized = true
 
@@ -57,7 +57,7 @@ proc init*(debug: Debug, events: EventBus, width, height: int) =
     warn "Debug subsystem already initialized."
     return
 
-  debug.projection = glm.ortho[GLfloat](0.0, GLfloat width, 0, GLfloat height, -1.0, 1.0)
+  debug.projection = glm.ortho[GLfloat](0.0, GLfloat width, GLfloat height, 0.0, -1.0, 1.0)
   debug.projectionDirty = true
 
   var loadDebugFontEvent = FragEvent(

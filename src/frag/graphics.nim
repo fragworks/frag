@@ -1,5 +1,6 @@
 import
-  logging
+  logging,
+  strfmt
 
 import
   opengl,
@@ -17,6 +18,7 @@ type
     rootGLContext: sdl.GLContextPtr
     debug: debug.Debug
     
+var lastTime {.global.} : uint64
 
 proc init*(
   graphics: Graphics,
@@ -85,11 +87,17 @@ proc clear*(graphics: Graphics, clearFlags: GLbitfield) =
 proc clearColor*(graphics: Graphics, color: color.Color) =
   glClearColor(color.r, color.g, color.b, color.a)  
 
-proc swap*(graphics: Graphics) =
-  glSwapWindow(graphics.rootWindow.handle)
-
 proc drawDebugText*(graphics: Graphics, text: string, x, y, scale: float = 1.0, color: color.Color = (r: 1.0, g: 1.0, b: 1.0, a: 1.0)) =
   graphics.debug.drawText(text, x, y, scale, color)
+
+proc swap*(graphics: Graphics) =
+  let current = sdl.getPerformanceCounter()
+  let frameTime = float((current - lastTime) * 1000) / float sdl.getPerformanceFrequency()
+  lastTime = current
+
+  graphics.drawDebugText("Frame: {:7.3f}[ms]".fmt(frameTime), 20, 20)
+
+  glSwapWindow(graphics.rootWindow.handle)
 
 proc shutdown*(graphics: Graphics, events: EventBus) =
   if graphics.rootWindow.isNil:
