@@ -7,11 +7,11 @@ import
   opengl
 
 import
-  assets/asset,
-  event_bus,
-  events/event,
-  graphics/color,
-  graphics/text/ttf
+  ../assets/asset,
+  ../event_bus,
+  ../events/event,
+  color,
+  text/ttf
 
 type
   DebugMode* = enum
@@ -40,7 +40,7 @@ proc debugFontLoaded*(producer: ref EventProducer, events: EventBus, debugFontAs
 
   events.emit(getDebugFontEvent)
 
-proc printText*(debug: Debug, text: string, x, y, scale: float = 1.0, color: Color = (r: 1.0, g: 1.0, b: 1.0, a: 1.0)) =
+proc drawText*(debug: Debug, text: string, x, y, scale: float = 1.0, color: Color) =
   if debug.projectionDirty:
     debug.debugFont.render(text, x, y, scale, color, debug.projection)
     debug.projectionDirty = false

@@ -6,13 +6,17 @@ import
   sdl2 as sdl
 
 import
+  event_bus,
   graphics/color,
+  graphics/debug,
   graphics/window
 
 type
   Graphics* = ref object
     rootWindow*: window.Window
     rootGLContext: sdl.GLContextPtr
+    debug: debug.Debug
+    
 
 proc init*(
   graphics: Graphics,
@@ -69,6 +73,12 @@ proc init*(
 
   return true
 
+proc initializeDebug*(graphics: Graphics, events: EventBus, rootWindowWidth, rootWindowHeight: int) =
+  debug "Initializing debug subsystem..."
+  graphics.debug = debug.Debug()
+  graphics.debug.init(events, rootWindowWidth, rootWindowHeight)
+  debug "Debug subsystem initialized."
+
 proc clear*(graphics: Graphics, clearFlags: GLbitfield) =
   glClear(clearFlags)
 
@@ -78,7 +88,10 @@ proc clearColor*(graphics: Graphics, color: color.Color) =
 proc swap*(graphics: Graphics) =
   glSwapWindow(graphics.rootWindow.handle)
 
-proc shutdown*(graphics: Graphics) =
+proc drawDebugText*(graphics: Graphics, text: string, x, y, scale: float = 1.0, color: color.Color = (r: 1.0, g: 1.0, b: 1.0, a: 1.0)) =
+  graphics.debug.drawText(text, x, y, scale, color)
+
+proc shutdown*(graphics: Graphics, events: EventBus) =
   if graphics.rootWindow.isNil:
     return
   elif graphics.rootWindow.handle.isNil:
@@ -90,3 +103,8 @@ proc shutdown*(graphics: Graphics) =
     sdl.destroyWindow(graphics.rootWindow.handle)
     sdl.quit()
     debug "SDL shut down."
+
+  if not graphics.debug.isNil:
+    debug "Shutting down debug subsystem..."
+    graphics.debug.shutdown(events)
+    debug "Debug subsystem shut down."

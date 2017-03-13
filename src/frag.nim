@@ -8,7 +8,6 @@ import
   frag/assets,
   frag/assets/asset,
   frag/config,
-  frag/debug,
   frag/event_bus,
   frag/framerate/framerate,
   frag/globals,
@@ -17,7 +16,6 @@ import
 type
   Frag* = ref object
     assets*: AssetManager
-    debug*: debug.Debug
     events: EventBus
     graphics*: Graphics
 
@@ -27,12 +25,8 @@ var fileLogger : FileLogger
 proc shutdown(ctx: Frag, exitCode: int) =
   info "Shutting down Frag..."
 
-  debug "Shutting down debug subsystem..."
-  ctx.debug.shutdown(ctx.events)
-  debug "Debug subsystem shut down."
-
   debug "Shutting down graphics subsystem..."
-  ctx.graphics.shutdown()
+  ctx.graphics.shutdown(ctx.events)
   debug "Graphics subsystem shut down."
 
   debug "Shutting down asset management subsystem..."
@@ -86,10 +80,7 @@ proc init(ctx: Frag, config: FragConfig) =
 
   ctx.registerEventHandlers()
 
-  debug "Initializing debug subsystem..."
-  ctx.debug = debug.Debug()
-  ctx.debug.init(ctx.events, config.rootWindowWidth, config.rootWindowHeight)
-  debug "Debug subsystem initialized."
+  ctx.graphics.initializeDebug(ctx.events, config.rootWindowWidth, config.rootWindowHeight)
 
   info "Frag initialized."
 

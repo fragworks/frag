@@ -1,5 +1,5 @@
 import
-  debug,
+  graphics/debug,
   graphics/window
 
 type
