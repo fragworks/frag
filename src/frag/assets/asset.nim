@@ -12,8 +12,8 @@ import
 
 type
   AssetType* = enum
-    TEXTURE, TTF
-  
+    TEXTURE, VECTOR_FONT
+
   Character* = object
     textureID*: GLuint
     size*: Vec2i
@@ -28,7 +28,7 @@ type
       data*: sdl.SurfacePtr
       width*: int
       height*: int
-    of TTF:
+    of VECTOR_FONT:
       fontFace*: Face
       characters*: Table[GLchar, Character]
       vao*, vbo*: GLuint

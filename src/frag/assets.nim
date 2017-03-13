@@ -7,9 +7,9 @@ import
 
 import
   assets/asset,
-  assets/ttf_loader,
+  assets/vector_font_loader,
   globals,
-  graphics/text/ttf,
+  graphics/text/vector_font,
   graphics/two_d/texture
 
 type
@@ -17,8 +17,8 @@ type
     assetSearchPath: string
     internalSearchPath: string
     assets: Table[Hash, ref Asset]
-    ttfLoader: TTFLoader
-    ttfSupport: bool
+    vectorFontLoader: VectorFontLoader
+    vectorFontSupport: bool
 
 proc get*(assetManager: AssetManager, id: Hash): ref Asset =
   if not assetManager.assets.contains(id):
@@ -32,8 +32,8 @@ proc dispose(assetManager: AssetManager, id: Hash) =
     of AssetType.TEXTURE:
       texture.unload(assetManager.assets[id])
       assetManager.assets.del(id)
-    of AssetType.TTF:
-      ttf.unload(assetManager.assets[id])
+    of AssetType.VECTOR_FONT:
+      vectorFont.unload(assetManager.assets[id])
       assetManager.assets.del(id)
     else:
       warn "Unable to unload asset with unknown type."
@@ -79,12 +79,12 @@ proc load*(assetManager: AssetManager, filename: string, assetType: AssetType, i
     of AssetType.TEXTURE:
       var texture = texture.load(filepath)
       assetManager.assets.add(id, texture)
-    of AssetType.TTF:
-      if not assetManager.ttfSupport:
+    of AssetType.VECTOR_FONT:
+      if not assetManager.vectorFontSupport:
         warn "TrueType font loading is not enabled."
-      let fontFace = assetManager.ttfLoader.loadFontFace(filepath)
-      var ttf = ttf.load(fontFace)
-      assetManager.assets.add(id, ttf)
+      let fontFace = assetManager.vectorFontLoader.loadFontFace(filepath)
+      var font = vectorFont.load(fontFace)
+      assetManager.assets.add(id, font)
   return id
 
 proc init*(assetManager: AssetManager, assetRoot: string) =
@@ -92,14 +92,14 @@ proc init*(assetManager: AssetManager, assetRoot: string) =
   assetManager.assetSearchPath = getAppDir() & DirSep & assetRoot & DirSep
   assetManager.internalSearchPath = getAppDir() & DirSep & engineAssetRoot & DirSep
 
-  assetManager.ttfSupport = true
-  assetManager.ttfLoader = TTFLoader()
-  if not assetManager.ttfLoader.init():
+  assetManager.vectorFontSupport = true
+  assetManager.vectorFontLoader = VectorFontLoader()
+  if not assetManager.vectorFontLoader.init():
     error "Error initializing TrueType font loader. TrueType font support disabled."
-    assetManager.ttfSupport = false
+    assetManager.vectorFontSupport = false
 
 proc shutdown*(assetManager: AssetManager) =
   for id, _ in assetManager.assets:
     assetManager.dispose(id)
 
-  assetManager.ttfLoader.shutdown()
+  assetManager.vectorFontLoader.shutdown()

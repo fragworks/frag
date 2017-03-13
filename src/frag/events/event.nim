@@ -8,7 +8,7 @@ import
 import
   ../assets,
   ../assets/asset,
-  ../graphics/text/ttf
+  ../graphics/text/vector_font
 
 type
   EventBus* = ref object
@@ -28,7 +28,7 @@ type
     case eventProducerType*: EventProducerType
     of Debug:
       debugFontAssetId*: Hash
-      debugFont*: ttf.TTF
+      debugFont*: vectorFont.VectorFont
       projection*: Mat4f
       projectionDirty*: bool
 

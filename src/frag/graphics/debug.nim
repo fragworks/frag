@@ -11,7 +11,9 @@ import
   ../event_bus,
   ../events/event,
   color,
-  text/ttf
+  text/vector_font
+
+const fontPath = "fonts/FiraCode/distr/otf/FiraCode-Regular.otf"
 
 type
   DebugMode* = enum
@@ -64,8 +66,8 @@ proc init*(debug: Debug, events: EventBus, width, height: int) =
       eventBus: events,
       producer: debug,
       eventType: LoadAsset,
-      filename: "fonts/FiraCode/distr/otf/FiraCode-Regular.otf",
-      assetType: AssetType.TTF,
+      filename: fontPath,
+      assetType: AssetType.VECTOR_FONT,
       loadAssetCallback: debugFontLoaded
     )
 
@@ -74,7 +76,7 @@ proc init*(debug: Debug, events: EventBus, width, height: int) =
 proc shutdown*(debug: Debug, events: EventBus) =
   var unloadDebugFontEvent = FragEvent(
     eventType: UnloadAsset,
-    filename: "fonts/FiraCode/distr/ttf/FiraCode-Regular.ttf"
+    filename: fontPath
   )
 
   events.emit(unloadDebugFontEvent)
