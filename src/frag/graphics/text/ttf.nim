@@ -94,8 +94,6 @@ proc initializeFont(ttf: TTF, fontSize: FontSize) =
     )
     inc(c)
 
-  echo repr ttf.characters
-
   glBindTexture(GL_TEXTURE_2D, 0)
 
   glGenVertexArrays(1, addr ttf.vao)
@@ -157,7 +155,6 @@ proc render*(ttf: TTF, text: string, x, y, scale: float, color: Color, shaderBeg
     glBindBuffer(GL_ARRAY_BUFFER, 0)
     glDrawArrays(GL_TRIANGLES, 0, 6)
     xd += GLfloat `shr`(ch.advance, 6)
-    echo xd
 
   glBindVertexArray(0)
   glBindTexture(GL_TEXTURE_2D, 0)

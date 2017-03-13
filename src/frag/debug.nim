@@ -64,7 +64,7 @@ proc init*(debug: Debug, events: EventBus, width, height: int) =
       eventBus: events,
       producer: debug,
       eventType: LoadAsset,
-      filename: "fonts/fonts/apache/robotomono/RobotoMono-Regular.ttf",
+      filename: "fonts/FiraCode/distr/ttf/FiraCode-Regular.ttf",
       assetType: AssetType.TTF,
       loadAssetCallback: debugFontLoaded
     )
