@@ -5,7 +5,8 @@ import
 import
   assets/asset,
   event_bus,
-  events/event
+  events/event,
+  graphics/text/ttf
 
 type
   DebugMode* = enum
@@ -16,6 +17,8 @@ type
 proc debugFontRetrieved*(producer: ref EventProducer, debugFont: ref Asset) =
   let debug = cast[Debug](producer)
   debug.debugFont = debugFont
+
+  debug.debugFont.setSize((width: 24u32, height: 24u32))
 
   debug.initialized = true
     
@@ -44,7 +47,7 @@ proc init*(debug: Debug, events: EventBus) =
       producer: debug,
       eventType: LoadAsset,
       filename: "fonts/FiraCode/distr/ttf/FiraCode-Regular.ttf",
-      assetType: TTF,
+      assetType: AssetType.TTF,
       loadAssetCallback: debugFontLoaded
     )
 
