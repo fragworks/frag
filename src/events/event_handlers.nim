@@ -8,7 +8,8 @@ import
 proc handleLoadAssetEvent*(e: EventArgs) {.procvar.} =
   let event = FragEventMessage(e).event
   if not event.assetManager.isNil:
-    discard event.assetManager.load(event.filename, event.assetType, true)
+    let assetId = event.assetManager.load(event.filename, event.assetType, true)
+    event.loadAssetCallback(event.producer, assetId)
 
 proc handleUnloadAssetEvent*(e: EventArgs) {.procvar.} =
   let event = FragEventMessage(e).event
