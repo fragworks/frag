@@ -3,14 +3,19 @@ import
   logging
 
 import
+  glm,
+  opengl
+
+import
   assets/asset,
   event_bus,
   events/event,
+  graphics/color,
   graphics/text/ttf
 
 type
   DebugMode* = enum
-    TEXT
+    Text
 
   Debug* = ref EventProducer
 
@@ -18,7 +23,7 @@ proc debugFontRetrieved*(producer: ref EventProducer, debugFont: ref Asset) =
   let debug = cast[Debug](producer)
   debug.debugFont = debugFont
 
-  debug.debugFont.setSize((width: 24u32, height: 24u32))
+  debug.debugFont.setSize((width: 0u32, height: 18u32))
 
   debug.initialized = true
 
@@ -35,16 +40,31 @@ proc debugFontLoaded*(producer: ref EventProducer, events: EventBus, debugFontAs
 
   events.emit(getDebugFontEvent)
 
-proc init*(debug: Debug, events: EventBus) =
+proc printText*(debug: Debug, text: string, x, y, scale: float = 1.0, color: Color = (r: 1.0, g: 1.0, b: 1.0, a: 1.0)) =
+  if debug.projectionDirty:
+    debug.debugFont.render(text, x, y, scale, color, debug.projection)
+    debug.projectionDirty = false
+  else:
+    debug.debugFont.render(text, x, y, scale, color)
+  
+
+proc setProjection*(debug: Debug, projection: Mat4f) = 
+  debug.projection = projection
+  debug.projectionDirty = true
+
+proc init*(debug: Debug, events: EventBus, width, height: int) =
   if debug.initialized:
     warn "Debug subsystem already initialized."
     return
+
+  debug.projection = glm.ortho[GLfloat](0.0, GLfloat width, 0, GLfloat height, -1.0, 1.0)
+  debug.projectionDirty = true
 
   var loadDebugFontEvent = FragEvent(
       eventBus: events,
       producer: debug,
       eventType: LoadAsset,
-      filename: "fonts/FiraCode/distr/ttf/FiraCode-Regular.ttf",
+      filename: "fonts/fonts/apache/robotomono/RobotoMono-Regular.ttf",
       assetType: AssetType.TTF,
       loadAssetCallback: debugFontLoaded
     )

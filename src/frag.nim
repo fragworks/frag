@@ -88,7 +88,7 @@ proc init(ctx: Frag, config: FragConfig) =
 
   debug "Initializing debug subsystem..."
   ctx.debug = debug.Debug()
-  ctx.debug.init(ctx.events)
+  ctx.debug.init(ctx.events, config.rootWindowWidth, config.rootWindowHeight)
   debug "Debug subsystem initialized."
 
   info "Frag initialized."

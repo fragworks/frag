@@ -3,6 +3,9 @@ import
   hashes
 
 import
+  glm
+
+import
   ../assets,
   ../assets/asset,
   ../graphics/text/ttf
@@ -26,6 +29,8 @@ type
     of Debug:
       debugFontAssetId*: Hash
       debugFont*: ttf.TTF
+      projection*: Mat4f
+      projectionDirty*: bool
 
   FragEvent* = object of RootObj
     eventBus*: EventBus

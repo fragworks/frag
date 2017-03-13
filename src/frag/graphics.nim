@@ -65,6 +65,8 @@ proc init*(
 
   loadExtensions()
 
+  glViewport(0, 0, GLsizei rootWindowWidth, GLsizei rootWindowHeight)
+
   return true
 
 proc clear*(graphics: Graphics, clearFlags: GLbitfield) =

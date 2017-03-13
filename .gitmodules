@@ -1,3 +1,6 @@
-[submodule "assets/fonts/FiraCode"]
-	path = assets/fonts/FiraCode
+[submodule "google"]
+	path = assets/fonts/fonts
+	url = https://github.com/google/fonts.git
+[submodule "assets/FiraCode"]
+	path = assets/FiraCode
 	url = https://github.com/tonsky/FiraCode.git

@@ -7,6 +7,9 @@ import
   opengl,
   sdl2 as sdl
 
+import
+  ../graphics/shader
+
 type
   AssetType* = enum
     TEXTURE, TTF
@@ -29,3 +32,4 @@ type
       fontFace*: Face
       characters*: Table[GLchar, Character]
       vao*, vbo*: GLuint
+      shaderProgram*: ShaderProgram
