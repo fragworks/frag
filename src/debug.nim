@@ -14,7 +14,10 @@ type
   Debug* = ref EventProducer
 
 proc debugFontRetrieved*(producer: ref EventProducer, debugFont: ref Asset) =
-  echo repr debugFont
+  let debug = cast[Debug](producer)
+  debug.debugFont = debugFont
+
+  debug.initialized = true
     
 proc debugFontLoaded*(producer: ref EventProducer, events: EventBus, debugFontAssetId: Hash) =
   let debug = cast[Debug](producer)
@@ -31,7 +34,11 @@ proc debugFontLoaded*(producer: ref EventProducer, events: EventBus, debugFontAs
     getDebugFontEvent
   )
 
-proc init*(debug: Debug, events: EventBus) =  
+proc init*(debug: Debug, events: EventBus) =
+  if debug.initialized:
+    warn "Debug subsystem already initialized."
+    return
+
   var loadDebugFontEvent = FragEvent(
       eventBus: events,
       producer: debug,
@@ -47,7 +54,7 @@ proc init*(debug: Debug, events: EventBus) =
 
 proc shutdown*(debug: Debug, events: EventBus) =
   var unloadDebugFontEvent = FragEvent(
-    eventType: UNLOAD_ASSET,
+    eventType: UnloadAsset,
     filename: "fonts/FiraCode/distr/ttf/FiraCode-Regular.ttf"
   )
   

@@ -7,7 +7,8 @@ import
 
 import
   ../assets,
-  ../assets/asset
+  ../assets/asset,
+  ../graphics/text/ttf
 
 type
   EventBus* = ref object
@@ -26,9 +27,11 @@ type
     Debug
   
   EventProducer* = object
+    initialized*: bool
     case eventProducerType*: EventProducerType
     of Debug:
       debugFontAssetId*: Hash
+      debugFont*: ttf.TTF
 
   FragEvent* = object of RootObj
     eventBus*: EventBus
@@ -42,7 +45,6 @@ type
       loadAssetCallback*: proc(producer: ref EventProducer, eventBus: EventBus, assetId: Hash)
       getAssetCallback*: proc(producer: ref EventProducer, asset: ref Asset)
       
-
   SDLEvent* = object of FragEvent
     sdlEventData*: sdl.Event
 
