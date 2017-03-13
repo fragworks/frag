@@ -5,7 +5,7 @@ import sdl2 as sdl
 import ./event
 
 type
-  SDLEventType* = enum
+  SDLEventType* {.pure.} = enum
     WindowResize = "WindowEvent_Resized"
 
   SDLEvent* = object of FragEvent

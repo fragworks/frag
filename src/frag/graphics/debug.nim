@@ -16,7 +16,7 @@ import
 const fontPath = "fonts/FiraCode/distr/otf/FiraCode-Regular.otf"
 
 type
-  DebugMode* = enum
+  DebugMode* {.pure.} = enum
     Text
 
   Debug* = ref EventProducer
@@ -35,7 +35,7 @@ proc debugFontLoaded*(producer: ref EventProducer, events: EventBus, debugFontAs
 
   var getDebugFontEvent = FragEvent(
     producer: debug,
-    eventType: GetAsset,
+    eventType: FragEventType.GetAsset,
     assetId: debug.debugFontAssetId,
     getAssetCallback: debugFontRetrieved
   )
@@ -65,7 +65,7 @@ proc init*(debug: Debug, events: EventBus, width, height: int) =
   var loadDebugFontEvent = FragEvent(
       eventBus: events,
       producer: debug,
-      eventType: LoadAsset,
+      eventType: FragEventType.LoadAsset,
       filename: fontPath,
       assetType: AssetType.VectorFont,
       loadAssetCallback: debugFontLoaded
@@ -75,7 +75,7 @@ proc init*(debug: Debug, events: EventBus, width, height: int) =
 
 proc shutdown*(debug: Debug, events: EventBus) =
   var unloadDebugFontEvent = FragEvent(
-    eventType: UnloadAsset,
+    eventType: FragEventType.UnloadAsset,
     filename: fontPath
   )
 

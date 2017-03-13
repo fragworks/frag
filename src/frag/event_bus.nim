@@ -33,7 +33,7 @@ proc emit*(eventBus: EventBus, e: var FragEvent) =
       warn "Unable to emit event with unknown type : " & $sdlEvent.kind
   else:
     case e.eventType
-    of LoadAsset, UnloadAsset, GetAsset:
+    of FragEventType.LoadAsset, FragEventType.UnloadAsset, FragEventType.GetAsset:
       e.assetManager = eventBus.assetManager
       let eventMessage = FragEventMessage(event: e)
       eventBus.eventEmitter.emit($e.eventType, eventMessage)

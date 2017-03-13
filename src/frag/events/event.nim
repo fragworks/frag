@@ -15,18 +15,18 @@ type
     eventEmitter*: EventEmitter
     assetManager*: AssetManager
 
-  FragEventType* = enum
+  FragEventType* {.pure.} = enum
     LoadAsset
     UnloadAsset
     GetAsset
 
-  EventProducerType* = enum
+  EventProducerType* {.pure.} = enum
     Debug
 
   EventProducer* = object
     initialized*: bool
     case eventProducerType*: EventProducerType
-    of Debug:
+    of EventProducerType.Debug:
       debugFontAssetId*: Hash
       debugFont*: vectorFont.VectorFont
       projection*: Mat4f
@@ -36,7 +36,7 @@ type
     eventBus*: EventBus
     producer*: ref EventProducer
     case eventType*: FragEventType
-    of LoadAsset, UnloadAsset, GetAsset:
+    of FragEventType.LoadAsset, FragEventType.UnloadAsset, FragEventType.GetAsset:
       filename*: string
       assetManager*: AssetManager
       assetType*: AssetType
