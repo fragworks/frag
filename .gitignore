@@ -1,9 +1,9 @@
-*
-!/**/
-!*.*
-nimcache/
-nakefile
-main
-*.swp
+# generated
 *.log
+main
+nakefile
+nimcache/
+
+# environment
+*.swp
 .DS_store
