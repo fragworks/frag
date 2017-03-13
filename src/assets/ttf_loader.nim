@@ -28,6 +28,7 @@ proc init*(ttfLoader: TTFLoader) : bool =
   return true
 
 proc loadFontFace*(ttfLoader: TTFLoader, filepath: string, ): Face =
+  debug "Loading TrueType font..."
   if not(splitFile(filepath).ext == ".ttf"):
     warn "Only TrueType font files are supported by this loader."
     return
@@ -37,7 +38,11 @@ proc loadFontFace*(ttfLoader: TTFLoader, filepath: string, ): Face =
     warn "Failed loading TrueType font file at: " & filepath
     return
   
+  debug "TrueType font succesfully loaded."
+
   return face
 
 proc shutdown*(ttfLoader: TTFLoader) =
+  debug "Shutting down TrueType font loader..."
   discard freeType.doneLibrary(ttfLoader.ft)
+  debug "TrueType font loader shut down."
