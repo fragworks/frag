@@ -10,8 +10,6 @@ import
   config,
   debug,
   event_bus,
-  events/event,
-  events/event_handlers,
   framerate/framerate,
   globals,
   graphics
@@ -28,7 +26,7 @@ var fileLogger : FileLogger
 
 proc shutdown(ctx: Frag, exitCode: int) =
   info "Shutting down Frag..."
-  
+
   debug "Shutting down debug subsystem..."
   ctx.debug.shutdown(ctx.events)
   debug "Debug subsystem shut down."
@@ -36,7 +34,7 @@ proc shutdown(ctx: Frag, exitCode: int) =
   debug "Shutting down graphics subsystem..."
   ctx.graphics.shutdown()
   debug "Graphics subsystem shut down."
-  
+
   debug "Shutting down asset management subsystem..."
   ctx.assets.shutdown()
   debug "Asset management subsystem shut down."
@@ -44,10 +42,10 @@ proc shutdown(ctx: Frag, exitCode: int) =
   info "Frag shut down. Goodbye."
   quit(exitCode)
 
-proc registerEventHandlers(ctx: Frag) = 
-  ctx.events.registerEventHandler(handleLoadAssetEvent, LoadAsset)
-  ctx.events.registerEventHandler(handleUnloadAssetEvent, UnloadAsset)
-  ctx.events.registerEventHandler(handleGetAssetEvent, GetAsset)
+proc registerEventHandlers(ctx: Frag) =
+  ctx.events.on(handleLoadAssetEvent, LoadAsset)
+  ctx.events.on(handleUnloadAssetEvent, UnloadAsset)
+  ctx.events.on(handleGetAssetEvent, GetAsset)
 
 proc init(ctx: Frag, config: FragConfig) =
   echo "Initializing Frag - " & globals.version & "..."
@@ -70,8 +68,8 @@ proc init(ctx: Frag, config: FragConfig) =
   debug "Initializing graphics subsystem..."
   ctx.graphics = Graphics()
   if not ctx.graphics.init(
-    config.rootWindowTitle, 
-    config.rootWindowPosX, config.rootWindowPosY, 
+    config.rootWindowTitle,
+    config.rootWindowPosX, config.rootWindowPosY,
     config.rootWindowWidth, config.rootWindowHeight,
     uint32 config.rootWindowFlags
   ):
@@ -81,7 +79,7 @@ proc init(ctx: Frag, config: FragConfig) =
 
   debug "Initializing asset management subsystem..."
   ctx.assets = AssetManager()
-  ctx.assets.init(config.fragAssetRoot, config.gameAssetRoot)
+  ctx.assets.init(config.assetRoot)
   debug "Asset management subsystem initialized."
 
   ctx.events.registerAssetManager(ctx.assets)
@@ -103,7 +101,7 @@ proc startFrag*[App](config: FragConfig) =
   var ctx = Frag()
 
   ctx.init(config)
-  
+
   var app = App()
 
   app.initialize(ctx)
@@ -125,14 +123,14 @@ proc startFrag*[App](config: FragConfig) =
         break
       else:
         var event = SDLEvent(sdlEventData:event)
-        ctx.events.dispatch(event)
+        ctx.events.emit(event)
 
     app.render(ctx)
 
     ctx.graphics.swap()
 
     limitFramerate()
-  
+
   app.shutdown(ctx)
-  
+
   ctx.shutdown(QUIT_SUCCESS)

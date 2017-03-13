@@ -2,20 +2,27 @@ import
   events,
   logging
 
-import 
+import
   sdl2 as sdl
 
 import
-  events/event
+  events/event,
+  events/event_handlers,
+  events/sdl_event
 
-proc registerEventHandler*(
+export
+  event,
+  event_handlers,
+  sdl_event
+
+proc on*(
   eventBus: EventBus
   , eventHandler: event.EventHandler
   , eventType: FragEventType
 ) =
   events.on(eventBus.eventEmitter, $eventType, eventHandler)
 
-proc dispatch*(eventBus: EventBus, e: var FragEvent) =
+proc emit*(eventBus: EventBus, e: var FragEvent) =
   if e of SDLEvent:
     var sdlEvent = SDLEvent(e).sdlEventData
     case sdlEvent.kind
@@ -23,7 +30,7 @@ proc dispatch*(eventBus: EventBus, e: var FragEvent) =
       let eventMessage  = SDLEventMessage(event: sdlEvent)
       eventBus.eventEmitter.emit($sdlEvent.window.event, eventMessage)
     else:
-      warn "Unable to dispatch event with unknown type : " & $sdlEvent.kind
+      warn "Unable to emit event with unknown type : " & $sdlEvent.kind
   else:
     case e.eventType
     of LoadAsset, UnloadAsset, GetAsset:
