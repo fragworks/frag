@@ -18,7 +18,7 @@ proc debugFontRetrieved*(producer: ref EventProducer, debugFont: ref Asset) =
   debug.debugFont = debugFont
 
   debug.initialized = true
-    
+
 proc debugFontLoaded*(producer: ref EventProducer, events: EventBus, debugFontAssetId: Hash) =
   let debug = cast[Debug](producer)
   debug.debugFontAssetId = debugFontAssetId
@@ -30,9 +30,7 @@ proc debugFontLoaded*(producer: ref EventProducer, events: EventBus, debugFontAs
     getAssetCallback: debugFontRetrieved
   )
 
-  events.dispatch(
-    getDebugFontEvent
-  )
+  events.emit(getDebugFontEvent)
 
 proc init*(debug: Debug, events: EventBus) =
   if debug.initialized:
@@ -48,16 +46,12 @@ proc init*(debug: Debug, events: EventBus) =
       loadAssetCallback: debugFontLoaded
     )
 
-  events.dispatch(
-    loadDebugFontEvent
-  )
+  events.emit(loadDebugFontEvent)
 
 proc shutdown*(debug: Debug, events: EventBus) =
   var unloadDebugFontEvent = FragEvent(
     eventType: UnloadAsset,
     filename: "fonts/FiraCode/distr/ttf/FiraCode-Regular.ttf"
   )
-  
-  events.dispatch(
-    unloadDebugFontEvent
-  )
+
+  events.emit(unloadDebugFontEvent)

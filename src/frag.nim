@@ -43,9 +43,9 @@ proc shutdown(ctx: Frag, exitCode: int) =
   quit(exitCode)
 
 proc registerEventHandlers(ctx: Frag) =
-  ctx.events.registerEventHandler(handleLoadAssetEvent, LoadAsset)
-  ctx.events.registerEventHandler(handleUnloadAssetEvent, UnloadAsset)
-  ctx.events.registerEventHandler(handleGetAssetEvent, GetAsset)
+  ctx.events.on(handleLoadAssetEvent, LoadAsset)
+  ctx.events.on(handleUnloadAssetEvent, UnloadAsset)
+  ctx.events.on(handleGetAssetEvent, GetAsset)
 
 proc init(ctx: Frag, config: FragConfig) =
   echo "Initializing Frag - " & globals.version & "..."
@@ -123,7 +123,7 @@ proc startFrag*[App](config: FragConfig) =
         break
       else:
         var event = SDLEvent(sdlEventData:event)
-        ctx.events.dispatch(event)
+        ctx.events.emit(event)
 
     app.render(ctx)
 
