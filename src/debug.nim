@@ -1,4 +1,7 @@
 import
+  hashes
+
+import
   assets/asset,
   event_bus,
   events/event
@@ -17,4 +20,10 @@ proc init*(debug: Debug, events: EventBus) =
     )
   events.dispatch(
     loadDebugFontEvent
+  )
+
+proc shutdown*(debug: Debug, events: EventBus) =
+  var unloadDebugFontEvent = FragEvent(
+    eventType: UNLOAD_ASSET,
+    filename: "fonts/FiraCode/distr/ttf/FiraCode-Regular.ttf"
   )

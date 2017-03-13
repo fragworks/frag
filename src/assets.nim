@@ -34,7 +34,7 @@ proc unload*(assetManager: AssetManager, id: Hash) =
     
   assetManager.dispose(id)
 
-proc unload*(assetManager: AssetManager, filename: string) =
+proc unload*(assetManager: AssetManager, filename: string, internal: bool = false) =
   let filepath = assetManager.assetSearchPath & filename
   let id = hash(filepath)
   if not assetManager.assets.contains(id):

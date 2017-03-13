@@ -29,19 +29,24 @@ var fileLogger : FileLogger
 proc shutdown(ctx: Frag, exitCode: int) =
   info "Shutting down Frag..."
   
+  debug "Shutting down debug subsystem..."
+  ctx.debug.shutdown(ctx.events)
+  debug "Debug subsystem shut down."
+
   debug "Shutting down graphics subsystem..."
   ctx.graphics.shutdown()
-  debug "Graphics subsystem shutdown."
+  debug "Graphics subsystem shut down."
   
   debug "Shutting down asset management subsystem..."
   ctx.assets.shutdown()
-  debug "Asset management subsystem shutdown."
+  debug "Asset management subsystem shut down."
 
   info "Frag shut down. Goodbye."
   quit(exitCode)
 
 proc registerEventHandlers(ctx: Frag) = 
   ctx.events.registerEventHandler(handleLoadAssetEvent, LOAD_ASSET)
+  ctx.events.registerEventHandler(handleUnloadAssetEvent, UNLOAD_ASSET)
 
 proc init(ctx: Frag, config: FragConfig) =
   echo "Initializing Frag - " & globals.version & "..."
