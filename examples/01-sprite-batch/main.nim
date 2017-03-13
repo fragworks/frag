@@ -34,7 +34,7 @@ proc render*(app: App, ctx: Frag) =
   ctx.graphics.clearColor((0.18, 0.18, 0.18, 1.0))
   ctx.graphics.clear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-startFrag[App](FragConfig(
+startFrag[App](Config(
   rootWindowTitle: "Frag Example 01-sprite-batch",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,

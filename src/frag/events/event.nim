@@ -15,7 +15,7 @@ type
     eventEmitter*: EventEmitter
     assetManager*: AssetManager
 
-  FragEventType* {.pure.} = enum
+  EventType* {.pure.} = enum
     LoadAsset
     UnloadAsset
     GetAsset
@@ -32,11 +32,11 @@ type
       projection*: Mat4f
       projectionDirty*: bool
 
-  FragEvent* = object of RootObj
+  Event* = object of RootObj
     eventBus*: EventBus
     producer*: ref EventProducer
-    case eventType*: FragEventType
-    of FragEventType.LoadAsset, FragEventType.UnloadAsset, FragEventType.GetAsset:
+    case eventType*: EventType
+    of EventType.LoadAsset, EventType.UnloadAsset, EventType.GetAsset:
       filename*: string
       assetManager*: AssetManager
       assetType*: AssetType
@@ -44,8 +44,8 @@ type
       loadAssetCallback*: proc(producer: ref EventProducer, eventBus: EventBus, assetId: Hash)
       getAssetCallback*: proc(producer: ref EventProducer, asset: ref Asset)
 
-  FragEventMessage* = object of EventArgs
-    event*: FragEvent
+  EventMessage* = object of EventArgs
+    event*: Event
 
   EventHandler* = proc(e: EventArgs)
 

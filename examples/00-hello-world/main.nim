@@ -27,7 +27,7 @@ proc shutdown*(app: App, ctx: Frag) =
   debug "Shutting down app..."
   debug "App shut down."
 
-startFrag[App](FragConfig(
+startFrag[App](Config(
   rootWindowTitle: "Frag Example 00-hello-world",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,

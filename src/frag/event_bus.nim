@@ -3,7 +3,7 @@ import
   logging
 
 import
-  sdl2 as sdl
+  sdl2 as sdl except EventType, Event
 
 import
   events/event,
@@ -16,13 +16,13 @@ export
   sdl_event
 
 proc on*(
-  eventBus: EventBus
-  , eventHandler: event.EventHandler
-  , eventType: FragEventType
+  eventBus: EventBus,
+  eventHandler: event.EventHandler,
+  eventType: EventType
 ) =
   events.on(eventBus.eventEmitter, $eventType, eventHandler)
 
-proc emit*(eventBus: EventBus, e: var FragEvent) =
+proc emit*(eventBus: EventBus, e: var Event) =
   if e of SDLEvent:
     var sdlEvent = SDLEvent(e).sdlEventData
     case sdlEvent.kind
@@ -33,9 +33,9 @@ proc emit*(eventBus: EventBus, e: var FragEvent) =
       warn "Unable to emit event with unknown type : " & $sdlEvent.kind
   else:
     case e.eventType
-    of FragEventType.LoadAsset, FragEventType.UnloadAsset, FragEventType.GetAsset:
+    of EventType.LoadAsset, EventType.UnloadAsset, EventType.GetAsset:
       e.assetManager = eventBus.assetManager
-      let eventMessage = FragEventMessage(event: e)
+      let eventMessage = EventMessage(event: e)
       eventBus.eventEmitter.emit($e.eventType, eventMessage)
 
 proc init*(eventBus: EventBus) =

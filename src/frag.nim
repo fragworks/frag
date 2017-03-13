@@ -2,7 +2,7 @@ import
   logging
 
 import
-  sdl2 as sdl
+  sdl2 as sdl except EventType
 
 import
   frag/assets,
@@ -37,11 +37,11 @@ proc shutdown(ctx: Frag, exitCode: int) =
   quit(exitCode)
 
 proc registerEventHandlers(ctx: Frag) =
-  ctx.events.on(handleLoadAssetEvent, FragEventType.LoadAsset)
-  ctx.events.on(handleUnloadAssetEvent, FragEventType.UnloadAsset)
-  ctx.events.on(handleGetAssetEvent, FragEventType.GetAsset)
+  ctx.events.on(handleLoadAssetEvent, EventType.LoadAsset)
+  ctx.events.on(handleUnloadAssetEvent, EventType.UnloadAsset)
+  ctx.events.on(handleGetAssetEvent, EventType.GetAsset)
 
-proc init(ctx: Frag, config: FragConfig) =
+proc init(ctx: Frag, config: Config) =
   echo "Initializing Frag - " & globals.version & "..."
 
   echo "Initializing logging subsystem..."
@@ -88,7 +88,7 @@ var last = 0'u64
 var deltaTime = 0'f64
 var now = sdl.getPerformanceCounter()
 
-proc startFrag*[App](config: FragConfig) =
+proc startFrag*[App](config: Config) =
   var ctx = Frag()
 
   ctx.init(config)

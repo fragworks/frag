@@ -33,9 +33,9 @@ proc debugFontLoaded*(producer: ref EventProducer, events: EventBus, debugFontAs
   let debug = cast[Debug](producer)
   debug.debugFontAssetId = debugFontAssetId
 
-  var getDebugFontEvent = FragEvent(
+  var getDebugFontEvent = Event(
     producer: debug,
-    eventType: FragEventType.GetAsset,
+    eventType: EventType.GetAsset,
     assetId: debug.debugFontAssetId,
     getAssetCallback: debugFontRetrieved
   )
@@ -62,10 +62,10 @@ proc init*(debug: Debug, events: EventBus, width, height: int) =
   debug.projection = glm.ortho[GLfloat](0.0, GLfloat width, GLfloat height, 0.0, -1.0, 1.0)
   debug.projectionDirty = true
 
-  var loadDebugFontEvent = FragEvent(
+  var loadDebugFontEvent = Event(
       eventBus: events,
       producer: debug,
-      eventType: FragEventType.LoadAsset,
+      eventType: EventType.LoadAsset,
       filename: fontPath,
       assetType: AssetType.VectorFont,
       loadAssetCallback: debugFontLoaded
@@ -74,8 +74,8 @@ proc init*(debug: Debug, events: EventBus, width, height: int) =
   events.emit(loadDebugFontEvent)
 
 proc shutdown*(debug: Debug, events: EventBus) =
-  var unloadDebugFontEvent = FragEvent(
-    eventType: FragEventType.UnloadAsset,
+  var unloadDebugFontEvent = Event(
+    eventType: EventType.UnloadAsset,
     filename: fontPath
   )
 
