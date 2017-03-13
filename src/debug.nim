@@ -11,13 +11,11 @@ type
   DebugMode* = enum
     TEXT
 
-  Debug* = ref object of EventProducer
-    debugFontAssetId: Hash
-
-proc debugFontLoaded*(producer: EventProducer, debugFontAssetId: Hash) =
+  Debug* = ref EventProducer
+    
+proc debugFontLoaded*(producer: ref EventProducer, debugFontAssetId: Hash) =
   let debug = cast[Debug](producer)
   debug.debugFontAssetId = debugFontAssetId
-
 
 proc init*(debug: Debug, events: EventBus) =  
   var loadDebugFontEvent = FragEvent(

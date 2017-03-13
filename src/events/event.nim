@@ -18,17 +18,23 @@ type
   SDLEventType* = enum
     WindowResize = "WindowEvent_Resized"
 
-  EventProducer* = ref object of RootObj
+  EventProducerType* = enum
+    Debug
+  
+  EventProducer* = object
+    case eventProducerType*: EventProducerType
+    of Debug:
+      debugFontAssetId*: Hash
 
   FragEvent* = object of RootObj
-    producer*: EventProducer
+    producer*: ref EventProducer
     case eventType*: FragEventType
     of LoadAsset, UnloadAsset, GetAsset:
       filename*: string
       assetManager*: AssetManager
       assetType*: AssetType
-      loadAssetCallback*: proc(producer: EventProducer, assetId: Hash)
-      getAssetCallback*: proc(producer: EventProducer, asset: Asset)
+      loadAssetCallback*: proc(producer: ref EventProducer, assetId: Hash)
+      getAssetCallback*: proc(producer: ref EventProducer, asset: Asset)
       
 
   SDLEvent* = object of FragEvent

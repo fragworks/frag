@@ -19,7 +19,7 @@ import
 type
   Frag* = ref object
     assets*: AssetManager
-    debug*: Debug
+    debug*: debug.Debug
     events: EventBus
     graphics*: Graphics
 
@@ -88,7 +88,7 @@ proc init(ctx: Frag, config: FragConfig) =
   ctx.registerEventHandlers()
 
   debug "Initializing debug subsystem..."
-  ctx.debug = Debug()
+  ctx.debug = debug.Debug()
   ctx.debug.init(ctx.events)
   debug "Debug subsystem initialized."
 
