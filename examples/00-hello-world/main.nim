@@ -34,5 +34,5 @@ startFrag[App](Config(
   rootWindowFlags: window.WindowFlags.Default,
   logFileName: "example-00.log",
   assetRoot: "../assets",
-  debugMode: DebugMode.TEXT
+  debugMode: DebugMode.Text
 ))
