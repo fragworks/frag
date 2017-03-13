@@ -2,6 +2,8 @@
 !/**/
 !*.*
 nimcache/
+nakefile
+main
 *.swp
 *.log
 .DS_store

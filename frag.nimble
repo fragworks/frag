@@ -5,7 +5,10 @@ author        = "Zachary Carter"
 description   = "A 2D|3D game engine"
 license       = "MIT"
 
+# Settings
+
 srcDir        = "src"
+skipDirs      = @[ "examples" ]
 
 # Dependencies
 
