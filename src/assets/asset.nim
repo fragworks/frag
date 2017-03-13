@@ -28,3 +28,4 @@ type
     of TTF:
       fontFace*: Face
       characters*: Table[GLchar, Character]
+      vao*, vbo*: GLuint

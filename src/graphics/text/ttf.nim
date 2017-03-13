@@ -50,8 +50,6 @@ proc initializeFont(ttf: TTF, fontSize: FontSize) =
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
-    echo repr GLchar c
-
     ttf.characters.add(
       GLchar c,
       Character(
@@ -62,7 +60,17 @@ proc initializeFont(ttf: TTF, fontSize: FontSize) =
       )
     )
 
-  echo repr ttf.characters
+  glBindTexture(GL_TEXTURE_2D, 0)
+
+  glGenVertexArrays(1, addr ttf.vao)
+  glGenBuffers(1, addr ttf.vbo)
+  glBindVertexArray(ttf.vao)
+  glBindBuffer(GL_ARRAY_BUFFER, ttf.vbo)
+  glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, nil, GL_DYNAMIC_DRAW)
+  glEnableVertexAttribArray(0)
+  glVertexAttribPointer(0, 4, cGL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nil)
+  glBindBuffer(GL_ARRAY_BUFFER, 0)
+  glBindVertexArray(0)
 
 proc load*(fontFace: Face, fontSize: FontSize = defaultFontSize): TTF =
   result = TTF(assetType: AssetType.TTF)
