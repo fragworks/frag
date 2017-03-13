@@ -5,14 +5,14 @@ import
   sdl2 as sdl
 
 import
-  assets,
-  assets/asset,
-  config,
-  debug,
-  event_bus,
-  framerate/framerate,
-  globals,
-  graphics
+  frag/assets,
+  frag/assets/asset,
+  frag/config,
+  frag/debug,
+  frag/event_bus,
+  frag/framerate/framerate,
+  frag/globals,
+  frag/graphics
 
 type
   Frag* = ref object

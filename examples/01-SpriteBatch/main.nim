@@ -5,11 +5,11 @@ import
   opengl
 
 import
-  ../../src/config,
-  ../../src/debug,
+  ../../src/frag/config,
+  ../../src/frag/debug,
   ../../src/frag,
-  ../../src/graphics,
-  ../../src/graphics/window
+  ../../src/frag/graphics,
+  ../../src/frag/graphics/window
 
 type
   App = ref object
