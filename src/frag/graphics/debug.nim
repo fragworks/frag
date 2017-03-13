@@ -46,9 +46,9 @@ proc drawText*(debug: Debug, text: string, x, y, scale: float = 1.0, color: Colo
     debug.projectionDirty = false
   else:
     debug.debugFont.render(text, x, y, scale, color)
-  
 
-proc setProjection*(debug: Debug, projection: Mat4f) = 
+
+proc setProjection*(debug: Debug, projection: Mat4f) =
   debug.projection = projection
   debug.projectionDirty = true
 
@@ -64,7 +64,7 @@ proc init*(debug: Debug, events: EventBus, width, height: int) =
       eventBus: events,
       producer: debug,
       eventType: LoadAsset,
-      filename: "fonts/FiraCode/distr/ttf/FiraCode-Regular.ttf",
+      filename: "fonts/FiraCode/distr/otf/FiraCode-Regular.otf",
       assetType: AssetType.TTF,
       loadAssetCallback: debugFontLoaded
     )
