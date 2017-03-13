@@ -12,10 +12,10 @@ type
     TEXTURE, TTF
   
   Character* = object
-    textureID: GLuint
-    size: Vec2i
-    bearing: Vec2i
-    advance: GLuint
+    textureID*: GLuint
+    size*: Vec2i
+    bearing*: Vec2i
+    advance*: GLuint
 
   Asset* = object
     case assetType*: AssetType
