@@ -10,8 +10,6 @@ Some technical details about FRAG:
  - Modern OpenGL 3.3 desktop rendering backend
  - TTF and OTF font rendering via FreeType
  - SDL2
- 
-____
 
 Examples
 -------
