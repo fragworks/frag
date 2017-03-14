@@ -5,8 +5,8 @@ const
   exDir = "examples"
   exBin = "main"
 
-proc compile(bin: string) = shell(nimExe, "c", bin)
-proc run(bin: string) = shell(nimExe, "c", "-r", bin)
+proc compile(bin: string) = direShell(nimExe, "c", bin)
+proc run(bin: string) = direShell(nimExe, "c", "-r", bin)
 proc runExample(name: string) = run(join(@[ exDir, name, exBin ], "/"))
 
 proc registerExample(path: string) =
