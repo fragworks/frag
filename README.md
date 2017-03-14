@@ -11,6 +11,7 @@ FRAG is a game creation framework being developed using the [Nim](https://nim-la
 **Dependencies for Desktop**:
 - [Nim v0.16.1](https://github.com/nim-lang/Nim)
 - [OpenGL 3.3 capable device](http://opengl.gpuinfo.org/)
+- [SDL2](https://www.libsdl.org/download-2.0.php)
 - [FreeType v2.7.1](https://www.freetype.org/)
 
 **Some technical details about FRAG**:
