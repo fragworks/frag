@@ -16,6 +16,7 @@ Support for 3D and mobile are features planned for post-alpha releases of FRAG.
 - [Nim v0.16.1](https://github.com/nim-lang/Nim)
 - [OpenGL 3.3 capable device](http://opengl.gpuinfo.org/)
 - [SDL2](https://www.libsdl.org/download-2.0.php)
+- [SDL_image 2.0](https://www.libsdl.org/projects/SDL_image/)
 - [FreeType v2.7.1](https://www.freetype.org/)
 
 **Some technical details about FRAG**:
