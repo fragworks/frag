@@ -6,7 +6,7 @@ Framework for Rather Awesome Games
 FRAG is a game creation framework being developed using the [Nim](https://nim-lang.org/) programming language, and is currently in pre-alpha status. The immediate development focus for FRAG is supporting the creation of 2D desktop games. Support for 3D and mobile are features planned for post-alpha releases of FRAG.
 
 **Tested for Desktop on**:
-OSX Sierra v10.12.1
+- OSX Sierra v10.12.1
 
 **Dependencies for Desktop**:
 - [Nim v0.16.1](https://github.com/nim-lang/Nim)
@@ -18,7 +18,6 @@ OSX Sierra v10.12.1
  - Modern OpenGL 3.3 desktop rendering backend
  - TTF and OTF font rendering via FreeType
  - SDL2
-____
 
 Examples
 -------
