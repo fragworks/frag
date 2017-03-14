@@ -16,9 +16,9 @@ export
   sdl_event
 
 proc on*(
-  eventBus: EventBus,
-  eventHandler: event.EventHandler,
-  eventType: EventType
+  eventBus: EventBus
+  , eventHandler: event.EventHandler
+  , eventType: enum
 ) =
   events.on(eventBus.eventEmitter, $eventType, eventHandler)
 
