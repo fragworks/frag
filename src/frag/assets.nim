@@ -62,7 +62,7 @@ proc unload*(assetManager: AssetManager, filename: string, internal: bool = fals
 proc load*(assetManager: AssetManager, filename: string, assetType: AssetType, internal: bool = false) : Hash =
   var filepath : string
   if not internal:
-    filepath = assetManager.assetSearchPath & filepath
+    filepath = assetManager.assetSearchPath & filename
   else:
     filepath = assetManager.internalSearchPath & filename
 

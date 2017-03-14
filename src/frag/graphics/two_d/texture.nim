@@ -1,3 +1,4 @@
+# TODO: (ZC) BMPs MipMaps
 import
   logging,
   os
@@ -71,6 +72,9 @@ proc loadPNG*(filename: string) : Texture {.procvar.} =
   glBindTexture(GL_TEXTURE_2D, 0)
 
   return texture
+
+proc `bind`*(texture: Texture) =
+  glBindTexture(GL_TEXTURE_2D, texture.handle)
 
 proc load*(filename: string): Texture =
   let ext = splitFile(filename).ext

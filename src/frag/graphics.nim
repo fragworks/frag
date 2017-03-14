@@ -19,6 +19,11 @@ type
     rootGLContext: sdl.GLContextPtr
     debug: debug.Debug
 
+type
+  BlendFunc* {.pure.} = enum
+    SrcAlpha = GL_SRC_ALPHA
+    OneMinusSrcAlpha = GL_ONE_MINUS_SRC_ALPHA
+
 var lastTime {.global.} : uint64
 
 proc init*(
