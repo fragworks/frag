@@ -18,7 +18,7 @@ type
     rootWindow*: window.Window
     rootGLContext: sdl.GLContextPtr
     debug: debug.Debug
-    
+
 var lastTime {.global.} : uint64
 
 proc init*(
@@ -31,7 +31,7 @@ proc init*(
   if sdl.init(INIT_VIDEO) != SdlSuccess:
     error "Error initializing SDL : " & $getError()
     return false
-  
+
   discard glSetAttribute(SDL_GL_RED_SIZE, 8)
   discard glSetAttribute(SDL_GL_GREEN_SIZE, 8)
   discard glSetAttribute(SDL_GL_BLUE_SIZE, 8)
@@ -51,7 +51,7 @@ proc init*(
 
   graphics.rootWindow = Window()
   graphics.rootWindow.init(
-    rootWindowTitle, 
+    rootWindowTitle,
     rootWindowPosX, rootWindowPosY,
     rootWindowWidth, rootWindowHeight,
     rootWindowFlags
@@ -60,7 +60,7 @@ proc init*(
   if graphics.rootWindow.handle.isNil:
     error "Error creating root application window."
     return false
-  
+
   graphics.rootGLContext = glCreateContext(graphics.rootWindow.handle)
   if graphics.rootGLContext.isNil:
     error "Error creating root OpenGL context."
@@ -86,7 +86,7 @@ proc clear*(graphics: Graphics, clearFlags: GLbitfield) =
   glClear(clearFlags)
 
 proc clearColor*(graphics: Graphics, color: color.Color) =
-  glClearColor(color.r, color.g, color.b, color.a)  
+  glClearColor(color.r, color.g, color.b, color.a)
 
 proc drawDebugText*(graphics: Graphics, text: string, x, y, scale: float = 1.0, fgColor: color.Color = (r: 1.0, g: 1.0, b: 1.0, a: 1.0), bgColor: color.Color = (r: 0.0, g: 0.0, b: 0.0, a: 0.0)) =
   graphics.debug.drawText(text, x, y, scale, fgColor, bgColor)

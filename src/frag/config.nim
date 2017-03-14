@@ -3,7 +3,7 @@ import
   graphics/window
 
 type
-  FragConfig* = object
+  Config* = object
     rootWindowTitle*: string
     rootWindowPosX*, rootWindowPosY*: int
     rootWindowWidth*, rootWindowHeight*: int

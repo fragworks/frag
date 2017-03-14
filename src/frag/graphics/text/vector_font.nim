@@ -13,7 +13,7 @@ import
   ../shader
 
 type
-  TTF* = ref Asset
+  VectorFont* = ref Asset
 
   FontSize* = tuple[
     width, height: uint32
@@ -57,7 +57,7 @@ const vertexShaderSource = """
   {
       gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);
       TexCoords = vertex.zw;
-  } 
+  }
 """
 
 const fragmentShaderSource = """
@@ -72,20 +72,20 @@ const fragmentShaderSource = """
   {
       vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);
       color = textColor * sampled;
-  }  
+  }
 """
 
-proc setSize*(ttf: TTF, size: FontSize) =
-  discard freetype.setPixelSizes(ttf.fontFace, size.width, size.height)
+proc setSize*(font: VectorFont, size: FontSize) =
+  discard freetype.setPixelSizes(font.fontFace, size.width, size.height)
 
-proc initializeFont(ttf: TTF, fontSize: FontSize) =
-  ttf.setSize(fontSize)
+proc initializeFont(font: VectorFont, fontSize: FontSize) =
+  font.setSize(fontSize)
 
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
 
   var c : GLubyte = 0
   while c < 128:
-    if freetype.loadChar(ttf.fontFace, c, freetype.LOAD_RENDER) != 0:
+    if freetype.loadChar(font.fontFace, c, freetype.LOAD_RENDER) != 0:
       warn "Failed to load TrueType font glyph."
 
     var texture : GLuint
@@ -95,12 +95,12 @@ proc initializeFont(ttf: TTF, fontSize: FontSize) =
         GL_TEXTURE_2D,
         0,
         GL_RED.ord,
-        GLsizei ttf.fontFace.glyph.bitmap.width,
-        GLsizei ttf.fontFace.glyph.bitmap.rows,
+        GLsizei font.fontFace.glyph.bitmap.width,
+        GLsizei font.fontFace.glyph.bitmap.rows,
         0,
         GL_RED,
         GL_UNSIGNED_BYTE,
-        ttf.fontFace.glyph.bitmap.buffer
+        font.fontFace.glyph.bitmap.buffer
     )
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
@@ -108,35 +108,36 @@ proc initializeFont(ttf: TTF, fontSize: FontSize) =
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
-    ttf.characters.add(
+    font.characters.add(
       GLchar c,
       Character(
         textureID: texture,
-        size: vec2i(int32 ttf.fontFace.glyph.bitmap.width, int32 ttf.fontFace.glyph.bitmap.rows),
-        bearing: vec2i(ttf.fontFace.glyph.bitmap_left, ttf.fontFace.glyph.bitmap_top),
-        height: GLuint ttf.fontFace.glyph.bitmap.rows,
-        advance: GLuint `shr`(ttf.fontFace.glyph.advance.x, 6)
+        size: vec2i(int32 font.fontFace.glyph.bitmap.width, int32 font.fontFace.glyph.bitmap.rows),
+        bearing: vec2i(font.fontFace.glyph.bitmap_left, font.fontFace.glyph.bitmap_top),
+        height: GLuint font.fontFace.glyph.bitmap.rows,
+        advance: GLuint `shr`(font.fontFace.glyph.advance.x, 6)
       )
     )
     inc(c)
 
   glBindTexture(GL_TEXTURE_2D, 0)
 
-  glGenVertexArrays(1, addr ttf.backgroundVAO)
-  glGenVertexArrays(1, addr ttf.vao)
+  glGenVertexArrays(1, addr font.backgroundVAO)
+  glGenVertexArrays(1, addr font.vao)
   
-  glGenBuffers(1, addr ttf.vbo)
-  glGenBuffers(1, addr ttf.backgroundVBO)
+  glGenBuffers(1, addr font.vbo)
+  glGenBuffers(1, addr font.backgroundVBO)
   
-  glBindVertexArray(ttf.backgroundVAO)
+  glBindVertexArray(font.backgroundVAO)
   
-  glBindBuffer(GL_ARRAY_BUFFER, ttf.backgroundVBO)
+  glBindBuffer(GL_ARRAY_BUFFER, font.backgroundVBO)
   glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 2, nil, GL_STATIC_DRAW)
   glEnableVertexAttribArray(0)
   glVertexAttribPointer(0, 2, cGL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), nil)
 
-  glBindVertexArray(ttf.vao)
-  glBindBuffer(GL_ARRAY_BUFFER, ttf.vbo)
+  glBindVertexArray(font.vao)
+  glBindBuffer(GL_ARRAY_BUFFER, font.vbo)
+
   glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, nil, GL_DYNAMIC_DRAW)
   glEnableVertexAttribArray(0)
   glVertexAttribPointer(0, 4, cGL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nil)
@@ -145,40 +146,40 @@ proc initializeFont(ttf: TTF, fontSize: FontSize) =
   
   glBindVertexArray(0)
 
-  ttf.backgroundProgram = createShaderProgram(backgroundVertexShaderSource, backgroundFragmentShaderSource)
-  ttf.shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource)
+  font.backgroundProgram = createShaderProgram(backgroundVertexShaderSource, backgroundFragmentShaderSource)
+  font.shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource)
 
-proc load*(fontFace: Face, fontSize: FontSize = defaultFontSize): TTF =
-  result = TTF(assetType: AssetType.TTF)
+proc load*(fontFace: Face, fontSize: FontSize = defaultFontSize): VectorFont =
+  result = VectorFont(assetType: AssetType.VectorFont)
   result.fontFace = fontFace
 
   result.characters = initTable[GLchar, Character](128)
 
   initializeFont(result, fontSize)
 
-proc measureText*(ttf: TTF, text: string): tuple[width, height: uint] =
+proc measureText*(font: VectorFont, text: string): tuple[width, height: uint] =
   var w: uint
   for i in 0..<text.len:
     let c = text[i]
-    w += ttf.characters[c].advance
+    w += font.characters[c].advance
   
   var h: uint
   for i in 0..<text.len:
     let c = text[i]
-    if h < ttf.characters[c].height:
-      h = ttf.characters[c].height
+    if h < font.characters[c].height:
+      h = font.characters[c].height
   
   return (w, h)
 
-proc renderBackground*(ttf: TTF, bgColor: Color, x, y: float, size: tuple[width, height: uint], projection: var Mat4f, projectionDirty: bool = false) =
-  ttf.backgroundProgram.begin()
+proc renderBackground*(font: VectorFont, bgColor: Color, x, y: float, size: tuple[width, height: uint], projection: var Mat4f, projectionDirty: bool = false) =
+  font.backgroundProgram.begin()
 
   if projectionDirty:
-    ttf.backgroundProgram.setUniformMatrix("projection", projection)
+    font.backgroundProgram.setUniformMatrix("projection", projection)
 
-  ttf.backgroundProgram.setUniform4f("backgroundTextColor", vec4f(bgColor.r, bgColor.g, bgColor.b, bgColor.a))
+  font.backgroundProgram.setUniform4f("backgroundTextColor", vec4f(bgColor.r, bgColor.g, bgColor.b, bgColor.a))
 
-  glBindVertexArray(ttf.backgroundVAO)
+  glBindVertexArray(font.backgroundVAO)
 
   let w: GLfloat = GLfloat size.width
   let h: GLfloat = GLfloat size.height
@@ -194,42 +195,43 @@ proc renderBackground*(ttf: TTF, bgColor: Color, x, y: float, size: tuple[width,
         [GLfloat x + w, y]
       ]
 
-  glBindBuffer(GL_ARRAY_BUFFER, ttf.backgroundVBO)
+  glBindBuffer(GL_ARRAY_BUFFER, font.backgroundVBO)
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), addr vertices[0], GL_STATIC_DRAW)
   glBindBuffer(GL_ARRAY_BUFFER, 0)
   glDrawArrays(GL_TRIANGLES, 0, 6)
 
-  ttf.backgroundProgram.`end`()
 
-proc render*(ttf: TTF, text: string, x, y, scale: float, fgColor, bgColor: Color, projection: var Mat4f, projectionDirty: bool = false) =
+  font.backgroundProgram.`end`()
+
+proc render*(font: VectorFont, text: string, x, y, scale: float, fgColor, bgColor: Color, projection: var Mat4f, projectionDirty: bool = false) =
   glEnable(GL_CULL_FACE)
   glEnable(GL_BLEND)
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-
-  let size = ttf.measureText(text)
-  ttf.renderBackground(bgColor, x, y, size, projection, projectionDirty)
+  let size = font.measureText(text)
+  font.renderBackground(bgColor, x, y, size, projection, projectionDirty)
   
   var xd = x
-  ttf.shaderProgram.begin()
+  font.shaderProgram.begin()
 
   if projectionDirty:
-    ttf.shaderProgram.setUniformMatrix("projection", projection)
+    font.shaderProgram.setUniformMatrix("projection", projection)
 
-  ttf.shaderProgram.setUniform4f("textColor", vec4f(fgColor.r, fgColor.g, fgColor.b, fgColor.a))
+  font.shaderProgram.setUniform4f("textColor", vec4f(fgColor.r, fgColor.g, fgColor.b, fgColor.a))
+
   glActiveTexture(GL_TEXTURE0)
-  glBindVertexArray(ttf.vao)
+  glBindVertexArray(font.vao)
 
   for c in text:
-    let ch = ttf.characters[c]
-    
+    let ch = font.characters[c]
+
     let xpos : GLfloat = xd + GLfloat(ch.bearing.x) * scale
-    let ypos : GLfloat = y + GLfloat(ttf.characters['H'].bearing.y - ch.bearing.y) * scale
+    let ypos : GLfloat = y + GLfloat(font.characters['H'].bearing.y - ch.bearing.y) * scale
 
     let w : GLfloat = GLfloat(ch.size.x) * scale
     let h : GLfloat = GLfloat(ch.size.y) * scale
 
-    var vertices: array[6, array[4, GLfloat]] = 
+    var vertices: array[6, array[4, GLfloat]] =
       [
         [xpos, ypos + h, 0.0, 1.0],
         [xpos + w, ypos, 1.0, 0.0],
@@ -239,9 +241,9 @@ proc render*(ttf: TTF, text: string, x, y, scale: float, fgColor, bgColor: Color
         [xpos + w, ypos + h, 1.0, 1.0],
         [xpos + w, ypos, 1.0, 0.0]
       ]
-    
+
     glBindTexture(GL_TEXTURE_2D, ch.textureID)
-    glBindBuffer(GL_ARRAY_BUFFER, ttf.vbo)
+    glBindBuffer(GL_ARRAY_BUFFER, font.vbo)
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), addr vertices[0])
     glBindBuffer(GL_ARRAY_BUFFER, 0)
     glDrawArrays(GL_TRIANGLES, 0, 6)
@@ -249,15 +251,16 @@ proc render*(ttf: TTF, text: string, x, y, scale: float, fgColor, bgColor: Color
 
   glBindVertexArray(0)
   glBindTexture(GL_TEXTURE_2D, 0)
-  ttf.shaderProgram.`end`()
+  font.shaderProgram.`end`()
 
   glDisable(GL_CULL_FACE)
   glDisable(GL_BLEND)
 
-proc unload*(ttf: TTF) =
-  for character in ttf.characters.mvalues:
+
+proc unload*(font: VectorFont) =
+  for character in font.characters.mvalues:
     glDeleteTextures(1, addr character.textureID)
 
-  ttf.shaderProgram.dispose()
+  font.shaderProgram.dispose()
 
-  discard freetype.doneFace(ttf.fontFace)
+  discard freetype.doneFace(font.fontFace)

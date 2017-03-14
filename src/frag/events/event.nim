@@ -8,35 +8,35 @@ import
 import
   ../assets,
   ../assets/asset,
-  ../graphics/text/ttf
+  ../graphics/text/vector_font
 
 type
   EventBus* = ref object
     eventEmitter*: EventEmitter
     assetManager*: AssetManager
 
-  FragEventType* = enum
+  EventType* {.pure.} = enum
     LoadAsset
     UnloadAsset
     GetAsset
 
-  EventProducerType* = enum
+  EventProducerType* {.pure.} = enum
     Debug
 
   EventProducer* = object
     initialized*: bool
     case eventProducerType*: EventProducerType
-    of Debug:
+    of EventProducerType.Debug:
       debugFontAssetId*: Hash
-      debugFont*: ttf.TTF
+      debugFont*: vectorFont.VectorFont
       projection*: Mat4f
       projectionDirty*: bool
 
-  FragEvent* = object of RootObj
+  Event* = object of RootObj
     eventBus*: EventBus
     producer*: ref EventProducer
-    case eventType*: FragEventType
-    of LoadAsset, UnloadAsset, GetAsset:
+    case eventType*: EventType
+    of EventType.LoadAsset, EventType.UnloadAsset, EventType.GetAsset:
       filename*: string
       assetManager*: AssetManager
       assetType*: AssetType
@@ -44,8 +44,8 @@ type
       loadAssetCallback*: proc(producer: ref EventProducer, eventBus: EventBus, assetId: Hash)
       getAssetCallback*: proc(producer: ref EventProducer, asset: ref Asset)
 
-  FragEventMessage* = object of EventArgs
-    event*: FragEvent
+  EventMessage* = object of EventArgs
+    event*: Event
 
   EventHandler* = proc(e: EventArgs)
 

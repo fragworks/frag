@@ -11,9 +11,9 @@ import
   ../graphics/shader
 
 type
-  AssetType* = enum
-    TEXTURE, TTF
-  
+  AssetType* {.pure.} = enum
+    Texture, VectorFont
+
   Character* = object
     textureID*: GLuint
     size*: Vec2i
@@ -23,13 +23,13 @@ type
 
   Asset* = object
     case assetType*: AssetType
-    of TEXTURE:
+    of AssetType.Texture:
       handle*: GLuint
       filename*: string
       data*: sdl.SurfacePtr
       width*: int
       height*: int
-    of TTF:
+    of AssetType.VectorFont:
       fontFace*: Face
       characters*: Table[GLchar, Character]
       vao*, backgroundVAO*, vbo*, backgroundVBO*: GLuint

@@ -4,6 +4,9 @@ main
 nakefile
 nimcache/
 
+# submodules
+assets/fonts
+
 # environment
 *.swp
 .DS_store

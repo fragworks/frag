@@ -11,10 +11,12 @@ import
   ../event_bus,
   ../events/event,
   color,
-  text/ttf
+  text/vector_font
+
+const fontPath = "fonts/FiraCode/distr/otf/FiraCode-Regular.otf"
 
 type
-  DebugMode* = enum
+  DebugMode* {.pure.} = enum
     Text
 
   Debug* = ref EventProducer
@@ -31,9 +33,9 @@ proc debugFontLoaded*(producer: ref EventProducer, events: EventBus, debugFontAs
   let debug = cast[Debug](producer)
   debug.debugFontAssetId = debugFontAssetId
 
-  var getDebugFontEvent = FragEvent(
+  var getDebugFontEvent = Event(
     producer: debug,
-    eventType: GetAsset,
+    eventType: EventType.GetAsset,
     assetId: debug.debugFontAssetId,
     getAssetCallback: debugFontRetrieved
   )
@@ -46,9 +48,9 @@ proc drawText*(debug: Debug, text: string, x, y, scale: float = 1.0, fgColor, bg
     debug.projectionDirty = false
   else:
     debug.debugFont.render(text, x, y, scale, fgColor, bgColor, debug.projection)
-  
 
-proc setProjection*(debug: Debug, projection: Mat4f) = 
+
+proc setProjection*(debug: Debug, projection: Mat4f) =
   debug.projection = projection
   debug.projectionDirty = true
 
@@ -60,21 +62,21 @@ proc init*(debug: Debug, events: EventBus, width, height: int) =
   debug.projection = glm.ortho[GLfloat](0.0, GLfloat width, GLfloat height, 0.0, -1.0, 1.0)
   debug.projectionDirty = true
 
-  var loadDebugFontEvent = FragEvent(
+  var loadDebugFontEvent = Event(
       eventBus: events,
       producer: debug,
-      eventType: LoadAsset,
-      filename: "fonts/FiraCode/distr/ttf/FiraCode-Regular.ttf",
-      assetType: AssetType.TTF,
+      eventType: EventType.LoadAsset,
+      filename: fontPath,
+      assetType: AssetType.VectorFont,
       loadAssetCallback: debugFontLoaded
     )
 
   events.emit(loadDebugFontEvent)
 
 proc shutdown*(debug: Debug, events: EventBus) =
-  var unloadDebugFontEvent = FragEvent(
-    eventType: UnloadAsset,
-    filename: "fonts/FiraCode/distr/ttf/FiraCode-Regular.ttf"
+  var unloadDebugFontEvent = Event(
+    eventType: EventType.UnloadAsset,
+    filename: fontPath
   )
 
   events.emit(unloadDebugFontEvent)

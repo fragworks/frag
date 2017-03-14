@@ -1,14 +1,14 @@
 import events
 
-import sdl2 as sdl
+import sdl2 as sdl except Event
 
 import ./event
 
 type
-  SDLEventType* = enum
+  SDLEventType* {.pure.} = enum
     WindowResize = "WindowEvent_Resized"
 
-  SDLEvent* = object of FragEvent
+  SDLEvent* = object of Event
     sdlEventData*: sdl.Event
 
   SDLEventMessage* = object of EventArgs
