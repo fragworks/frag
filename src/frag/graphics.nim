@@ -88,8 +88,8 @@ proc clear*(graphics: Graphics, clearFlags: GLbitfield) =
 proc clearColor*(graphics: Graphics, color: color.Color) =
   glClearColor(color.r, color.g, color.b, color.a)
 
-proc drawDebugText*(graphics: Graphics, text: string, x, y, scale: float = 1.0, fgColor: color.Color = (r: 1.0, g: 1.0, b: 1.0, a: 1.0), bgColor: color.Color = (r: 0.0, g: 0.0, b: 0.0, a: 0.0)) =
-  graphics.debug.drawText(text, x, y, scale, fgColor, bgColor)
+proc drawDebugText*(graphics: Graphics, text: string, x, y, scale: float = 1.0, fgColor: color.Color = (r: 1.0, g: 1.0, b: 1.0, a: 1.0), bgColor: color.Color = (r: 0.0, g: 0.0, b: 0.0, a: 0.0), drawBackground: bool = false) =
+  graphics.debug.drawText(text, x, y, scale, fgColor, bgColor, drawBackground)
 
 proc swap*(graphics: Graphics) =
   let current = sdl.getPerformanceCounter()

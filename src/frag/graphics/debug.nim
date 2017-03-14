@@ -42,12 +42,12 @@ proc debugFontLoaded*(producer: ref EventProducer, events: EventBus, debugFontAs
 
   events.emit(getDebugFontEvent)
 
-proc drawText*(debug: Debug, text: string, x, y, scale: float = 1.0, fgColor, bgColor: Color) =
+proc drawText*(debug: Debug, text: string, x, y, scale: float = 1.0, fgColor, bgColor: Color, drawBackground: bool) =
   if debug.projectionDirty:
-    debug.debugFont.render(text, x, y, scale, fgColor, bgColor, debug.projection, true)
+    debug.debugFont.render(text, x, y, scale, fgColor, bgColor, debug.projection, drawBackground, true)
     debug.projectionDirty = false
   else:
-    debug.debugFont.render(text, x, y, scale, fgColor, bgColor, debug.projection)
+    debug.debugFont.render(text, x, y, scale, fgColor, bgColor, debug.projection, drawBackground)
 
 
 proc setProjection*(debug: Debug, projection: Mat4f) =

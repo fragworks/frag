@@ -203,13 +203,15 @@ proc renderBackground*(font: VectorFont, bgColor: Color, x, y: float, size: tupl
 
   font.backgroundProgram.`end`()
 
-proc render*(font: VectorFont, text: string, x, y, scale: float, fgColor, bgColor: Color, projection: var Mat4f, projectionDirty: bool = false) =
+proc render*(font: VectorFont, text: string, x, y, scale: float, fgColor, bgColor: Color, projection: var Mat4f, renderBackground, projectionDirty: bool = false) =
   glEnable(GL_CULL_FACE)
   glEnable(GL_BLEND)
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-  let size = font.measureText(text)
-  font.renderBackground(bgColor, x, y, size, projection, projectionDirty)
+  if renderBackground:
+    let size = font.measureText(text)
+    font.renderBackground(bgColor, x, y, size, projection, projectionDirty)
+
   
   var xd = x
   font.shaderProgram.begin()
