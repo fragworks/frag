@@ -9,6 +9,7 @@ import
   frag/assets/asset,
   frag/config,
   frag/event_bus,
+  frag/events/sdl_event,
   frag/framerate/framerate,
   frag/globals,
   frag/graphics
@@ -40,6 +41,7 @@ proc registerEventHandlers(ctx: Frag) =
   ctx.events.on(handleLoadAssetEvent, LoadAsset)
   ctx.events.on(handleUnloadAssetEvent, UnloadAsset)
   ctx.events.on(handleGetAssetEvent, GetAsset)
+  ctx.events.on(graphics.handleWindowResizedEvent, WindowResize)
 
 proc init(ctx: Frag, config: FragConfig) =
   echo "Initializing Frag - " & globals.version & "..."

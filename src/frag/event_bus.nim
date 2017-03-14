@@ -18,7 +18,7 @@ export
 proc on*(
   eventBus: EventBus
   , eventHandler: event.EventHandler
-  , eventType: FragEventType
+  , eventType: enum
 ) =
   events.on(eventBus.eventEmitter, $eventType, eventHandler)
 

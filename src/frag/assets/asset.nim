@@ -19,6 +19,7 @@ type
     size*: Vec2i
     bearing*: Vec2i
     advance*: GLuint
+    height*: GLuint
 
   Asset* = object
     case assetType*: AssetType
@@ -31,5 +32,5 @@ type
     of TTF:
       fontFace*: Face
       characters*: Table[GLchar, Character]
-      vao*, vbo*: GLuint
-      shaderProgram*: ShaderProgram
+      vao*, backgroundVAO*, vbo*, backgroundVBO*: GLuint
+      shaderProgram*, backgroundProgram*: ShaderProgram

@@ -1,4 +1,5 @@
 import
+  events,
   logging,
   strfmt
 
@@ -87,17 +88,22 @@ proc clear*(graphics: Graphics, clearFlags: GLbitfield) =
 proc clearColor*(graphics: Graphics, color: color.Color) =
   glClearColor(color.r, color.g, color.b, color.a)  
 
-proc drawDebugText*(graphics: Graphics, text: string, x, y, scale: float = 1.0, color: color.Color = (r: 1.0, g: 1.0, b: 1.0, a: 1.0)) =
-  graphics.debug.drawText(text, x, y, scale, color)
+proc drawDebugText*(graphics: Graphics, text: string, x, y, scale: float = 1.0, fgColor: color.Color = (r: 1.0, g: 1.0, b: 1.0, a: 1.0), bgColor: color.Color = (r: 0.0, g: 0.0, b: 0.0, a: 0.0)) =
+  graphics.debug.drawText(text, x, y, scale, fgColor, bgColor)
 
 proc swap*(graphics: Graphics) =
   let current = sdl.getPerformanceCounter()
   let frameTime = float((current - lastTime) * 1000) / float sdl.getPerformanceFrequency()
   lastTime = current
 
-  graphics.drawDebugText("Frame: {:7.3f}[ms]".fmt(frameTime), 20, 20)
+  graphics.drawDebugText("Frame: {:7.3f}[ms]".fmt(frameTime), 20, 20, 1.0, (1.0, 1.0, 1.0, 1.0), (0.0, 0.0, 0.0, 1.0))
 
   glSwapWindow(graphics.rootWindow.handle)
+
+proc handleWindowResizedEvent*(e: EventArgs) {.procvar.} =
+  let eventMessage = SDLEventMessage(e)
+  glViewport(0, 0, eventMessage.event.window.data1, eventMessage.event.window.data2)
+
 
 proc shutdown*(graphics: Graphics, events: EventBus) =
   if graphics.rootWindow.isNil:

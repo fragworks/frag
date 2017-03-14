@@ -3,6 +3,7 @@ import
 
 import
   event,
+  sdl_event,
   ../assets
 
 proc handleLoadAssetEvent*(e: EventArgs) {.procvar.} =
@@ -21,3 +22,4 @@ proc handleGetAssetEvent*(e: EventArgs) {.procvar.} =
   if not event.assetManager.isNil:
     let asset = event.assetManager.get(event.assetId)
     event.getAssetCallback(event.producer, asset)
+  
