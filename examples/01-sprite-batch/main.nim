@@ -11,6 +11,7 @@ import
   ../../src/frag,
   ../../src/frag/assets,
   ../../src/frag/assets/asset,
+  ../../src/frag/assets/asset_types,
   ../../src/frag/graphics,
   ../../src/frag/graphics/debug,
   ../../src/frag/graphics/two_d/spritebatch,
@@ -61,7 +62,7 @@ proc render*(app: App, ctx: Frag) =
   ctx.graphics.clearColor((0.18, 0.18, 0.18, 1.0))
   ctx.graphics.clear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-  let tex = Texture(ctx.assets.get(app.assetIds["textures/test01.png"]))
+  let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
 
   let texHalfW = tex.data.w / 2
   let texHalfH = tex.data.h / 2

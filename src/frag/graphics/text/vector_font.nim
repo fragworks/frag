@@ -9,6 +9,7 @@ import
 
 import
   ../../assets/asset,
+  ../../assets/asset_types,
   ../color,
   ../shader
 

@@ -6,11 +6,13 @@ import
     opengl
 
 import 
+    ../../assets/asset,
     ../../graphics,
     ibo, 
     mesh, 
     ../shader, 
-    texture, 
+    texture,
+    texture_region, 
     vbo, 
     vertex
 
@@ -93,10 +95,10 @@ proc flush(spriteBatch: SpriteBatch) =
 proc switchTexture(spriteBatch: SpriteBatch, texture: Texture) =
   flush(spriteBatch)
   spriteBatch.lastTexture = texture
-#[
-proc draw*(spriteBatch: var SpriteBatch, textureRegion: TextureRegion, x, y, width, height: float, color: Vec4f = vec4f(1.0, 1.0, 1.0, 1.0f)) =
+
+proc drawTextureRegion*(spriteBatch: var SpriteBatch, textureRegion: TextureRegion, x, y, width, height: float, color: Vec4f = vec4f(1.0, 1.0, 1.0, 1.0f)) =
   if not spriteBatch.drawing:
-    logError "Spritebatch not in drawing mode. Call begin before calling draw."
+    error "Spritebatch not in drawing mode. Call begin before calling draw."
     return
 
   let texture = textureRegion.texture
@@ -142,8 +144,8 @@ proc draw*(spriteBatch: var SpriteBatch, textureRegion: TextureRegion, x, y, wid
     flush(spriteBatch)
 
 proc draw*(spriteBatch: var SpriteBatch, textureRegion: TextureRegion, x, y: float) =
-  draw(spriteBatch, textureRegion, x, y, float textureRegion.regionWidth, float textureRegion.regionHeight)
-]#
+  drawTextureRegion(spriteBatch, textureRegion, x, y, float textureRegion.regionWidth, float textureRegion.regionHeight)
+
 
 proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: float, color: Vec4f = vec4f(1.0, 1.0, 1.0, 1.0f)) =
   if not spriteBatch.drawing:

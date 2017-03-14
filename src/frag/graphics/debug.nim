@@ -8,6 +8,7 @@ import
 
 import
   ../assets/asset,
+  ../assets/asset_types,
   ../event_bus,
   ../events/event,
   color,

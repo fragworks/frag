@@ -8,6 +8,7 @@ import
 import
   ../assets,
   ../assets/asset,
+  ../assets/asset_types,
   ../graphics/text/vector_font
 
 type

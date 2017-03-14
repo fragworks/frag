@@ -9,10 +9,10 @@ import
   sdl2.image as sdl_img
 
 import
+  ../../assets/asset_types,
   ../../assets/asset
 
-type
-  Texture* = ref Asset
+export Texture
 
 const PNG_HEADER_BYTES : seq[uint8] = @[137'u8, 80'u8, 78'u8, 71'u8, 13'u8, 10'u8, 26'u8, 10'u8]
 

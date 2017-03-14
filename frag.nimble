@@ -12,7 +12,7 @@ skipDirs      = @[ "examples" ]
 
 # Dependencies
 
-requires "nim >= 0.16.1"
+requires "nim >= 0.16.0"
 requires "sdl2 >= 1.1"
 requires "opengl >= 1.1.0"
 requires "https://github.com/krux02/nim-glm.git"

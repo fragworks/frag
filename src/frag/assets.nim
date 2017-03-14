@@ -7,10 +7,12 @@ import
 
 import
   assets/asset,
+  assets/asset_types,
   assets/vector_font_loader,
   globals,
   graphics/text/vector_font,
-  graphics/two_d/texture
+  graphics/two_d/texture,
+  graphics/two_d/texture_region
 
 type
   AssetManager* = ref object
@@ -20,12 +22,12 @@ type
     vectorFontLoader: VectorFontLoader
     vectorFontSupport: bool
 
-proc get*(assetManager: AssetManager, id: Hash): ref Asset =
+proc get*[T](assetManager: AssetManager, id: Hash): T =
   if not assetManager.assets.contains(id):
     warn "Asset with filename : " & $id & " not loaded."
     return
 
-  return assetManager.assets[id]
+  return cast[T](assetManager.assets[id])
 
 proc dispose(assetManager: AssetManager, id: Hash) =
   case assetManager.assets[id].assetType
@@ -81,10 +83,12 @@ proc load*(assetManager: AssetManager, filename: string, assetType: AssetType, i
       assetManager.assets.add(id, texture)
     of AssetType.VectorFont:
       if not assetManager.vectorFontSupport:
-        warn "TrueType font loading is not enabled."
+        warn "Vector font loading is not enabled."
       let fontFace = assetManager.vectorFontLoader.loadFontFace(filepath)
       var font = vectorFont.load(fontFace)
       assetManager.assets.add(id, font)
+    of AssetType.TextureRegion:
+      warn "Cannot load a texture region... Try loading a texture and creating a texture region."
   return id
 
 proc init*(assetManager: AssetManager, assetRoot: string) =

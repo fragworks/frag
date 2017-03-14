@@ -4,7 +4,9 @@ import
 import
   event,
   sdl_event,
-  ../assets
+  ../assets,
+  ../assets/asset,
+  ../assets/asset_types
 
 proc handleLoadAssetEvent*(e: EventArgs) {.procvar.} =
   let event = EventMessage(e).event
@@ -20,6 +22,6 @@ proc handleUnloadAssetEvent*(e: EventArgs) {.procvar.} =
 proc handleGetAssetEvent*(e: EventArgs) {.procvar.} =
   let event = EventMessage(e).event
   if not event.assetManager.isNil:
-    let asset = event.assetManager.get(event.assetId)
+    let asset = assets.get[Texture](event.assetManager, event.assetId)
     event.getAssetCallback(event.producer, asset)
   

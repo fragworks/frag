@@ -8,12 +8,10 @@ import
   sdl2 as sdl
 
 import
+  asset_types,
   ../graphics/shader
 
 type
-  AssetType* {.pure.} = enum
-    Texture, VectorFont
-
   Character* = object
     textureID*: GLuint
     size*: Vec2i
@@ -29,8 +27,15 @@ type
       data*: sdl.SurfacePtr
       width*: int
       height*: int
+    of AssetType.TextureRegion:
+      texture*: ref Asset
+      u*, v*, u2*, v2*: float
+      regionWidth*, regionHeight*: int
     of AssetType.VectorFont:
       fontFace*: Face
       characters*: Table[GLchar, Character]
       vao*, backgroundVAO*, vbo*, backgroundVBO*: GLuint
       shaderProgram*, backgroundProgram*: ShaderProgram
+
+  Texture* = ref Asset
+  TextureRegion* = ref Asset
