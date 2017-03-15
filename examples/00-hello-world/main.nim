@@ -20,8 +20,7 @@ proc initialize*(app: App, ctx: Frag) =
   debug "App initialized."
 
 proc render*(app: App, ctx: Frag) =
-  ctx.graphics.clearColor((0.18, 0.18, 0.18, 1.0))
-  ctx.graphics.clear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+  ctx.graphics.clearView(0, graphics.ClearMode.Color.ord or graphics.ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
 proc shutdown*(app: App, ctx: Frag) =
   debug "Shutting down app..."
@@ -31,8 +30,9 @@ startFrag[App](Config(
   rootWindowTitle: "Frag Example 00-hello-world",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
-  rootWindowFlags: window.WindowFlags.Default,
+  rootWindowFlags: window.WindowFlag.WindowShown.ord or window.WindowFlag.WindowResizable.ord,
+  resetFlags: graphics.ResetFlag.None,
   logFileName: "example-00.log",
   assetRoot: "../assets",
-  debugMode: DebugMode.Text
+  debugMode: graphics.DebugMode.Text
 ))

@@ -9,13 +9,13 @@ type
     handle*: sdl.WindowPtr
 
 type
-  WindowFlags* {.pure.} = enum
+  WindowFlag* {.pure.} = enum
     WindowFullscreen = sdl.SDL_WINDOW_FULLSCREEN # Start window in fullscreen mode
     WindowOpenGL = sdl.SDL_WINDOW_OPENGL # Create window with OpenGL support
     WindowShown = sdl.SDL_WINDOW_SHOWN # Window will start out visible
     WindowHidden = sdl.SDL_WINDOW_HIDDEN # Window will start out hidden
     WindowResizable = sdl.SDL_WINDOW_RESIZABLE # Window will be resizable
-    Default = WindowFlags.WindowShown.ord or WindowFlags.WindowResizable.ord or WindowFlags.WindowOpenGL.ord
+    Default = WindowFlag.WindowShown.ord or WindowFlag.WindowResizable.ord
     WindowFullscreenDesktop = sdl.SDL_WINDOW_FULLSCREEN_DESKTOP # Start window in fullscreen mode w/ same resolution as desktop
 
 

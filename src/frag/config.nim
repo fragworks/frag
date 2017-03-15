@@ -1,4 +1,5 @@
 import
+  graphics,
   graphics/debug,
   graphics/window
 
@@ -7,7 +8,8 @@ type
     rootWindowTitle*: string
     rootWindowPosX*, rootWindowPosY*: int
     rootWindowWidth*, rootWindowHeight*: int
-    rootWindowFlags*: window.WindowFlags
+    resetFlags*: graphics.ResetFlag
+    rootWindowFlags*: uint32
     logFileName*: string
     assetRoot*: string
-    debugMode*: DebugMode
+    debugMode*: graphics.DebugMode

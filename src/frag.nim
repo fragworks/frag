@@ -67,7 +67,8 @@ proc init(ctx: Frag, config: Config) =
     config.rootWindowTitle,
     config.rootWindowPosX, config.rootWindowPosY,
     config.rootWindowWidth, config.rootWindowHeight,
-    uint32 config.rootWindowFlags
+    config.resetFlags,
+    config.debugMode
   ):
     fatal "Error initializing graphics subsystem."
     ctx.shutdown(QUIT_FAILURE)
@@ -81,8 +82,6 @@ proc init(ctx: Frag, config: Config) =
   ctx.events.registerAssetManager(ctx.assets)
 
   ctx.registerEventHandlers()
-
-  ctx.graphics.initializeDebug(ctx.events, config.rootWindowWidth, config.rootWindowHeight)
 
   info "Frag initialized."
 
