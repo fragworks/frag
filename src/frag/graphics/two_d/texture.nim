@@ -4,9 +4,10 @@ import
   os
 
 import
-  opengl,
+  bgfxdotnim as bgfx,
   sdl2 as sdl,
-  sdl2.image as sdl_img
+  #sdl2.image as sdl_img
+  stb_image as stbi
 
 import
   ../../assets/asset_types,
@@ -51,30 +52,19 @@ proc loadPNG*(filename: string) : Texture {.procvar.} =
 
   var texture = Texture(assetType: AssetType.Texture)
   texture.filename = filename
-  texture.data = sdl_img.load(filename.cstring)
+  texture.data = stbi.load(filename, texture.width, texture.height, texture.channels, stbi.Default)
+  #result.surface = sdl_image.load(filename)
 
   if texture.data.isNil:
-    error "Error loading PNG : " & $sdl.getError()
+    error "Error loading Texture!"
     return
 
-  glGenTextures(1, addr texture.handle)
-
-  glBindTexture(GL_TEXTURE_2D, texture.handle)
-
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA.ord, texture.data.w, texture.data.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture.data.pixels)
-  #glGenerateMipmap(GL_TEXTURE_2D)
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-
-  glBindTexture(GL_TEXTURE_2D, 0)
+  if texture.channels == 4:
+    texture.handle = bgfx_create_texture_2d(uint16 texture.width, uint16 texture.height, false, 1, BGFX_TEXTURE_FORMAT_RGBA8, 0, bgfx_copy(addr texture.data[0], uint32 texture.width * texture.height * 4))
+  else:
+    texture.handle = bgfx.bgfx_create_texture_2d(uint16 texture.width, uint16 texture.height, false, 1, BGFX_TEXTURE_FORMAT_RGB8, 0, bgfx_copy(addr texture.data[0], uint32 texture.width * texture.height * 4))
 
   return texture
-
-proc `bind`*(texture: Texture) =
-  glBindTexture(GL_TEXTURE_2D, texture.handle)
 
 proc load*(filename: string): Texture =
   let ext = splitFile(filename).ext
@@ -85,6 +75,6 @@ proc load*(filename: string): Texture =
     warn "Extension : " & ext & " not recognized."
 
 proc unload*(texture: Texture) =
-  glDeleteTextures(1, addr texture.handle)
+  bgfx_destroy_texture(texture.handle)
 
-  sdl.destroy(texture.data)
+  #sdl.destroy(texture.data)

@@ -8,8 +8,7 @@ import
 import
   ../assets,
   ../assets/asset,
-  ../assets/asset_types,
-  ../graphics/text/vector_font
+  ../assets/asset_types
 
 type
   EventBus* = ref object
@@ -22,16 +21,9 @@ type
     GetAsset
 
   EventProducerType* {.pure.} = enum
-    Debug
+    NONE
 
   EventProducer* = object
-    initialized*: bool
-    case eventProducerType*: EventProducerType
-    of EventProducerType.Debug:
-      debugFontAssetId*: Hash
-      debugFont*: vectorFont.VectorFont
-      projection*: Mat4f
-      projectionDirty*: bool
 
   Event* = object of RootObj
     eventBus*: EventBus

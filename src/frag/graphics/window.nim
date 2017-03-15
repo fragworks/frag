@@ -15,7 +15,6 @@ type
     WindowShown = sdl.SDL_WINDOW_SHOWN # Window will start out visible
     WindowHidden = sdl.SDL_WINDOW_HIDDEN # Window will start out hidden
     WindowResizable = sdl.SDL_WINDOW_RESIZABLE # Window will be resizable
-    Default = WindowFlag.WindowShown.ord or WindowFlag.WindowResizable.ord
     WindowFullscreenDesktop = sdl.SDL_WINDOW_FULLSCREEN_DESKTOP # Start window in fullscreen mode w/ same resolution as desktop
 
 

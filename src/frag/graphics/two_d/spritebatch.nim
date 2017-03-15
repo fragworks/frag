@@ -1,153 +1,85 @@
 import
   logging
 
-import 
-    glm, 
-    opengl
+import
+  bgfxdotnim as bgfx
 
 import 
-    ../../assets/asset,
-    ../../graphics,
-    ibo, 
-    mesh, 
-    ../shader, 
-    texture,
-    texture_region, 
-    vbo, 
-    vertex
+  fs_default
+  , ../../graphics
+  , ../../math/fpu_math as fpumath
+  , texture
+  , vs_default
+
 
 type
   SpriteBatch* = ref object
-    mesh: Mesh
-    vertices: seq[Vertex]
+    vertices: seq[PosUVColorVertex]
     maxSprites: int
     lastTexture: Texture
-    projectionMatrix: Mat4x4[GLfloat]
-    transformMatrix : Mat4x4[GLfloat]
-    combinedMatrix: Mat4x4[GLfloat]
-    shader: ShaderProgram
     drawing: bool
-    blendSrcFunc*, blendDstFunc*: BlendFunc
+    programHandle: bgfx_program_handle_t
+    ibh: bgfx_index_buffer_handle_t
+    vDecl: ptr bgfx_vertex_decl_t
+    texHandle: bgfx_uniform_handle_t
+    view: uint8
+    blendSrcFunc*, blendDstFunc*: graphics.BlendFunc
     blendingEnabled*: bool
 
-proc createDefaultShader() : ShaderProgram =
-  let vertexShaderSource = """
-    #version 330 core
-    layout (location = 0) in vec3 position;
-    layout (location = 1) in vec2 texCoords;
-    layout (location = 2) in vec4 color;
-    out vec2 TexCoords;
-    out vec4 Color;
-    uniform mat4 model;
-    uniform mat4 projection;
-    void main()
-    {
-        Color = color;
-        TexCoords = texCoords;
-        gl_Position = projection * model * vec4(position, 1.0);
-    }
-  """
-  let fragmentShaderSource = """
-    #version 330 core
-    in vec2 TexCoords;
-    in vec4 Color;
-    out vec4 color;
-    uniform sampler2D image;
-    uniform vec3 spriteColor;
-    const float smoothing = 1.0/16.0;
-    void main()
-    {
-        //float distance = texture(image, TexCoords).a;    
-        //float alpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, distance);
-        //color = vec4(Color.xyz, Color.w * alpha);
-        color =  Color * texture(image, TexCoords);
-    }  
-  """
-
-  let shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource)
-  if not shaderProgram.isCompiled:
-    error "Error compiling shader : " & shaderProgram.log
-  return shaderProgram
-
-
-proc setupMatrices(spriteBatch: SpriteBatch) =
-  spriteBatch.combinedMatrix = spriteBatch.projectionMatrix * spriteBatch.transformMatrix
-  spriteBatch.shader.setUniformMatrix("projection", spriteBatch.combinedMatrix)
-  spriteBatch.shader.setUniformi("image", 0)
+  PosUVColorVertex {.packed, pure.} = object
+    x*, y*, z*: float32
+    u*, v*: float32
+    abgr*: uint32
 
 proc flush(spriteBatch: SpriteBatch) =
   if spriteBatch.lastTexture.isNil:
     return
 
-  if spriteBatch.blendingEnabled:
-    glEnable(GL_BLEND)
-    glBlendFunc(GLenum spriteBatch.blendSrcFunc, GLenum spriteBatch.blendDstFunc)
+  discard bgfx_touch(0)
+
+  var vb : bgfx_transient_vertex_buffer_t
+  bgfx_alloc_transient_vertex_buffer(addr vb, 4, spriteBatch.vDecl);
+  copyMem(vb.data, addr spriteBatch.vertices[0], sizeof(PosUVColorVertex) * spriteBatch.vertices.len)
+
+  bgfx_set_texture(0, spriteBatch.texHandle, spriteBatch.lastTexture.handle, high(uint32))
+  bgfx_set_transient_vertex_buffer(addr vb, 0u32, uint32 spriteBatch.vertices.len)
+  bgfx_set_index_buffer(spriteBatch.ibh, 0, 6)
+
+  var mtx: fpumath.Mat4
+  mtxIdentity(mtx)
+
+  discard bgfx_set_transform(addr mtx[0], 1)
   
-
-  spriteBatch.lastTexture.`bind`()
-
-  spriteBatch.mesh.`bind`()
-  spriteBatch.mesh.render()
-
   if spriteBatch.blendingEnabled:
-    glDisable(GL_BLEND)
+    bgfx_set_state(0'u64 or BGFX_STATE_RGB_WRITE or BGFX_STATE_ALPHA_WRITE or BGFX_STATE_BLEND_FUNC(spriteBatch.blendSrcFunc
+      , spriteBatch.blendDstFunc), 0);
+  
+  discard bgfx_submit(spriteBatch.view, spriteBatch.programHandle, 0, false)
+
+  spriteBatch.vertices.setLen(0)
 
 proc switchTexture(spriteBatch: SpriteBatch, texture: Texture) =
   flush(spriteBatch)
   spriteBatch.lastTexture = texture
-
-proc drawTextureRegion*(spriteBatch: var SpriteBatch, textureRegion: TextureRegion, x, y, width, height: float, color: Vec4f = vec4f(1.0, 1.0, 1.0, 1.0f)) =
+#[
+proc draw*(spriteBatch: SpriteBatch, textureRegion: TextureRegion, x, y: float32, color: uint32 = 0xffffffff'u32) =
   if not spriteBatch.drawing:
-    error "Spritebatch not in drawing mode. Call begin before calling draw."
+    logError "Spritebatch not in drawing mode. Call begin before calling draw."
     return
-
+  
   let texture = textureRegion.texture
+
   if texture != spriteBatch.lastTexture:
     switchTexture(spriteBatch, texture)
-  
-  var m = mat4[GLfloat](1.0)
-  spriteBatch.shader.setUniformMatrix("model", m)
 
-  let u = textureRegion.u
-  let v = textureRegion.v2
-  let u2 = textureRegion.u2
-  let v2 = textureRegion.v
-  
-  spritebatch.vertices.add(newVertex(
-    vec3f(x, y, 0.0)
-    , vec2f(u, v)
-    , color
-  ))
-
-  spritebatch.vertices.add(newVertex(
-    vec3f(x, y + height, 0.0)
-    , vec2f(u, v2)
-    , color
-  ))
-
-  spritebatch.vertices.add(newVertex(
-    vec3f(x + width, y + height, 0.0)
-    , vec2f(u2, v2)
-    , color
-  ))
-
-  spritebatch.vertices.add(newVertex(
-    vec3f(x + width, y, 0.0)
-    , vec2f(u2, v)
-    , color
-  ))
-
-  spriteBatch.mesh.addVertices(spritebatch.vertices)
-  spriteBatch.vertices.setLen(0)
-
-  if int(spriteBatch.mesh.indexCount() / 6) >= spriteBatch.maxSprites:
-    flush(spriteBatch)
-
-proc draw*(spriteBatch: var SpriteBatch, textureRegion: TextureRegion, x, y: float) =
-  drawTextureRegion(spriteBatch, textureRegion, x, y, float textureRegion.regionWidth, float textureRegion.regionHeight)
-
-
-proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: float, color: Vec4f = vec4f(1.0, 1.0, 1.0, 1.0f)) =
+  spriteBatch.vertices.add([
+    PosUVColorVertex(x: x, y: y, u:textureRegion.u, v:textureRegion.v, z: 0.0'f32, abgr: color ),
+    PosUVColorVertex(x: x + float textureRegion.regionWidth, y: y, u:textureRegion.u2, v:textureRegion.v, z: 0.0'f32, abgr: color ),
+    PosUVColorVertex(x: x + float textureRegion.regionWidth, y: y + float textureRegion.regionHeight, u:textureRegion.u2, v:textureRegion.v2, z: 0.0'f32, abgr: color ),
+    PosUVColorVertex(x: x, y: y + float textureRegion.regionHeight, u:textureRegion.u, v:textureRegion.v2, z: 0.0'f32, abgr: color ),
+  ])
+]#
+proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: float32, color: uint32 = 0xffffffff'u32, scale: Vec3 = [1.0'f32, 1.0'f32, 1.0'f32]) =
   if not spriteBatch.drawing:
     error "Spritebatch not in drawing mode. Call begin before calling draw."
     return
@@ -155,77 +87,62 @@ proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: floa
   if texture != spriteBatch.lastTexture:
     switchTexture(spriteBatch, texture)
 
-  var m = mat4[GLfloat](1.0)
-  spriteBatch.shader.setUniformMatrix("model", m)
-  
-  spritebatch.vertices.add(newVertex(
-    vec3f(x, y, 0.0)
-    , vec2f(0.0, 0.0)
-    , color
-  ))
+  var x1 = x
+  var x2 = x + width
+  var y1 = y
+  var y2 = y + width
 
-  spritebatch.vertices.add(newVertex(
-    vec3f(x, y + height, 0.0)
-    , vec2f(0.0, 1.0)
-    , color
-  ))
+  if scale[0] != 1.0'f32 or scale[1] != 1.0'f32:
+    x1 *= scale[0]
+    x2 *= scale[0]
+    y1 *= scale[0]
+    y2 *= scale[0]
 
-  spritebatch.vertices.add(newVertex(
-    vec3f(x + width, y + height, 0.0)
-    , vec2f(1.0, 1.0)
-    , color
-  ))
 
-  spritebatch.vertices.add(newVertex(
-    vec3f(x + width, y, 0.0)
-    , vec2f(1.0, 0.0)
-    , color
-  ))
+  spriteBatch.vertices.add([
+    PosUVColorVertex(x: x1, y: y1, u:0.0, v:1.0, z: 0.0'f32, abgr: color ),
+    PosUVColorVertex(x: x2, y: y1, u:1.0, v:1.0, z: 0.0'f32, abgr: color ),
+    PosUVColorVertex(x: x2, y: y2, u:1.0, v:0.0, z: 0.0'f32, abgr: color ),
+    PosUVColorVertex(x: x1, y: y2, u:0.0, v:0.0, z: 0.0'f32, abgr: color )
+  ])
 
-  spriteBatch.mesh.addVertices(spritebatch.vertices)
-  spriteBatch.vertices.setLen(0)
-
-  if int(spriteBatch.mesh.indexCount() / 6) >= spriteBatch.maxSprites:
-    flush(spriteBatch)
-
-proc init*(spriteBatch: SpriteBatch, maxSprites: int, defaultShader: ShaderProgram) =
+proc init*(spriteBatch: SpriteBatch, maxSprites: int, view: uint8) =
   spriteBatch.drawing = false
   spriteBatch.maxSprites = maxSprites
   spriteBatch.vertices = @[]
-  spriteBatch. mesh = newMesh(true)
+  spriteBatch.view = view
 
-  var i = 0
-  var j : GLushort = 0
-  var indices : seq[GLushort] = @[]
-  while i < maxSprites:
-    indices.add(j)
-    indices.add(j + 1)
-    indices.add(j + 2)
-    indices.add(j + 2)
-    indices.add(j + 3)
-    indices.add(j)
-    inc(j, 4)
-    inc(i, 6)
+  spriteBatch.vDecl = create(bgfx_vertex_decl_t)
 
-  spriteBatch.mesh.setIndices(indices)
+  var indexdata = [
+    0'u16, 1'u16, 2'u16,
+    3'u16, 0'u16, 2'u16
+  ]
 
-  if defaultShader.isNil:
-    spriteBatch.shader = createDefaultShader()
-  else:
-    spriteBatch.shader = defaultShader
+  spriteBatch.ibh = bgfx_create_index_buffer(bgfx_copy(addr indexdata[0], uint32 indexdata.len * sizeof(uint16)), BGFX_BUFFER_NONE)
 
-  spriteBatch.projectionMatrix = ortho[GLfloat](0, 960, 540, 0, -1.0, 1.0)
-  spriteBatch.transformMatrix = mat4[GLfloat]()
-  spriteBatch.transformMatrix = scale(spriteBatch.transformMatrix, vec3f(1, 1, 1.0))
+  bgfx_vertex_decl_begin(spriteBatch.vDecl, BGFX_RENDERER_TYPE_NOOP)
+  bgfx_vertex_decl_add(spriteBatch.vDecl, BGFX_ATTRIB_POSITION, 3, BGFX_ATTRIB_TYPE_FLOAT, false, false)
+  bgfx_vertex_decl_add(spriteBatch.vDecl, BGFX_ATTRIB_TEXCOORD0, 2, BGFX_ATTRIB_TYPE_FLOAT, false, false)
+  bgfx_vertex_decl_add(spriteBatch.vDecl, BGFX_ATTRIB_COLOR0, 4, BGFX_ATTRIB_TYPE_UINT8, true, false)
+  bgfx_vertex_decl_end(spriteBatch.vDecl)
+
+  spriteBatch.texHandle = bgfx_create_uniform("s_texColor", BGFX_UNIFORM_TYPE_INT1, 1)
+  
+  let vsh = bgfx_create_shader(bgfx_make_ref(addr vs_default.vs[0], uint32 sizeof(vs_default.vs)))
+  let fsh = bgfx_create_shader(bgfx_make_ref(addr fs_default.fs[0], uint32 sizeof(fs_default.fs)))
+  spriteBatch.programHandle = bgfx_create_program(vsh, fsh, true)
+  
+  var proj: fpumath.Mat4
+  fpumath.mtxOrtho(proj, 0.0, 960.0, 0.0, 540.0, 0.1'f32, 100.0'f32)
+  bgfx_set_view_transform(0, nil, unsafeAddr(proj[0]))
+
+  bgfx_set_view_rect(0, 0, 0, cast[uint16](960), cast[uint16](540))
 
 proc begin*(spriteBatch: SpriteBatch) =
   if spriteBatch.drawing:
     error "Spritebatch is already in drawing mode. Call end before calling begin."
     return
-  glDepthMask(false)
-  spriteBatch.shader.begin()
-
-  spriteBatch.setupMatrices()
 
   spriteBatch.drawing = true
 
@@ -234,20 +151,13 @@ proc `end`*(spriteBatch: SpriteBatch) =
     error "Spritebatch is not currently in drawing mode. Call begin before calling end."
     return
   
-  if spriteBatch.mesh.indexCount() > 0:
+  if spriteBatch.vertices.len > 0:
     flush(spriteBatch)
 
   spriteBatch.lastTexture = nil
   spriteBatch.drawing = false
 
-  glDepthMask(true)
-
-  spriteBatch.shader.`end`()
-
-proc setProjectionMatrix*(spriteBatch: SpriteBatch, projection: Mat4x4[GLfloat]) =
-  if spriteBatch.drawing:
-    flush(spriteBatch)
-  
-  spriteBatch.projectionMatrix = projection
-  if spriteBatch.drawing:
-    spriteBatch.setupMatrices()
+proc destroy*(spriteBatch: SpriteBatch) =
+  bgfx_destroy_uniform(spriteBatch.texHandle)
+  bgfx_destroy_index_buffer(spriteBatch.ibh)
+  bgfx_destroy_program(spriteBatch.programHandle)

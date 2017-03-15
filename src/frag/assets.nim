@@ -10,7 +10,6 @@ import
   assets/asset_types,
   assets/vector_font_loader,
   globals,
-  graphics/text/vector_font,
   graphics/two_d/texture,
   graphics/two_d/texture_region
 
@@ -33,9 +32,6 @@ proc dispose(assetManager: AssetManager, id: Hash) =
   case assetManager.assets[id].assetType
     of AssetType.Texture:
       texture.unload(assetManager.assets[id])
-      assetManager.assets.del(id)
-    of AssetType.VectorFont:
-      vectorFont.unload(assetManager.assets[id])
       assetManager.assets.del(id)
     else:
       warn "Unable to unload asset with unknown type."
@@ -81,12 +77,6 @@ proc load*(assetManager: AssetManager, filename: string, assetType: AssetType, i
     of AssetType.Texture:
       var texture = texture.load(filepath)
       assetManager.assets.add(id, texture)
-    of AssetType.VectorFont:
-      if not assetManager.vectorFontSupport:
-        warn "Vector font loading is not enabled."
-      let fontFace = assetManager.vectorFontLoader.loadFontFace(filepath)
-      var font = vectorFont.load(fontFace)
-      assetManager.assets.add(id, font)
     of AssetType.TextureRegion:
       warn "Cannot load a texture region... Try loading a texture and creating a texture region."
   return id

@@ -4,38 +4,35 @@ import
 import
   freetype,
   glm,
-  opengl,
-  sdl2 as sdl
+  bgfxdotnim as bgfx
+  #sdl2 as sdl
 
 import
-  asset_types,
-  ../graphics/shader
+  asset_types
 
 type
+  #[
   Character* = object
     textureID*: GLuint
     size*: Vec2i
     bearing*: Vec2i
     advance*: GLuint
-    height*: GLuint
+    height*: GLuint]#
 
   Asset* = object
     case assetType*: AssetType
     of AssetType.Texture:
-      handle*: GLuint
+      handle*: bgfx_texture_handle_t
       filename*: string
-      data*: sdl.SurfacePtr
+      data*: seq[uint8]
+      channels*: int
+      #data*: sdl.SurfacePtr
       width*: int
       height*: int
     of AssetType.TextureRegion:
       texture*: ref Asset
       u*, v*, u2*, v2*: float
       regionWidth*, regionHeight*: int
-    of AssetType.VectorFont:
-      fontFace*: Face
-      characters*: Table[GLchar, Character]
-      vao*, backgroundVAO*, vbo*, backgroundVBO*: GLuint
-      shaderProgram*, backgroundProgram*: ShaderProgram
 
   Texture* = ref Asset
   TextureRegion* = ref Asset

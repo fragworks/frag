@@ -13,7 +13,6 @@ import
   ../../src/frag/assets/asset,
   ../../src/frag/assets/asset_types,
   ../../src/frag/graphics,
-  ../../src/frag/graphics/debug,
   ../../src/frag/graphics/two_d/spritebatch,
   ../../src/frag/graphics/two_d/texture,
   ../../src/frag/graphics/window
@@ -40,11 +39,11 @@ proc initialize*(app: App, ctx: Frag) =
   debug "Assets loaded."
 
   app.batch = SpriteBatch(
-    blendSrcFunc: BlendFunc.SrcAlpha,
-    blendDstFunc: BlendFunc.OneMinusSrcAlpha,
+    blendSrcFunc: graphics.BlendFunc.SrcAlpha,
+    blendDstFunc: graphics.BlendFunc.InvSrcAlpha,
     blendingEnabled: true
   )
-  app.batch.init(1000, nil)
+  app.batch.init(1000, 0)
 
   debug "App initialized."
 
@@ -59,24 +58,23 @@ proc shutdown*(app: App, ctx: Frag) =
   debug "App shut down..."
 
 proc render*(app: App, ctx: Frag) =
-  ctx.graphics.clearColor((0.18, 0.18, 0.18, 1.0))
-  ctx.graphics.clear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+  ctx.graphics.clearView(0, graphics.ClearMode.Color.ord or graphics.ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
   let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
 
-  let texHalfW = tex.data.w / 2
-  let texHalfH = tex.data.h / 2
+  let texHalfW = tex.width / 2
+  let texHalfH = tex.height / 2
 
   app.batch.begin()
-  app.batch.draw(tex, HALF_WIDTH - texHalfW, HALF_HEIGHT - texHalfH, float tex.data.w, float tex.data.h)
+  app.batch.draw(tex, HALF_WIDTH - texHalfW, HALF_HEIGHT - texHalfH, float tex.width, float tex.height)
   app.batch.`end`()
 
 startFrag[App](Config(
   rootWindowTitle: "Frag Example 01-sprite-batch",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
-  rootWindowWidth: WIDTH, rootWindowHeight: HEIGHT,
-  rootWindowFlags: window.WindowFlags.Default,
+  rootWindowWidth: 960, rootWindowHeight: 540,
+  resetFlags: graphics.ResetFlag.None,
   logFileName: "example-01.log",
   assetRoot: "../assets",
-  debugMode: DebugMode.Text
+  debugMode: graphics.DebugMode.Text
 ))

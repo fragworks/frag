@@ -11,7 +11,6 @@ import
 import
   event_bus,
   graphics/color,
-  graphics/debug,
   graphics/sdl2/version,
   graphics/window
 

@@ -30,7 +30,6 @@ startFrag[App](Config(
   rootWindowTitle: "Frag Example 00-hello-world",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
-  rootWindowFlags: window.WindowFlag.WindowShown.ord or window.WindowFlag.WindowResizable.ord,
   resetFlags: graphics.ResetFlag.None,
   logFileName: "example-00.log",
   assetRoot: "../assets",
