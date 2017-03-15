@@ -90,7 +90,7 @@ proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: floa
   var x1 = x
   var x2 = x + width
   var y1 = y
-  var y2 = y + width
+  var y2 = y + height
 
   if scale[0] != 1.0'f32 or scale[1] != 1.0'f32:
     x1 *= scale[0]
@@ -134,7 +134,7 @@ proc init*(spriteBatch: SpriteBatch, maxSprites: int, view: uint8) =
   spriteBatch.programHandle = bgfx_create_program(vsh, fsh, true)
   
   var proj: fpumath.Mat4
-  fpumath.mtxOrtho(proj, 0.0, 960.0, 0.0, 540.0, 0.1'f32, 100.0'f32)
+  fpumath.mtxOrtho(proj, 0.0, 960.0, 0.0, 540.0, -1.0'f32, 1.0'f32)
   bgfx_set_view_transform(0, nil, unsafeAddr(proj[0]))
 
   bgfx_set_view_rect(0, 0, 0, cast[uint16](960), cast[uint16](540))
