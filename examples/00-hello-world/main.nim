@@ -2,9 +2,6 @@ import
   logging
 
 import
-  opengl
-
-import
   ../../src/frag/config,
   ../../src/frag,
   ../../src/frag/graphics,

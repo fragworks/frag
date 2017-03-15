@@ -14,8 +14,8 @@ skipDirs      = @[ "examples" ]
 
 requires "nim >= 0.16.0"
 requires "sdl2 >= 1.1"
-requires "opengl >= 1.1.0"
 requires "https://github.com/zacharycarter/bgfx.nim.git"
+requires "https://github.com/zacharycarter/soloud-nim.git"
 requires "stb_image >= 1.1"
 requires "https://github.com/zacharycarter/freetype.git"
 requires "https://github.com/zacharycarter/nanovg.nim.git"

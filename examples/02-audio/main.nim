@@ -4,6 +4,9 @@ import
   tables
 
 import
+  solouddotnim
+
+import
   ../../src/frag/config,
   ../../src/frag,
   ../../src/frag/assets,
@@ -41,6 +44,22 @@ proc initialize*(app: App, ctx: Frag) =
     blendingEnabled: true
   )
   app.batch.init(1000, 0)
+
+
+  var sl : ptr Soloud
+
+  sl = Soloud_create()
+
+  echo Soloud_init(sl)
+
+  Soloud_setGlobalVolume(sl, 1)
+
+
+  var stream = WavStream_create()
+  echo WavStream_load(cast[ptr Wav](stream), "examples/assets/sounds/test.ogg")
+
+
+  discard Soloud_play(cast[ptr Soloud](sl), cast[ptr Wav](stream))
 
   debug "App initialized."
 
