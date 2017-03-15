@@ -8,7 +8,6 @@ import
   ../../src/frag/config,
   ../../src/frag,
   ../../src/frag/graphics,
-  ../../src/frag/graphics/debug,
   ../../src/frag/graphics/color,
   ../../src/frag/graphics/window
 
