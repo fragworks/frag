@@ -15,7 +15,8 @@ import
   ../../src/frag/graphics,
   ../../src/frag/graphics/two_d/spritebatch,
   ../../src/frag/graphics/two_d/texture,
-  ../../src/frag/graphics/window
+  ../../src/frag/graphics/window,
+  ../../src/frag/input
 
 type
   App = ref object
@@ -58,6 +59,8 @@ proc shutdown*(app: App, ctx: Frag) =
   debug "App shut down..."
 
 proc render*(app: App, ctx: Frag) =
+  if ctx.input.pressed("q"): echo "quit"
+
   ctx.graphics.clearView(0, graphics.ClearMode.Color.ord or graphics.ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
   let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])

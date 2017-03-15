@@ -12,13 +12,15 @@ import
   frag/events/sdl_event,
   frag/framerate/framerate,
   frag/globals,
-  frag/graphics
+  frag/graphics,
+  frag/input
 
 type
   Frag* = ref object
     assets*: AssetManager
     events: EventBus
     graphics*: Graphics
+    input*: Input
 
 var consoleLogger : ConsoleLogger
 var fileLogger : FileLogger
@@ -41,6 +43,8 @@ proc registerEventHandlers(ctx: Frag) =
   ctx.events.on(handleLoadAssetEvent, EventType.LoadAsset)
   ctx.events.on(handleUnloadAssetEvent, EventType.UnloadAsset)
   ctx.events.on(handleGetAssetEvent, EventType.GetAsset)
+  ctx.events.on(input.onKeyDown, SDLEventType.KeyDown)
+  ctx.events.on(input.onKeyUp, SDLEventType.KeyUp)
   ctx.events.on(graphics.handleWindowResizedEvent, SDLEventType.WindowResize)
 
 proc init(ctx: Frag, config: Config) =
@@ -73,6 +77,13 @@ proc init(ctx: Frag, config: Config) =
     fatal "Error initializing graphics subsystem."
     ctx.shutdown(QUIT_FAILURE)
   debug "Graphics subsystem initialized."
+
+  debug "Initializing input subsystem..."
+  ctx.input = Input()
+  if not ctx.input.init():
+    fatal "Error initializing graphics subsystem."
+    ctx.shutdown(QUIT_FAILURE)
+  debug "Input subsystem initialized."
 
   debug "Initializing asset management subsystem..."
   ctx.assets = AssetManager()
@@ -114,11 +125,12 @@ proc startFrag*[App](config: Config) =
         runGame = false
         break
       else:
-        var event = SDLEvent(sdlEventData:event)
+        var event = SDLEvent(sdlEventData: event)
         ctx.events.emit(event)
 
-    app.render(ctx)
+    ctx.input.update()
 
+    app.render(ctx)
     ctx.graphics.swap()
 
     limitFramerate()

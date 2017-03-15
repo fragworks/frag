@@ -6,6 +6,8 @@ import ./event
 
 type
   SDLEventType* {.pure.} = enum
+    KeyDown
+    KeyUp
     WindowResize = "WindowEvent_Resized"
 
   SDLEvent* = object of Event
