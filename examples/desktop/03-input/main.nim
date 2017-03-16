@@ -70,22 +70,13 @@ proc shutdownApp*(app: App, ctx: Frag) =
   debug "App shut down..."
 
 proc updateApp*(app: App, ctx: Frag, deltaTime: float) =
-  for key in ctx.input.pressedKeys:
-    case key
-    of sdl.K_W:
-      app.player.position[1] += 1
-    of sdl.K_S:
-      app.player.position[1] -= 1
-    of sdl.K_A:
-      app.player.position[0] -= 1
-    of sdl.K_D:
-      app.player.position[0] += 1
-    else:
-      discard
+  if ctx.input.down("w"): app.player.position.y += 1
+  if ctx.input.down("s"): app.player.position.y -= 1
+  if ctx.input.down("a"): app.player.position.x += 1
+  if ctx.input.down("d"): app.player.position.x -= 1
 
 proc renderApp*(app: App, ctx: Frag) =
   ctx.graphics.clearView(0, graphics.ClearMode.Color.ord or graphics.ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
-
 
   app.batch.begin()
   app.batch.draw(app.player.texture, app.player.position[0], app.player.position[1], float32 app.player.texture.width, float32 app.player.texture.height)
