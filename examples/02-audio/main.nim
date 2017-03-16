@@ -4,6 +4,9 @@ import
   tables
 
 import
+  sound.sound
+
+import
   ../../src/frag/config,
   ../../src/frag,
   ../../src/frag/assets,
@@ -12,8 +15,7 @@ import
   ../../src/frag/graphics,
   ../../src/frag/graphics/two_d/spritebatch,
   ../../src/frag/graphics/two_d/texture,
-  ../../src/frag/graphics/window,
-  ../../src/frag/input
+  ../../src/frag/graphics/window
 
 type
   App = ref object
@@ -43,10 +45,18 @@ proc initialize*(app: App, ctx: Frag) =
   )
   app.batch.init(1000, 0)
 
+
+  var snd = sound.newSoundWithFile("examples/assets/sounds/test.ogg")
+  snd.`gain=`(0.5)
+
+  snd.play()
+
   debug "App initialized."
 
 proc shutdown*(app: App, ctx: Frag) =
   debug "Shutting down app..."
+
+  app.batch.dispose()
 
   debug "Unloading assets..."
   for _, assetId in app.assetIds:
@@ -56,8 +66,6 @@ proc shutdown*(app: App, ctx: Frag) =
   debug "App shut down..."
 
 proc render*(app: App, ctx: Frag) =
-  if ctx.input.pressed("q"): echo "quit"
-
   ctx.graphics.clearView(0, graphics.ClearMode.Color.ord or graphics.ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
   let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
@@ -70,7 +78,7 @@ proc render*(app: App, ctx: Frag) =
   app.batch.`end`()
 
 startFrag[App](Config(
-  rootWindowTitle: "Frag Example 01-sprite-batch",
+  rootWindowTitle: "Frag Example 02-audio",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
   resetFlags: graphics.ResetFlag.None,
