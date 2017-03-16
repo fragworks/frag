@@ -25,16 +25,17 @@ proc on*(
 
 proc emit*(eventBus: EventBus, event: var Event) =
   if event of SDLEvent:
-    var sdlEvent = SDLEvent(event).sdlEventData
-    case sdlEvent.kind
+    let sdlEvent = SDLEvent(event)
+    let sdlEventData = sdlEvent.sdlEventData
+    case sdlEventData.kind
     of sdl.WindowEvent:
       let eventMessage  = SDLEventMessage(event: sdlEvent)
-      eventBus.eventEmitter.emit($sdlEvent.window.event, eventMessage)
+      eventBus.eventEmitter.emit($sdlEventData.window.event, eventMessage)
     of sdl.KeyDown, sdl.KeyUp:
       let eventMessage  = SDLEventMessage(event: sdlEvent)
-      eventBus.eventEmitter.emit($sdlEvent.kind, eventMessage)
+      eventBus.eventEmitter.emit($sdlEventData.kind, eventMessage)
     else:
-      warn "Unable to emit event with unknown type : " & $sdlEvent.kind
+      warn "Unable to emit event with unknown type : " & $sdlEventData.kind
   else:
     case event.eventType
     of EventType.LoadAsset, EventType.UnloadAsset, EventType.GetAsset:

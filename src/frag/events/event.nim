@@ -3,7 +3,7 @@ import
   hashes
 
 import
-  glm
+  sdl2 as sdl
 
 import
   ../assets,

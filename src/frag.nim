@@ -43,8 +43,8 @@ proc registerEventHandlers(ctx: Frag) =
   ctx.events.on(handleLoadAssetEvent, EventType.LoadAsset)
   ctx.events.on(handleUnloadAssetEvent, EventType.UnloadAsset)
   ctx.events.on(handleGetAssetEvent, EventType.GetAsset)
-  ctx.events.on(input.onKeyDown, SDLEventType.KeyDown)
-  ctx.events.on(input.onKeyUp, SDLEventType.KeyUp)
+  ctx.events.on(handleInputEvent, SDLEventType.KeyDown)
+  ctx.events.on(handleInputEvent, SDLEventType.KeyUp)
   ctx.events.on(graphics.handleWindowResizedEvent, SDLEventType.WindowResize)
 
 proc init(ctx: Frag, config: Config) =
@@ -125,8 +125,14 @@ proc startFrag*[App](config: Config) =
         runGame = false
         break
       else:
-        var event = SDLEvent(sdlEventData: event)
-        ctx.events.emit(event)
+        var sdlEvent = SDLEvent(sdlEventData: event)
+        if event.kind == sdl.KeyUp:
+          sdlEvent.sdlEventType = SDLEventType.KeyUp
+          sdlEvent.input = ctx.input
+        elif event.kind == sdl.KeyDown:
+          sdlEvent.sdlEventType = SDLEventType.KeyDown
+          sdlEvent.input = ctx.input
+        ctx.events.emit(sdlEvent)
 
     ctx.input.update()
 

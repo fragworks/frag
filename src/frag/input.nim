@@ -5,7 +5,7 @@ import
   sdl2 as sdl
 
 import
-  events/sdl_event
+  events/event
 
 var pressedKeys, releasedKeys: seq[cint]
 var state = sdl.getKeyboardState(nil)
@@ -22,10 +22,11 @@ proc update*(this: Input) =
   releasedKeys = @[]
   state = sdl.getKeyboardState(nil)
 
-proc onKeyDown*(event: EventArgs) {.procvar.} =
-  let sdlEventMsg = SDLEventMessage(event)
-  pressedKeys.add(sdlEventMsg.event.key.keysym.sym)
-  echo repr sdlEventMsg.event.key.keysym.sym
+proc onKeyDown*(input: Input, event: sdl.Event) {.procvar.} =
+  echo repr event
+  #let sdlEventMsg = SDLEventMessage(event)
+  #pressedKeys.add(sdlEventMsg.event.key.keysym.sym)
+  #echo repr sdlEventMsg.event.key.keysym.sym
 
 proc onKeyUp*(event: EventArgs) {.procvar.} =
   discard

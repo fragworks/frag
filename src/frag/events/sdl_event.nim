@@ -2,7 +2,9 @@ import events
 
 import sdl2 as sdl except Event
 
-import ./event
+import 
+  ./event,
+  ../input
 
 type
   SDLEventType* {.pure.} = enum
@@ -12,6 +14,11 @@ type
 
   SDLEvent* = object of Event
     sdlEventData*: sdl.Event
+    case sdlEventType*: SDLEventType
+    of SDLEventType.KeyDown, SDLEventType.KeyUp:
+      input*: Input
+    else:
+      discard
 
   SDLEventMessage* = object of EventArgs
-    event*: sdl.Event
+    event*: SDLEvent
