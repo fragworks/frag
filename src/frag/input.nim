@@ -7,20 +7,21 @@ import
 import
   events/event
 
-var pressedKeys, releasedKeys: seq[cint]
-var state = sdl.getKeyboardState(nil)
+let defaultKeyboardState = sdl.getKeyboardState(nil)
 
 type Input* = ref object
+  pressedKeys, releasedKeys: seq[cint]
+  state: ptr array[0 .. SDL_NUM_SCANCODES.int, uint8]
 
-proc init*(this: Input): bool =
-  pressedKeys = @[]
-  releasedKeys = @[]
+proc init*(input: Input): bool =
+  input.pressedKeys = @[]
+  input.releasedKeys = @[]
   return true
 
-proc update*(this: Input) =
-  pressedKeys = @[]
-  releasedKeys = @[]
-  state = sdl.getKeyboardState(nil)
+proc update*(input: Input) =
+  input.pressedKeys.setLen(0)
+  input.releasedKeys.setLen(0)
+  input.state = defaultKeyboardState
 
 proc onKeyDown*(input: Input, event: sdl.Event) {.procvar.} =
   echo repr event
