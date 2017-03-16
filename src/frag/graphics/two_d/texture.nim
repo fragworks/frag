@@ -7,7 +7,7 @@ import
   bgfxdotnim as bgfx,
   sdl2 as sdl,
   #sdl2.image as sdl_img
-  stb_image as stbi
+  stb_image/read as stbi
 
 import
   ../../assets/asset_types,
