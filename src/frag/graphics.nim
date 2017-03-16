@@ -119,7 +119,7 @@ proc init*(
     rootWindowTitle,
     rootWindowPosX, rootWindowPosY,
     rootWindowWidth, rootWindowHeight,
-    window.WindowFlag.WindowShown.ord
+    window.WindowFlag.WindowShown.ord or window.WindowFlag.WindowResizable.ord
   )
 
   if graphics.rootWindow.handle.isNil:

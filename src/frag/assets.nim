@@ -18,8 +18,6 @@ type
     assetSearchPath: string
     internalSearchPath: string
     assets: Table[Hash, ref Asset]
-    vectorFontLoader: VectorFontLoader
-    vectorFontSupport: bool
 
 proc get*[T](assetManager: AssetManager, id: Hash): T =
   if not assetManager.assets.contains(id):
@@ -86,14 +84,6 @@ proc init*(assetManager: AssetManager, assetRoot: string) =
   assetManager.assetSearchPath = getAppDir() & DirSep & assetRoot & DirSep
   assetManager.internalSearchPath = getAppDir() & DirSep & engineAssetRoot & DirSep
 
-  assetManager.vectorFontSupport = true
-  assetManager.vectorFontLoader = VectorFontLoader()
-  if not assetManager.vectorFontLoader.init():
-    error "Error initializing TrueType font loader. TrueType font support disabled."
-    assetManager.vectorFontSupport = false
-
 proc shutdown*(assetManager: AssetManager) =
   for id, _ in assetManager.assets:
     assetManager.dispose(id)
-
-  assetManager.vectorFontLoader.shutdown()
