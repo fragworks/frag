@@ -7,15 +7,15 @@ import
   sound.sound
 
 import
-  ../../src/frag/config,
-  ../../src/frag,
-  ../../src/frag/assets,
-  ../../src/frag/assets/asset,
-  ../../src/frag/assets/asset_types,
-  ../../src/frag/graphics,
-  ../../src/frag/graphics/two_d/spritebatch,
-  ../../src/frag/graphics/two_d/texture,
-  ../../src/frag/graphics/window
+  ../../../src/frag/config,
+  ../../../src/frag,
+  ../../../src/frag/assets,
+  ../../../src/frag/assets/asset,
+  ../../../src/frag/assets/asset_types,
+  ../../../src/frag/graphics,
+  ../../../src/frag/graphics/two_d/spritebatch,
+  ../../../src/frag/graphics/two_d/texture,
+  ../../../src/frag/graphics/window
 
 type
   App = ref object

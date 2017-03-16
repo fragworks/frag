@@ -7,17 +7,17 @@ import
   sdl2 as sdl
 
 import
-  ../../src/frag/config,
-  ../../src/frag,
-  ../../src/frag/assets,
-  ../../src/frag/assets/asset,
-  ../../src/frag/assets/asset_types,
-  ../../src/frag/graphics,
-  ../../src/frag/graphics/two_d/spritebatch,
-  ../../src/frag/graphics/two_d/texture,
-  ../../src/frag/graphics/window,
-  ../../src/frag/input,
-  ../../src/frag/math/fpu_math as math
+  ../../../src/frag/config,
+  ../../../src/frag,
+  ../../../src/frag/assets,
+  ../../../src/frag/assets/asset,
+  ../../../src/frag/assets/asset_types,
+  ../../../src/frag/graphics,
+  ../../../src/frag/graphics/two_d/spritebatch,
+  ../../../src/frag/graphics/two_d/texture,
+  ../../../src/frag/graphics/window,
+  ../../../src/frag/input,
+  ../../../src/frag/math/fpu_math as math
 
 type
   App = ref object

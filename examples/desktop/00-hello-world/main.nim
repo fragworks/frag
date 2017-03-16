@@ -2,11 +2,11 @@ import
   logging
 
 import
-  ../../src/frag/config,
-  ../../src/frag,
-  ../../src/frag/graphics,
-  ../../src/frag/graphics/color,
-  ../../src/frag/graphics/window
+  ../../../src/frag/config,
+  ../../../src/frag,
+  ../../../src/frag/graphics,
+  ../../../src/frag/graphics/color,
+  ../../../src/frag/graphics/window
 
 type
   App = ref object
