@@ -167,6 +167,8 @@ proc handleWindowResizedEvent*(e: EventArgs) {.procvar.} =
     width = uint16 eventMessage.event.window.data1 
     height = uint16 eventMessage.event.window.data2
 
+  echo repr eventMessage
+
   bgfx_reset(width, height, ResetFlag.None.ord)
   bgfx_set_view_rect(0, 0, 0, width , height )
 

@@ -20,6 +20,7 @@ proc on*(
   , eventHandler: event.EventHandler
   , eventType: enum
 ) =
+  echo repr eventType
   events.on(eventBus.eventEmitter, $eventType, eventHandler)
 
 proc emit*(eventBus: EventBus, event: var Event) =

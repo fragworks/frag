@@ -23,8 +23,9 @@ proc update*(this: Input) =
   state = sdl.getKeyboardState(nil)
 
 proc onKeyDown*(event: EventArgs) {.procvar.} =
-  echo event
-  # pressedKeys.add(event.event.key.keysym.sym)
+  let sdlEventMsg = SDLEventMessage(event)
+  pressedKeys.add(sdlEventMsg.event.key.keysym.sym)
+  echo repr sdlEventMsg.event.key.keysym.sym
 
 proc onKeyUp*(event: EventArgs) {.procvar.} =
   discard
