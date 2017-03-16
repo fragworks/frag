@@ -43,8 +43,8 @@ proc registerEventHandlers(ctx: Frag) =
   ctx.events.on(handleLoadAssetEvent, EventType.LoadAsset)
   ctx.events.on(handleUnloadAssetEvent, EventType.UnloadAsset)
   ctx.events.on(handleGetAssetEvent, EventType.GetAsset)
-  ctx.events.on(handleInputEvent, SDLEventType.KeyDown)
-  ctx.events.on(handleInputEvent, SDLEventType.KeyUp)
+  ctx.events.on(handleKeyDown, SDLEventType.KeyDown)
+  ctx.events.on(handleKeyUp, SDLEventType.KeyUp)
   ctx.events.on(graphics.handleWindowResizedEvent, SDLEventType.WindowResize)
 
 proc init(ctx: Frag, config: Config) =

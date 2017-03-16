@@ -26,9 +26,13 @@ proc handleGetAssetEvent*(e: EventArgs) {.procvar.} =
     let asset = assets.get[Texture](event.assetManager, event.assetId)
     event.getAssetCallback(event.producer, asset)
   
-proc handleInputEvent*(e: EventArgs) {.procvar.} =
+proc handleKeyDown*(e: EventArgs) {.procvar.} =
   let event = SDLEventMessage(e).event
   if not event.input.isNil:
     event.input.onKeyDown(event.sdlEventData)
 
+proc handleKeyUp*(e: EventArgs) {.procvar.} =
+  let event = SDLEventMessage(e).event
+  if not event.input.isNil:
+    event.input.onKeyUp(event.sdlEventData)
   

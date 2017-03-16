@@ -24,15 +24,10 @@ proc update*(input: Input) =
   input.state = defaultKeyboardState
 
 proc onKeyDown*(input: Input, event: sdl.Event) {.procvar.} =
-  echo repr event
-  #let sdlEventMsg = SDLEventMessage(event)
-  #pressedKeys.add(sdlEventMsg.event.key.keysym.sym)
-  #echo repr sdlEventMsg.event.key.keysym.sym
+  input.pressedKeys.add(event.key.keysym.sym)
 
-proc onKeyUp*(event: EventArgs) {.procvar.} =
-  discard
-  #let msg = SDLEventMessage(event)
-  #releasedKeys.add(msg.event.key.keysym.sym)
+proc onKeyUp*(input: Input, event: sdl.Event) {.procvar.} =
+  input.releasedKeys.add(event.key.keysym.sym)
 
 proc down*(this: Input, button: string): bool =
   var key = sdl.getKeyFromName(button)
@@ -40,8 +35,8 @@ proc down*(this: Input, button: string): bool =
   echo $key & " " & $code
   # state[code] == 1
 
-proc pressed*(this: Input, button: string): bool =
-  sdl.getKeyFromName(button) in pressedKeys
+#proc pressed*(this: Input, button: string): bool =
+  #sdl.getKeyFromName(button) in pressedKeys
 
-proc released*(this: Input, button: string): bool =
-  sdl.getKeyFromName(button) in releasedKeys
+#proc released*(this: Input, button: string): bool =
+  #sdl.getKeyFromName(button) in releasedKeys
