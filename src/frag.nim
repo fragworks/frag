@@ -117,7 +117,7 @@ proc startFrag*[App](config: Config) =
      # Calculate Delta Time
     last = now
     now = sdl.getPerformanceCounter()
-    deltaTime = float64((now - last) * 1000 div sdl.getPerformanceFrequency())
+    deltaTime = (float64(now - last) * 1000) / float64(sdl.getPerformanceFrequency())
 
     ctx.input.update()
 
@@ -136,7 +136,7 @@ proc startFrag*[App](config: Config) =
           sdlEvent.input = ctx.input
         ctx.events.emit(sdlEvent)
 
-    app.updateApp(ctx, deltaTime)
+    app.updateApp(ctx, deltaTime * 0.001)
     app.renderApp(ctx)
     ctx.graphics.swap()
 
