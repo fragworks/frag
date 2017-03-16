@@ -23,13 +23,12 @@ proc update*(this: Input) =
   state = sdl.getKeyboardState(nil)
 
 proc onKeyDown*(event: EventArgs) {.procvar.} =
-  let sdlEventMsg = SDLEventMessage(event)
-  pressedKeys.add(sdlEventMsg.event.key.keysym.sym)
-  echo repr sdlEventMsg.event.key.keysym.sym
+  let msg = SDLEventMessage(event)
+  pressedKeys.add(msg.event.key.keysym.sym)
 
 proc onKeyUp*(event: EventArgs) {.procvar.} =
-  discard
-  # releasedKeys.add(event.key.keysym.sym)
+  let msg = SDLEventMessage(event)
+  releasedKeys.add(msg.event.key.keysym.sym)
 
 proc down*(this: Input, button: string): bool =
   var key = sdl.getKeyFromName(button)
