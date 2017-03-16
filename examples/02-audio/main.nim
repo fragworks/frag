@@ -27,7 +27,7 @@ const HEIGHT = 540
 const HALF_WIDTH = WIDTH / 2
 const HALF_HEIGHT = HEIGHT / 2
 
-proc initialize*(app: App, ctx: Frag) =
+proc initializeApp*(app: App, ctx: Frag) =
   debug "Initializing app..."
 
   app.assetIds = initTable[string, Hash]()
@@ -53,7 +53,7 @@ proc initialize*(app: App, ctx: Frag) =
 
   debug "App initialized."
 
-proc shutdown*(app: App, ctx: Frag) =
+proc shutdownApp*(app: App, ctx: Frag) =
   debug "Shutting down app..."
 
   app.batch.dispose()
@@ -65,7 +65,10 @@ proc shutdown*(app: App, ctx: Frag) =
 
   debug "App shut down..."
 
-proc render*(app: App, ctx: Frag) =
+proc updateApp*(app:App, ctx: Frag, deltaTime: float) =
+  discard
+
+proc renderApp*(app: App, ctx: Frag) =
   ctx.graphics.clearView(0, graphics.ClearMode.Color.ord or graphics.ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
   let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])

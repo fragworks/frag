@@ -10,7 +10,7 @@ import
 let defaultKeyboardState = sdl.getKeyboardState(nil)
 
 type Input* = ref object
-  pressedKeys, releasedKeys: seq[cint]
+  pressedKeys*, releasedKeys: seq[cint]
   state: ptr array[0 .. SDL_NUM_SCANCODES.int, uint8]
 
 proc init*(input: Input): bool =

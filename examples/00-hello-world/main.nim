@@ -11,14 +11,17 @@ import
 type
   App = ref object
 
-proc initialize*(app: App, ctx: Frag) =
+proc initializeApp*(app: App, ctx: Frag) =
   debug "Initializing app..."
   debug "App initialized."
 
-proc render*(app: App, ctx: Frag) =
+proc updateApp*(app:App, ctx: Frag, deltaTime: float) =
+  discard
+
+proc renderApp*(app: App, ctx: Frag) =
   ctx.graphics.clearView(0, graphics.ClearMode.Color.ord or graphics.ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
-proc shutdown*(app: App, ctx: Frag) =
+proc shutdownApp*(app: App, ctx: Frag) =
   debug "Shutting down app..."
   debug "App shut down."
 

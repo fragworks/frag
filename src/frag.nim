@@ -107,7 +107,7 @@ proc startFrag*[App](config: Config) =
 
   var app = App()
 
-  app.initialize(ctx)
+  app.initializeApp(ctx)
 
   var
     event = sdl.defaultEvent
@@ -136,11 +136,12 @@ proc startFrag*[App](config: Config) =
           sdlEvent.input = ctx.input
         ctx.events.emit(sdlEvent)
 
-    app.render(ctx)
+    app.updateApp(ctx, deltaTime)
+    app.renderApp(ctx)
     ctx.graphics.swap()
 
     limitFramerate()
 
-  app.shutdown(ctx)
+  app.shutdownApp(ctx)
 
   ctx.shutdown(QUIT_SUCCESS)
