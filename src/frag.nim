@@ -119,6 +119,8 @@ proc startFrag*[App](config: Config) =
     now = sdl.getPerformanceCounter()
     deltaTime = float64((now - last) * 1000 div sdl.getPerformanceFrequency())
 
+    ctx.input.update()
+
     while bool sdl.pollEvent(event):
       case event.kind
       of sdl.QuitEvent:
@@ -133,8 +135,6 @@ proc startFrag*[App](config: Config) =
           sdlEvent.sdlEventType = SDLEventType.KeyDown
           sdlEvent.input = ctx.input
         ctx.events.emit(sdlEvent)
-
-    ctx.input.update()
 
     app.render(ctx)
     ctx.graphics.swap()

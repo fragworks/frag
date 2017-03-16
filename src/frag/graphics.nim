@@ -28,16 +28,11 @@ when defined(macosx):
       cocoa: SysWMinfoCocoaObj
 
 when defined(linux):
-  import 
-    x, 
-    xlib
-
+  import x, xlib
   type
     SysWMmsgX11Obj* = object  ## when defined(SDL_VIDEO_DRIVER_X11)
       display*: ptr xlib.TXDisplay  ##  The X11 display
       window*: ptr x.TWindow            ##  The X11 window
-
-
     SysWMinfoKindObj* = object ## when defined(SDL_VIDEO_DRIVER_X11)
       x11*: SysWMMsgX11Obj
 
@@ -77,11 +72,11 @@ type
 var lastTime {.global.} : uint64
 
 proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
-    var pd: ptr bgfx_platform_data_t = create(bgfx_platform_data_t) 
+    var pd: ptr bgfx_platform_data_t = create(bgfx_platform_data_t)
     var info: sdl.WMinfo
     version(info.version)
     assert sdl.getWMInfo(window, info)
-    
+
     case(info.subsystem):
         of SysWM_Windows:
           when defined(windows):
@@ -124,7 +119,7 @@ proc init*(
     rootWindowTitle,
     rootWindowPosX, rootWindowPosY,
     rootWindowWidth, rootWindowHeight,
-    window.WindowFlag.WindowShown.ord or window.WindowFlag.WindowResizable.ord
+    window.WindowFlag.WindowShown.ord
   )
 
   if graphics.rootWindow.handle.isNil:

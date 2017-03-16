@@ -29,8 +29,8 @@ proc onKeyDown*(input: Input, event: sdl.Event) {.procvar.} =
   #echo repr sdlEventMsg.event.key.keysym.sym
 
 proc onKeyUp*(event: EventArgs) {.procvar.} =
-  discard
-  # releasedKeys.add(event.key.keysym.sym)
+  let msg = SDLEventMessage(event)
+  releasedKeys.add(msg.event.key.keysym.sym)
 
 proc down*(this: Input, button: string): bool =
   var key = sdl.getKeyFromName(button)
