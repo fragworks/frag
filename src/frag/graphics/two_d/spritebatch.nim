@@ -157,7 +157,7 @@ proc `end`*(spriteBatch: SpriteBatch) =
   spriteBatch.lastTexture = nil
   spriteBatch.drawing = false
 
-proc destroy*(spriteBatch: SpriteBatch) =
+proc dispose*(spriteBatch: SpriteBatch) =
   bgfx_destroy_uniform(spriteBatch.texHandle)
   bgfx_destroy_index_buffer(spriteBatch.ibh)
   bgfx_destroy_program(spriteBatch.programHandle)

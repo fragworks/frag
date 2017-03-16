@@ -4,7 +4,7 @@ import
   tables
 
 import
-  solouddotnim
+  sound.sound
 
 import
   ../../src/frag/config,
@@ -46,25 +46,17 @@ proc initialize*(app: App, ctx: Frag) =
   app.batch.init(1000, 0)
 
 
-  var sl : ptr Soloud
+  var snd = sound.newSoundWithFile("examples/assets/sounds/test.ogg")
+  snd.`gain=`(0.5)
 
-  sl = Soloud_create()
-
-  echo Soloud_init(sl)
-
-  Soloud_setGlobalVolume(sl, 1)
-
-
-  var stream = WavStream_create()
-  echo WavStream_load(cast[ptr Wav](stream), "examples/assets/sounds/test.ogg")
-
-
-  discard Soloud_play(cast[ptr Soloud](sl), cast[ptr Wav](stream))
+  snd.play()
 
   debug "App initialized."
 
 proc shutdown*(app: App, ctx: Frag) =
   debug "Shutting down app..."
+
+  app.batch.dispose()
 
   debug "Unloading assets..."
   for _, assetId in app.assetIds:
@@ -86,7 +78,7 @@ proc render*(app: App, ctx: Frag) =
   app.batch.`end`()
 
 startFrag[App](Config(
-  rootWindowTitle: "Frag Example 01-sprite-batch",
+  rootWindowTitle: "Frag Example 02-audio",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
   resetFlags: graphics.ResetFlag.None,
