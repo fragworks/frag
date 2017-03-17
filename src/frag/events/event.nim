@@ -12,7 +12,7 @@ import
 
 type
   EventBus* = ref object
-    eventEmitter*: EventEmitter
+    emitter*: EventEmitter
     assetManager*: AssetManager
 
   EventType* {.pure.} = enum
