@@ -16,9 +16,9 @@ export
   sdl_event
 
 proc on*(
-  eventBus: EventBus
-  , eventHandler: event.EventHandler
-  , eventType: enum
+  eventBus: EventBus,
+  eventType: enum,
+  eventHandler: event.EventHandler
 ) =
   echo repr eventType
   events.on(eventBus.eventEmitter, $eventType, eventHandler)

@@ -40,12 +40,12 @@ proc shutdown(ctx: Frag, exitCode: int) =
   quit(exitCode)
 
 proc registerEventHandlers(ctx: Frag) =
-  ctx.events.on(handleLoadAssetEvent, EventType.LoadAsset)
-  ctx.events.on(handleUnloadAssetEvent, EventType.UnloadAsset)
-  ctx.events.on(handleGetAssetEvent, EventType.GetAsset)
-  ctx.events.on(handleKeyDown, SDLEventType.KeyDown)
-  ctx.events.on(handleKeyUp, SDLEventType.KeyUp)
-  ctx.events.on(graphics.handleWindowResizedEvent, SDLEventType.WindowResize)
+  ctx.events.on(EventType.LoadAsset, handleLoadAssetEvent)
+  ctx.events.on(EventType.UnloadAsset, handleUnloadAssetEvent)
+  ctx.events.on(EventType.GetAsset, handleGetAssetEvent)
+  ctx.events.on(SDLEventType.KeyDown, handleKeyDown)
+  ctx.events.on(SDLEventType.KeyUp, handleKeyUp)
+  ctx.events.on(SDLEventType.WindowResize, graphics.handleWindowResizedEvent)
 
 proc init(ctx: Frag, config: Config) =
   echo "Initializing Frag - " & globals.version & "..."
