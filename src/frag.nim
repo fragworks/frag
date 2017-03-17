@@ -29,7 +29,7 @@ proc shutdown(ctx: Frag, exitCode: int) =
   info "Shutting down Frag..."
 
   debug "Shutting down graphics subsystem..."
-  ctx.graphics.shutdown(ctx.events)
+  ctx.graphics.shutdown()
   debug "Graphics subsystem shut down."
 
   debug "Shutting down asset management subsystem..."

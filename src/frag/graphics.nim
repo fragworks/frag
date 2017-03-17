@@ -157,16 +157,16 @@ proc swap*(graphics: Graphics) =
   discard bgfx_frame(false)
 
 proc handleWindowResizedEvent*(e: EventArgs) {.procvar.} =
-  let 
+  let
     sdlEvent = SDLEventMessage(e).event
-    width = uint16 sdlEvent.sdlEventData.window.data1 
+    width = uint16 sdlEvent.sdlEventData.window.data1
     height = uint16 sdlEvent.sdlEventData.window.data2
 
   bgfx_reset(width, height, ResetFlag.None.ord)
   bgfx_set_view_rect(0, 0, 0, width , height )
 
 
-proc shutdown*(graphics: Graphics, events: EventBus) =
+proc shutdown*(graphics: Graphics) =
   if graphics.rootWindow.isNil:
     return
   elif graphics.rootWindow.handle.isNil:
