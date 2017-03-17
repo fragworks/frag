@@ -1,4 +1,4 @@
-import nake, os, strutils
+import algorithm, nake, os, strutils
 
 const
   fragBin = "src/frag"
@@ -16,7 +16,11 @@ proc registerExample(name, path: string) =
   task id, name & " - run example " & parts.join("-"):
     runExample(path)
 
+var examples: seq[string] = @[]
 for kind, path in walkDir("examples/desktop", true):
-  if path.contains("assets"):
-    continue
+  if path.contains("assets"): continue
+  examples.add(path)
+sort(examples, cmp[string])
+
+for path in examples:
   registerExample("Desktop", path)
