@@ -70,10 +70,10 @@ proc shutdownApp(app: App, ctx: Frag) =
   debug "App shut down..."
 
 proc updateApp(app: App, ctx: Frag, deltaTime: float) =
-  if ctx.input.down("w"): app.player.position[1] += 1
-  if ctx.input.down("s"): app.player.position[1] -= 1
-  if ctx.input.down("a"): app.player.position[0] += 1
-  if ctx.input.down("d"): app.player.position[0] -= 1
+  if ctx.input.down("w", true): app.player.position[1] += 1
+  if ctx.input.down("s", true): app.player.position[1] -= 1
+  if ctx.input.down("d", true): app.player.position[0] += 1
+  if ctx.input.down("a", true): app.player.position[0] -= 1
 
 proc renderApp(app: App, ctx: Frag) =
   ctx.graphics.clearView(0, graphics.ClearMode.Color.ord or graphics.ClearMode.Depth.ord, 0x303030ff, 1.0, 0)

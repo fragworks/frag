@@ -29,14 +29,22 @@ proc onKeyDown*(input: Input, event: sdl.Event) {.procvar.} =
 proc onKeyUp*(input: Input, event: sdl.Event) {.procvar.} =
   input.releasedKeys.add(event.key.keysym.sym)
 
-proc down*(input: Input, button: string): bool =
-  let key = sdl.getKeyFromName(button)
-  let code = sdl.getScancodeFromKey(key)
-  echo $key & " " & $code
+proc getScancode(input: Input, name: string, raw: bool): sdl.Scancode =
+  if raw: return sdl.getScancodeFromName(name)
+  let key = sdl.getKeyFromName(name)
+  return sdl.getScancodeFromKey(key)
+
+proc getKey(input: Input, name: string, raw: bool): cint =
+  if not raw: return sdl.getKeyFromName(name)
+  let code = sdl.getScancodeFromName(name)
+  return sdl.getKeyFromScancode(code)
+
+proc down*(input: Input, name: string, raw: bool = false): bool =
+  let code = input.getScancode(name, raw)
   input.state[code.int] == 1u8
 
-proc pressed*(input: Input, button: string): bool =
-  sdl.getKeyFromName(button) in input.pressedKeys
+proc pressed*(input: Input, name: string, raw: bool = false): bool =
+  input.getKey(name, raw) in input.pressedKeys
 
-proc released*(input: Input, button: string): bool =
-  sdl.getKeyFromName(button) in input.releasedKeys
+proc released*(input: Input, name: string, raw: bool = false): bool =
+  input.getKey(name, raw) in input.releasedKeys
