@@ -16,32 +16,32 @@ export
   sdl_event
 
 proc on*(
-  eventBus: EventBus,
+  this: EventBus,
   eventType: enum,
   eventHandler: event.EventHandler
 ) =
   echo repr eventType
-  events.on(eventBus.emitter, $eventType, eventHandler)
+  events.on(this.emitter, $eventType, eventHandler)
 
-proc emit*(eventBus: EventBus, event: var Event) =
+proc emit*(this: EventBus, event: var Event) =
   if event of SDLEvent:
     let sdlEvent = SDLEvent(event)
     let sdlEventData = sdlEvent.sdlEventData
     case sdlEventData.kind
     of sdl.WindowEvent:
       let eventMessage  = SDLEventMessage(event: sdlEvent)
-      eventBus.emitter.emit($sdlEventData.window.event, eventMessage)
+      this.emitter.emit($sdlEventData.window.event, eventMessage)
     of sdl.KeyDown, sdl.KeyUp:
       let eventMessage  = SDLEventMessage(event: sdlEvent)
-      eventBus.emitter.emit($sdlEventData.kind, eventMessage)
+      this.emitter.emit($sdlEventData.kind, eventMessage)
     else:
       warn "Unable to emit event with unknown type : " & $sdlEventData.kind
   else:
     case event.eventType
     of EventType.LoadAsset, EventType.UnloadAsset, EventType.GetAsset:
-      event.assetManager = eventBus.assetManager
+      event.assetManager = this.assetManager
       let eventMessage = EventMessage(event: event)
-      eventBus.emitter.emit($event.eventType, eventMessage)
+      this.emitter.emit($event.eventType, eventMessage)
 
-proc init*(eventBus: EventBus) =
-  eventBus.emitter = events.initEventEmitter()
+proc init*(this: EventBus) =
+  this.emitter = events.initEventEmitter()

@@ -103,7 +103,7 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
     return true
 
 proc init*(
-  graphics: Graphics,
+  this: Graphics,
   rootWindowTitle: string = nil,
   rootWindowPosX, rootWindowPosY: int = window.posUndefined,
   rootWindowWidth = 960, rootWindowHeight = 540,
@@ -114,19 +114,19 @@ proc init*(
     error "Error initializing SDL : " & $getError()
     return false
 
-  graphics.rootWindow = Window()
-  graphics.rootWindow.init(
+  this.rootWindow = Window()
+  this.rootWindow.init(
     rootWindowTitle,
     rootWindowPosX, rootWindowPosY,
     rootWindowWidth, rootWindowHeight,
     window.WindowFlag.WindowShown.ord or window.WindowFlag.WindowResizable.ord
   )
 
-  if graphics.rootWindow.handle.isNil:
+  if this.rootWindow.handle.isNil:
     error "Error creating root application window."
     return false
 
-  if not linkSDL2BGFX(graphics.rootWindow.handle):
+  if not linkSDL2BGFX(this.rootWindow.handle):
     return false
 
   if not bgfx_init(BGFX_RENDERER_TYPE_NOOP, 0'u16, 0, nil, nil):
@@ -141,10 +141,10 @@ proc init*(
 
   return true
 
-proc clearView*(graphics: Graphics, viewId: uint8, flags: uint16, rgba: uint32, depth: float32, stencil: uint8) =
+proc clearView*(this: Graphics, viewId: uint8, flags: uint16, rgba: uint32, depth: float32, stencil: uint8) =
   bgfx_set_view_clear(viewID, flags, rgba, depth, stencil)
 
-proc swap*(graphics: Graphics) =
+proc swap*(this: Graphics) =
   let current = sdl.getPerformanceCounter()
   let frameTime = float((current - lastTime) * 1000) / float sdl.getPerformanceFrequency()
   lastTime = current
@@ -166,10 +166,10 @@ proc handleWindowResizedEvent*(e: EventArgs) {.procvar.} =
   bgfx_set_view_rect(0, 0, 0, width , height )
 
 
-proc shutdown*(graphics: Graphics) =
-  if graphics.rootWindow.isNil:
+proc shutdown*(this: Graphics) =
+  if this.rootWindow.isNil:
     return
-  elif graphics.rootWindow.handle.isNil:
+  elif this.rootWindow.handle.isNil:
     debug "Shutting down SDL..."
     sdl.quit()
     debug "SDL shut down."
@@ -179,6 +179,6 @@ proc shutdown*(graphics: Graphics) =
     debug "BGFX shut down."
 
     debug "Destroying root window and shutting down SDL..."
-    sdl.destroyWindow(graphics.rootWindow.handle)
+    sdl.destroyWindow(this.rootWindow.handle)
     sdl.quit()
     debug "SDL shut down."
