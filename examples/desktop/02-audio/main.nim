@@ -63,6 +63,8 @@ proc shutdownApp(app: App, ctx: Frag) =
     ctx.assets.unload(assetId)
   logDebug "Assets unloaded."
 
+  app.batch.dispose()
+
   logDebug "App shut down..."
 
 proc updateApp(app:App, ctx: Frag, deltaTime: float) =
