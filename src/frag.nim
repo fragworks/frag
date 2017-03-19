@@ -64,6 +64,10 @@ proc init(ctx: Frag, config: Config) =
   ctx.input = Input()
   ctx.addModule(ctx.input, "input")
 
+  ctx.assets = AssetManager()
+  ctx.addModule(ctx.assets, "assets")
+  ctx.events.registerAssetManager(ctx.assets)
+
   for module in ctx.modules:
     logDebug "Initializing $1 subsystem..." % module.name
     if not module.init(config):
@@ -83,13 +87,6 @@ proc init(ctx: Frag, config: Config) =
     logFatal "Error initializing graphics subsystem."
     ctx.shutdown(QUIT_FAILURE)
   logDebug "Graphics subsystem initialized."
-
-  logDebug "Initializing asset management subsystem..."
-  ctx.assets = AssetManager()
-  ctx.assets.init(config.assetRoot)
-  logDebug "Asset management subsystem initialized."
-
-  ctx.events.registerAssetManager(ctx.assets)
 
   ctx.registerEventHandlers()
 
