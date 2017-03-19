@@ -14,6 +14,10 @@ import
   ../logger,
   module
 
+export
+  asset,
+  asset_types
+
 type
   AssetManager* = ref object of Module
     assetSearchPath: string

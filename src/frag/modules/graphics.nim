@@ -17,6 +17,11 @@ import
   ../logger,
   module
 
+export
+  color,
+  types,
+  window
+
 type
   Graphics* = ref object of Module
     rootWindow*: window.Window

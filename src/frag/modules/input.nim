@@ -6,7 +6,6 @@ import
 
 import
   ../config,
-  ../events/event,
   module
 
 let defaultKeyboardState = sdl.getKeyboardState(nil)

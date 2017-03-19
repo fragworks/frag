@@ -7,16 +7,10 @@ import
 
 import
   ../../../src/frag,
-  ../../../src/frag/assets/asset,
-  ../../../src/frag/assets/asset_types,
-  ../../../src/frag/config,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
-  ../../../src/frag/graphics/types,
   ../../../src/frag/graphics/window,
-  ../../../src/frag/logger,
-  ../../../src/frag/modules/assets,
-  ../../../src/frag/modules/graphics
+  ../../../src/frag/modules/assets
 
 type
   App = ref object
