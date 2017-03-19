@@ -11,7 +11,8 @@ import
   frag/globals,
   frag/graphics,
   frag/input,
-  frag/logger
+  frag/logger,
+  frag/modules/module
 
 type
   Frag* = ref object
@@ -19,6 +20,7 @@ type
     events: EventBus
     graphics*: Graphics
     input*: Input
+    modules*: seq[Module]
 
 proc shutdown(ctx: Frag, exitCode: int) =
   logInfo "Shutting down Frag..."
@@ -42,8 +44,15 @@ proc registerEventHandlers(ctx: Frag) =
   ctx.events.on(SDLEventType.KeyUp, handleKeyUp)
   ctx.events.on(SDLEventType.WindowResize, graphics.handleWindowResizedEvent)
 
+proc addModule(ctx: Frag, module: Module, name: string = ""): void =
+  logDebug "Adding $1 subsystem..." % name
+  if name != "": module.name = name
+  ctx.modules.add(module)
+
 proc init(ctx: Frag, config: Config) =
   echo "Initializing Frag - " & globals.version & "..."
+
+  ctx.modules = @[]
 
   echo "Initializing logging subsystem..."
   logger.init(config.logFileName)
@@ -67,12 +76,15 @@ proc init(ctx: Frag, config: Config) =
     ctx.shutdown(QUIT_FAILURE)
   logDebug "Graphics subsystem initialized."
 
-  logDebug "Initializing input subsystem..."
   ctx.input = Input()
-  if not ctx.input.init():
-    logFatal "Error initializing graphics subsystem."
-    ctx.shutdown(QUIT_FAILURE)
-  logDebug "Input subsystem initialized."
+  ctx.addModule(ctx.input, "input")
+
+  for module in ctx.modules:
+    logDebug "Initializing $1 subsystem..." % module.name
+    if not module.init():
+      logFatal "Error initializing $1 subsystem." % module.name
+      ctx.shutdown(QUIT_FAILURE)
+    logDebug "Initialized $1 subsystem." % module.name
 
   logDebug "Initializing asset management subsystem..."
   ctx.assets = AssetManager()

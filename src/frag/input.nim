@@ -5,20 +5,21 @@ import
   sdl2 as sdl
 
 import
-  events/event
+  events/event,
+  modules/module
 
 let defaultKeyboardState = sdl.getKeyboardState(nil)
 
-type Input* = ref object
+type Input* = ref object of Module
   pressedKeys*, releasedKeys: seq[cint]
   state: ptr array[0 .. SDL_NUM_SCANCODES.int, uint8]
 
-proc init*(this: Input): bool =
+method init*(this: Input): bool =
   this.pressedKeys = @[]
   this.releasedKeys = @[]
   return true
 
-proc update*(this: Input) =
+method update*(this: Input) =
   this.pressedKeys.setLen(0)
   this.releasedKeys.setLen(0)
   this.state = defaultKeyboardState

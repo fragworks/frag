@@ -1,4 +1,4 @@
 type
   Color* = tuple[
-    r, g, b, a: float    
+    r, g, b, a: float
   ]
