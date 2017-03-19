@@ -1,11 +1,12 @@
 import
   bgfxdotnim as bgfx
 
-import 
+import
   fs_default,
   ../../logger,
   ../../graphics,
   ../../math/fpu_math as fpumath,
+  ../types,
   texture,
   vs_default
 
@@ -20,7 +21,7 @@ type
     vDecl: ptr bgfx_vertex_decl_t
     texHandle: bgfx_uniform_handle_t
     view: uint8
-    blendSrcFunc*, blendDstFunc*: graphics.BlendFunc
+    blendSrcFunc*, blendDstFunc*: BlendFunc
     blendingEnabled*: bool
 
   PosUVColorVertex {.packed, pure.} = object
@@ -46,11 +47,11 @@ proc flush(spriteBatch: SpriteBatch) =
   mtxIdentity(mtx)
 
   discard bgfx_set_transform(addr mtx[0], 1)
-  
+
   if spriteBatch.blendingEnabled:
     bgfx_set_state(0'u64 or BGFX_STATE_RGB_WRITE or BGFX_STATE_ALPHA_WRITE or BGFX_STATE_BLEND_FUNC(spriteBatch.blendSrcFunc
       , spriteBatch.blendDstFunc), 0);
-  
+
   discard bgfx_submit(spriteBatch.view, spriteBatch.programHandle, 0, false)
 
   spriteBatch.vertices.setLen(0)
@@ -63,7 +64,7 @@ proc draw*(spriteBatch: SpriteBatch, textureRegion: TextureRegion, x, y: float32
   if not spriteBatch.drawing:
     logError "Spritebatch not in drawing mode. Call begin before calling draw."
     return
-  
+
   let texture = textureRegion.texture
 
   if texture != spriteBatch.lastTexture:
@@ -125,11 +126,11 @@ proc init*(spriteBatch: SpriteBatch, maxSprites: int, view: uint8) =
   bgfx_vertex_decl_end(spriteBatch.vDecl)
 
   spriteBatch.texHandle = bgfx_create_uniform("s_texColor", BGFX_UNIFORM_TYPE_INT1, 1)
-  
+
   let vsh = bgfx_create_shader(bgfx_make_ref(addr vs_default.vs[0], uint32 sizeof(vs_default.vs)))
   let fsh = bgfx_create_shader(bgfx_make_ref(addr fs_default.fs[0], uint32 sizeof(fs_default.fs)))
   spriteBatch.programHandle = bgfx_create_program(vsh, fsh, true)
-  
+
   var proj: fpumath.Mat4
   fpumath.mtxOrtho(proj, 0.0, 960.0, 0.0, 540.0, -1.0'f32, 1.0'f32)
   bgfx_set_view_transform(0, nil, unsafeAddr(proj[0]))
@@ -147,7 +148,7 @@ proc `end`*(spriteBatch: SpriteBatch) =
   if not spriteBatch.drawing:
     logError "Spritebatch is not currently in drawing mode. Call begin before calling end."
     return
-  
+
   if spriteBatch.vertices.len > 0:
     flush(spriteBatch)
 

@@ -66,7 +66,7 @@ proc init(ctx: Frag, config: Config) =
 
   for module in ctx.modules:
     logDebug "Initializing $1 subsystem..." % module.name
-    if not module.init():
+    if not module.init(config):
       logFatal "Error initializing $1 subsystem." % module.name
       ctx.shutdown(QUIT_FAILURE)
     logDebug "Initialized $1 subsystem." % module.name

@@ -1,13 +1,12 @@
 import
-  graphics,
-  graphics/window
+  graphics/types
 
 type
   Config* = object
     rootWindowTitle*: string
     rootWindowPosX*, rootWindowPosY*: int
     rootWindowWidth*, rootWindowHeight*: int
-    resetFlags*: graphics.ResetFlag
+    resetFlags*: ResetFlag
     logFileName*: string
     assetRoot*: string
-    debugMode*: graphics.DebugMode
+    debugMode*: DebugMode

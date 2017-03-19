@@ -5,6 +5,7 @@ import
   sdl2 as sdl except EventType, Event
 
 import
+  config,
   events/event,
   events/event_handlers,
   events/sdl_event,
@@ -15,7 +16,7 @@ export
   event_handlers,
   sdl_event
 
-method init*(this: EventBus): bool =
+method init*(this: EventBus, config: Config): bool =
   this.emitter = events.initEventEmitter()
   return true
 

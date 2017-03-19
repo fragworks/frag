@@ -5,6 +5,7 @@ import
   sdl2 as sdl
 
 import
+  config,
   events/event,
   modules/module
 
@@ -14,7 +15,7 @@ type Input* = ref object of Module
   pressedKeys*, releasedKeys: seq[cint]
   state: ptr array[0 .. SDL_NUM_SCANCODES.int, uint8]
 
-method init*(this: Input): bool =
+method init*(this: Input, config: Config): bool =
   this.pressedKeys = @[]
   this.releasedKeys = @[]
   return true
