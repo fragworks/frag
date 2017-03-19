@@ -1,5 +1,6 @@
 # generated
 *.log
+main
 !main/
 nakefile
 nimcache/
