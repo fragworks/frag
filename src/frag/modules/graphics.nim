@@ -73,6 +73,7 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
     return true
 
 method init*(this: Graphics, config: Config): bool =
+  # TODO: We need to add the defaults back in. I was struggling with the cleanest ways to do so.
   var rootWindowPosX = config.rootWindowPosX
   var rootWindowPosY = config.rootWindowPosY
   var rootWindowWidth = config.rootWindowWidth
