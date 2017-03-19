@@ -56,8 +56,6 @@ proc initializeApp(app: App, ctx: Frag) =
 proc shutdownApp(app: App, ctx: Frag) =
   logDebug "Shutting down app..."
 
-  app.batch.dispose()
-
   logDebug "Unloading assets..."
   for _, assetId in app.assetIds:
     ctx.assets.unload(assetId)
