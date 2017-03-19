@@ -14,7 +14,7 @@ Support for 3D is planned for post-alpha releases of FRAG.
 - Arch Linux
 
 **Tested for Android on**:
-Samsung Galaxy S6 (arm64-v8a)
+- Samsung Galaxy S6 (arm64-v8a)
 
 **Dependencies for Desktop**:
 - [Nim v0.16.1](https://github.com/nim-lang/Nim)
