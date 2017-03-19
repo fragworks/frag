@@ -1,6 +1,6 @@
 # generated
 *.log
-#main -- causing java files to be ignored
+!main/
 nakefile
 nimcache/
 
