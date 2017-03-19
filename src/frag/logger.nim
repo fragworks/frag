@@ -7,7 +7,8 @@ when defined(android):
   """.}
   proc native_log(level: string, a: cstring) =
       {.emit: """__android_log_write(ANDROID_LOG_INFO, level, `a`);""".}
-  
+
+  proc log*(a: varargs[string, `$`]) = native_log(LevelNames.DEBUG, a.join())
   proc logDebug*(a: varargs[string, `$`]) = native_log(LevelNames.DEBUG, a.join())
   proc logInfo*(a: varargs[string, `$`]) = native_log(LevelNames.INFO, a.join())
   proc logNotice*(a: varargs[string, `$`]) = native_log(LevelNames.NOTICE, a.join())
@@ -17,6 +18,9 @@ when defined(android):
 
 var consoleLogger : ConsoleLogger
 var fileLogger : FileLogger
+
+proc log*(args: varargs[string, `$`]) =
+  logging.debug(args)
 
 proc logDebug*(args: varargs[string, `$`]) =
   logging.debug(args)
