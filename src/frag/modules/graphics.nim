@@ -8,14 +8,22 @@ import
   sdl2 as sdl
 
 import
-  event_bus,
-  graphics/color,
-  graphics/sdl2/version,
-  graphics/window,
-  logger
+  ../config,
+  ../events/sdl_event,
+  ../graphics/color,
+  ../graphics/sdl2/version,
+  ../graphics/types,
+  ../graphics/window,
+  ../logger,
+  module
+
+export
+  color,
+  types,
+  window
 
 type
-  Graphics* = ref object
+  Graphics* = ref object of Module
     rootWindow*: window.Window
     rootGLContext: sdl.GLContextPtr
 
@@ -35,39 +43,6 @@ when defined(linux):
       window*: ptr x.TWindow            ##  The X11 window
     SysWMinfoKindObj* = object ## when defined(SDL_VIDEO_DRIVER_X11)
       x11*: SysWMMsgX11Obj
-
-type
-  ResetFlag* {.pure.} = enum
-    None = BGFX_RESET_NONE
-    Fullscreen = BGFX_RESET_FULLSCREEN
-    MSAAx2 = BGFX_RESET_MSAA_X2
-    MSAAx4 = BGFX_RESET_MSAA_X4
-    MSAAx8 = BGFX_RESET_MSAA_X8
-    MSAAx16 = BGFX_RESET_MSAA_X16
-    VSync = BGFX_RESET_VSYNC
-    MaxAnisotropy = BGFX_RESET_MAXANISOTROPY
-    Capture = BGFX_RESET_CAPTURE
-    HMD = BGFX_RESET_HMD
-    DEUBG = BGFX_RESET_HMD_DEBUG
-    HMDRecenter = BGFX_RESET_HMD_RECENTER
-    FlushAfterRender = BGFX_RESET_FLUSH_AFTER_RENDER
-    FlipAfterRender = BGFX_RESET_FLIP_AFTER_RENDER
-    sRGBBackbuffer = BGFX_RESET_SRGB_BACKBUFFER
-
-  DebugMode* {.pure.} = enum
-    None = 0u32
-    Wireframe = BGFX_DEBUG_WIREFRAME
-    IFH = BGFX_DEBUG_IFH
-    Stats = BGFX_DEBUG_STATS
-    Text = BGFX_DEBUG_TEXT
-
-  ClearMode* {.pure.} = enum
-    Color = BGFX_CLEAR_COLOR
-    Depth = BGFX_CLEAR_DEPTH
-
-  BlendFunc* {.pure.} = enum
-    SrcAlpha = BGFX_STATE_BLEND_SRC_ALPHA
-    InvSrcAlpha = BGFX_STATE_BLEND_INV_SRC_ALPHA
 
 var lastTime {.global.} : uint64
 
@@ -102,21 +77,22 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
     bgfx_set_platform_data(pd)
     return true
 
-proc init*(
-  this: Graphics,
-  rootWindowTitle: string = nil,
-  rootWindowPosX, rootWindowPosY: int = window.posUndefined,
-  rootWindowWidth = 960, rootWindowHeight = 540,
-  resetFlags: ResetFlag = ResetFlag.None,
-  debugMode: DebugMode = DebugMode.None
-): bool =
+method init*(this: Graphics, config: Config): bool =
+  # TODO: We need to add the defaults back in. I was struggling with the cleanest ways to do so.
+  var rootWindowPosX = config.rootWindowPosX
+  var rootWindowPosY = config.rootWindowPosY
+  var rootWindowWidth = config.rootWindowWidth
+  var rootWindowHeight = config.rootWindowHeight
+  var resetFlags = config.resetFlags
+  var debugMode = config.debugMode
+
   if sdl.init(INIT_VIDEO) != SdlSuccess:
     logError "Error initializing SDL : " & $getError()
     return false
 
   this.rootWindow = Window()
   this.rootWindow.init(
-    rootWindowTitle,
+    config.rootWindowTitle,
     rootWindowPosX, rootWindowPosY,
     rootWindowWidth, rootWindowHeight,
     window.WindowFlag.WindowShown.ord or window.WindowFlag.WindowResizable.ord
@@ -144,7 +120,7 @@ proc init*(
 proc clearView*(this: Graphics, viewId: uint8, flags: uint16, rgba: uint32, depth: float32, stencil: uint8) =
   bgfx_set_view_clear(viewID, flags, rgba, depth, stencil)
 
-proc swap*(this: Graphics) =
+method render*(this: Graphics) =
   let current = sdl.getPerformanceCounter()
   let frameTime = float((current - lastTime) * 1000) / float sdl.getPerformanceFrequency()
   lastTime = current
@@ -165,8 +141,7 @@ proc handleWindowResizedEvent*(e: EventArgs) {.procvar.} =
   bgfx_reset(width, height, ResetFlag.None.ord)
   bgfx_set_view_rect(0, 0, 0, width , height )
 
-
-proc shutdown*(this: Graphics) =
+method shutdown*(this: Graphics) =
   if this.rootWindow.isNil:
     return
   elif this.rootWindow.handle.isNil:

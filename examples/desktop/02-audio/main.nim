@@ -7,15 +7,10 @@ import
 
 import
   ../../../src/frag,
-  ../../../src/frag/assets,
-  ../../../src/frag/assets/asset,
-  ../../../src/frag/assets/asset_types,
-  ../../../src/frag/config,
-  ../../../src/frag/graphics,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
   ../../../src/frag/graphics/window,
-  ../../../src/frag/logger
+  ../../../src/frag/modules/assets
 
 type
   App = ref object
@@ -39,8 +34,8 @@ proc initializeApp(app: App, ctx: Frag) =
   logDebug "Assets loaded."
 
   app.batch = SpriteBatch(
-    blendSrcFunc: graphics.BlendFunc.SrcAlpha,
-    blendDstFunc: graphics.BlendFunc.InvSrcAlpha,
+    blendSrcFunc: BlendFunc.SrcAlpha,
+    blendDstFunc: BlendFunc.InvSrcAlpha,
     blendingEnabled: true
   )
   app.batch.init(1000, 0)
@@ -69,7 +64,7 @@ proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   discard
 
 proc renderApp(app: App, ctx: Frag) =
-  ctx.graphics.clearView(0, graphics.ClearMode.Color.ord or graphics.ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
+  ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
   let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
 
@@ -84,8 +79,8 @@ startFrag[App](Config(
   rootWindowTitle: "Frag Example 02-audio",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
-  resetFlags: graphics.ResetFlag.None,
+  resetFlags: ResetFlag.None,
   logFileName: "example-01.log",
   assetRoot: "../assets",
-  debugMode: graphics.DebugMode.Text
+  debugMode: DebugMode.Text
 ))

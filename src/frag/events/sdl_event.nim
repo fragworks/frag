@@ -2,9 +2,9 @@ import events
 
 import sdl2 as sdl except Event
 
-import 
-  ./event,
-  ../input
+import
+  ../modules/input,
+  ./event
 
 type
   SDLEventType* {.pure.} = enum

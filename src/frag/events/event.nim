@@ -6,12 +6,13 @@ import
   sdl2 as sdl
 
 import
-  ../assets,
   ../assets/asset,
-  ../assets/asset_types
+  ../assets/asset_types,
+  ../modules/assets,
+  ../modules/module
 
 type
-  EventBus* = ref object
+  EventBus* = ref object of Module
     emitter*: EventEmitter
     assetManager*: AssetManager
 
