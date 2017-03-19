@@ -8,10 +8,11 @@ import
 import
   ../assets,
   ../assets/asset,
-  ../assets/asset_types
+  ../assets/asset_types,
+  ../modules/module
 
 type
-  EventBus* = ref object
+  EventBus* = ref object of Module
     emitter*: EventEmitter
     assetManager*: AssetManager
 

@@ -58,10 +58,18 @@ proc init(ctx: Frag, config: Config) =
   logger.init(config.logFileName)
   logDebug "Logging subsystem initialized."
 
-  logDebug "Initializing events subsystem..."
   ctx.events = EventBus()
-  ctx.events.init()
-  logDebug "Events subsystem initialized."
+  ctx.addModule(ctx.events, "events")
+
+  ctx.input = Input()
+  ctx.addModule(ctx.input, "input")
+
+  for module in ctx.modules:
+    logDebug "Initializing $1 subsystem..." % module.name
+    if not module.init():
+      logFatal "Error initializing $1 subsystem." % module.name
+      ctx.shutdown(QUIT_FAILURE)
+    logDebug "Initialized $1 subsystem." % module.name
 
   logDebug "Initializing graphics subsystem..."
   ctx.graphics = Graphics()
@@ -75,16 +83,6 @@ proc init(ctx: Frag, config: Config) =
     logFatal "Error initializing graphics subsystem."
     ctx.shutdown(QUIT_FAILURE)
   logDebug "Graphics subsystem initialized."
-
-  ctx.input = Input()
-  ctx.addModule(ctx.input, "input")
-
-  for module in ctx.modules:
-    logDebug "Initializing $1 subsystem..." % module.name
-    if not module.init():
-      logFatal "Error initializing $1 subsystem." % module.name
-      ctx.shutdown(QUIT_FAILURE)
-    logDebug "Initialized $1 subsystem." % module.name
 
   logDebug "Initializing asset management subsystem..."
   ctx.assets = AssetManager()
