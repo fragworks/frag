@@ -2,11 +2,11 @@ import
   bgfxdotnim as bgfx
 
 import
-  fs_default,
   ../../logger,
-  ../../graphics,
   ../../math/fpu_math as fpumath,
+  ../../modules/graphics,
   ../types,
+  fs_default,
   texture,
   vs_default
 

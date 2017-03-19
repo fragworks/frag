@@ -1,11 +1,11 @@
 import
   ../../../src/frag,
   ../../../src/frag/config,
-  ../../../src/frag/graphics,
   ../../../src/frag/graphics/color,
   ../../../src/frag/graphics/types,
   ../../../src/frag/graphics/window,
-  ../../../src/frag/logger
+  ../../../src/frag/logger,
+  ../../../src/frag/modules/graphics
 
 type
   App = ref object

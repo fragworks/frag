@@ -2,16 +2,16 @@ import
   sdl2 as sdl except EventType
 
 import
-  frag/assets,
   frag/assets/asset,
   frag/config,
-  frag/event_bus,
   frag/events/sdl_event,
   frag/framerate/framerate,
   frag/globals,
-  frag/graphics,
-  frag/input,
   frag/logger,
+  frag/modules/assets,
+  frag/modules/event_bus,
+  frag/modules/graphics,
+  frag/modules/input,
   frag/modules/module
 
 type

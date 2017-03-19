@@ -5,11 +5,11 @@ import
   sdl2 as sdl except EventType, Event
 
 import
-  config,
-  events/event,
-  events/event_handlers,
-  events/sdl_event,
-  logger
+  ../config,
+  ../events/event,
+  ../events/event_handlers,
+  ../events/sdl_event,
+  ../logger
 
 export
   event,

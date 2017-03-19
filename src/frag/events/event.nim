@@ -6,9 +6,9 @@ import
   sdl2 as sdl
 
 import
-  ../assets,
   ../assets/asset,
   ../assets/asset_types,
+  ../modules/assets,
   ../modules/module
 
 type

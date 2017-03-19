@@ -5,14 +5,14 @@ import
   tables
 
 import
-  assets/asset,
-  assets/asset_types,
-  config,
-  globals,
-  graphics/two_d/texture,
-  graphics/two_d/texture_region,
-  logger,
-  modules/module
+  ../assets/asset,
+  ../assets/asset_types,
+  ../config,
+  ../globals,
+  ../graphics/two_d/texture,
+  ../graphics/two_d/texture_region,
+  ../logger,
+  module
 
 type
   AssetManager* = ref object of Module

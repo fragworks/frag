@@ -8,14 +8,14 @@ import
   sdl2 as sdl
 
 import
-  config,
-  event_bus,
-  graphics/color,
-  graphics/sdl2/version,
-  graphics/types,
-  graphics/window,
-  logger,
-  modules/module
+  ../config,
+  ../events/sdl_event,
+  ../graphics/color,
+  ../graphics/sdl2/version,
+  ../graphics/types,
+  ../graphics/window,
+  ../logger,
+  module
 
 type
   Graphics* = ref object of Module
