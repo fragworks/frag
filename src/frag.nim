@@ -1,7 +1,4 @@
 import
-  logging
-
-import
   sdl2 as sdl except EventType
 
 import
@@ -13,7 +10,8 @@ import
   frag/framerate/framerate,
   frag/globals,
   frag/graphics,
-  frag/input
+  frag/input,
+  frag/logger
 
 type
   Frag* = ref object
@@ -22,21 +20,18 @@ type
     graphics*: Graphics
     input*: Input
 
-var consoleLogger : ConsoleLogger
-var fileLogger : FileLogger
-
 proc shutdown(ctx: Frag, exitCode: int) =
-  info "Shutting down Frag..."
+  logInfo "Shutting down Frag..."
 
-  debug "Shutting down graphics subsystem..."
+  logDebug "Shutting down graphics subsystem..."
   ctx.graphics.shutdown()
-  debug "Graphics subsystem shut down."
+  logDebug "Graphics subsystem shut down."
 
-  debug "Shutting down asset management subsystem..."
+  logDebug "Shutting down asset management subsystem..."
   ctx.assets.shutdown()
-  debug "Asset management subsystem shut down."
+  logDebug "Asset management subsystem shut down."
 
-  info "Frag shut down. Goodbye."
+  logInfo "Frag shut down. Goodbye."
   quit(exitCode)
 
 proc registerEventHandlers(ctx: Frag) =
@@ -51,21 +46,15 @@ proc init(ctx: Frag, config: Config) =
   echo "Initializing Frag - " & globals.version & "..."
 
   echo "Initializing logging subsystem..."
+  logger.init(config.logFileName)
+  logDebug "Logging subsystem initialized."
 
-  consoleLogger = newConsoleLogger()
-  fileLogger = newFileLogger(config.logFileName)
-
-  logging.addHandler(consoleLogger)
-  logging.addHandler(fileLogger)
-
-  debug "Logging subsystem initialized."
-
-  debug "Initializing events subsystem..."
+  logDebug "Initializing events subsystem..."
   ctx.events = EventBus()
   ctx.events.init()
-  debug "Events subsystem initialized."
+  logDebug "Events subsystem initialized."
 
-  debug "Initializing graphics subsystem..."
+  logDebug "Initializing graphics subsystem..."
   ctx.graphics = Graphics()
   if not ctx.graphics.init(
     config.rootWindowTitle,
@@ -74,27 +63,27 @@ proc init(ctx: Frag, config: Config) =
     config.resetFlags,
     config.debugMode
   ):
-    fatal "Error initializing graphics subsystem."
+    logFatal "Error initializing graphics subsystem."
     ctx.shutdown(QUIT_FAILURE)
-  debug "Graphics subsystem initialized."
+  logDebug "Graphics subsystem initialized."
 
-  debug "Initializing input subsystem..."
+  logDebug "Initializing input subsystem..."
   ctx.input = Input()
   if not ctx.input.init():
-    fatal "Error initializing graphics subsystem."
+    logFatal "Error initializing graphics subsystem."
     ctx.shutdown(QUIT_FAILURE)
-  debug "Input subsystem initialized."
+  logDebug "Input subsystem initialized."
 
-  debug "Initializing asset management subsystem..."
+  logDebug "Initializing asset management subsystem..."
   ctx.assets = AssetManager()
   ctx.assets.init(config.assetRoot)
-  debug "Asset management subsystem initialized."
+  logDebug "Asset management subsystem initialized."
 
   ctx.events.registerAssetManager(ctx.assets)
 
   ctx.registerEventHandlers()
 
-  info "Frag initialized."
+  logInfo "Frag initialized."
 
 var last = 0'u64
 var deltaTime = 0'f64

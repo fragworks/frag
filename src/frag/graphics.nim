@@ -1,6 +1,5 @@
 import
   events,
-  logging,
   strfmt
 
 import
@@ -12,7 +11,8 @@ import
   event_bus,
   graphics/color,
   graphics/sdl2/version,
-  graphics/window
+  graphics/window,
+  logger
 
 type
   Graphics* = ref object
@@ -93,7 +93,7 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
             pd.nwh = info.cocoa.window
           pd.ndt = nil
         else:
-          error "Error linking SDL2 and BGFX."
+          logError "Error linking SDL2 and BGFX."
           return false
 
     pd.backBuffer = nil
@@ -111,7 +111,7 @@ proc init*(
   debugMode: DebugMode = DebugMode.None
 ): bool =
   if sdl.init(INIT_VIDEO) != SdlSuccess:
-    error "Error initializing SDL : " & $getError()
+    logError "Error initializing SDL : " & $getError()
     return false
 
   this.rootWindow = Window()
@@ -123,14 +123,14 @@ proc init*(
   )
 
   if this.rootWindow.handle.isNil:
-    error "Error creating root application window."
+    logError "Error creating root application window."
     return false
 
   if not linkSDL2BGFX(this.rootWindow.handle):
     return false
 
   if not bgfx_init(BGFX_RENDERER_TYPE_NOOP, 0'u16, 0, nil, nil):
-    error("Error initializng BGFX.")
+    logError("Error initializng BGFX.")
 
   bgfx_reset(rootWindowWidth.uint32, rootWindowHeight.uint32, uint32 resetFlags)
 
@@ -170,15 +170,15 @@ proc shutdown*(this: Graphics) =
   if this.rootWindow.isNil:
     return
   elif this.rootWindow.handle.isNil:
-    debug "Shutting down SDL..."
+    logDebug "Shutting down SDL..."
     sdl.quit()
-    debug "SDL shut down."
+    logDebug "SDL shut down."
   else:
-    debug "Shutting down BGFX..."
+    logDebug "Shutting down BGFX..."
     bgfx_shutdown()
-    debug "BGFX shut down."
+    logDebug "BGFX shut down."
 
-    debug "Destroying root window and shutting down SDL..."
+    logDebug "Destroying root window and shutting down SDL..."
     sdl.destroyWindow(this.rootWindow.handle)
     sdl.quit()
-    debug "SDL shut down."
+    logDebug "SDL shut down."

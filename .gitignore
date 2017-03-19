@@ -8,12 +8,17 @@ main
 nakefile
 nimcache/
 
-# submodules
+##############
+# SUBMODULES #
+##############
 assets/fonts
 
-# environment
+###############
+# ENVIRONMENT #
+###############
 *.swp
 .DS_store
+.vscode
 
 ##########
 # GRADLE #

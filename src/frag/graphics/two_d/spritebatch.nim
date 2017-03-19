@@ -1,16 +1,13 @@
 import
-  logging
-
-import
   bgfxdotnim as bgfx
 
 import 
-  fs_default
-  , ../../graphics
-  , ../../math/fpu_math as fpumath
-  , texture
-  , vs_default
-
+  fs_default,
+  ../../logger,
+  ../../graphics,
+  ../../math/fpu_math as fpumath,
+  texture,
+  vs_default
 
 type
   SpriteBatch* = ref object
@@ -81,7 +78,7 @@ proc draw*(spriteBatch: SpriteBatch, textureRegion: TextureRegion, x, y: float32
 ]#
 proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: float32, color: uint32 = 0xffffffff'u32, scale: Vec3 = [1.0'f32, 1.0'f32, 1.0'f32]) =
   if not spriteBatch.drawing:
-    error "Spritebatch not in drawing mode. Call begin before calling draw."
+    logError "Spritebatch not in drawing mode. Call begin before calling draw."
     return
 
   if texture != spriteBatch.lastTexture:
@@ -141,14 +138,14 @@ proc init*(spriteBatch: SpriteBatch, maxSprites: int, view: uint8) =
 
 proc begin*(spriteBatch: SpriteBatch) =
   if spriteBatch.drawing:
-    error "Spritebatch is already in drawing mode. Call end before calling begin."
+    logError "Spritebatch is already in drawing mode. Call end before calling begin."
     return
 
   spriteBatch.drawing = true
 
 proc `end`*(spriteBatch: SpriteBatch) =
   if not spriteBatch.drawing:
-    error "Spritebatch is not currently in drawing mode. Call begin before calling end."
+    logError "Spritebatch is not currently in drawing mode. Call begin before calling end."
     return
   
   if spriteBatch.vertices.len > 0:

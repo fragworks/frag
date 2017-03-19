@@ -7,6 +7,6 @@
 [submodule "android/app/src/main/jni/SDL"]
 	path = android/app/src/main/jni/SDL
 	url = git@github.com:fragworks/sdl2.git
-[submodule "3rd/bgfx"]
-	path = 3rd/bgfx
-	url = https://github.com/bkaradzic/bgfx.git
+[submodule "3rdparty/bgfx"]
+	path = 3rdparty/bgfx
+	url = git@github.com:bkaradzic/bgfx.git

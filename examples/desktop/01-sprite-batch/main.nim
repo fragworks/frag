@@ -1,19 +1,19 @@
 import
   hashes,
-  logging,
   tables
 
 import
-  ../../../src/frag/config,
   ../../../src/frag,
   ../../../src/frag/assets,
   ../../../src/frag/assets/asset,
   ../../../src/frag/assets/asset_types,
+  ../../../src/frag/config,
   ../../../src/frag/graphics,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
   ../../../src/frag/graphics/window,
-  ../../../src/frag/input
+  ../../../src/frag/input,
+  ../../../src/frag/logger
 
 type
   App = ref object
@@ -26,15 +26,15 @@ const HALF_WIDTH = WIDTH / 2
 const HALF_HEIGHT = HEIGHT / 2
 
 proc initializeApp(app: App, ctx: Frag) =
-  debug "Initializing app..."
+  logDebug "Initializing app..."
 
   app.assetIds = initTable[string, Hash]()
 
   let filename = "textures/test01.png"
 
-  debug "Loading assets..."
+  logDebug "Loading assets..."
   app.assetIds.add(filename, ctx.assets.load(filename, AssetType.Texture))
-  debug "Assets loaded."
+  logDebug "Assets loaded."
 
   app.batch = SpriteBatch(
     blendSrcFunc: graphics.BlendFunc.SrcAlpha,
@@ -43,17 +43,17 @@ proc initializeApp(app: App, ctx: Frag) =
   )
   app.batch.init(1000, 0)
 
-  debug "App initialized."
+  logDebug "App initialized."
 
 proc shutdownApp(app: App, ctx: Frag) =
-  debug "Shutting down app..."
+  logDebug "Shutting down app..."
 
-  debug "Unloading assets..."
+  logDebug "Unloading assets..."
   for _, assetId in app.assetIds:
     ctx.assets.unload(assetId)
-  debug "Assets unloaded."
+  logDebug "Assets unloaded."
 
-  debug "App shut down..."
+  logDebug "App shut down..."
 
 proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   discard

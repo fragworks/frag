@@ -1,11 +1,11 @@
 import
-  events,
-  logging
+  events
 
 import
   sdl2 as sdl except EventType, Event
 
 import
+  logger,
   events/event,
   events/event_handlers,
   events/sdl_event
@@ -35,7 +35,7 @@ proc emit*(this: EventBus, event: var Event) =
       let eventMessage  = SDLEventMessage(event: sdlEvent)
       this.emitter.emit($sdlEventData.kind, eventMessage)
     else:
-      warn "Unable to emit event with unknown type : " & $sdlEventData.kind
+      logWarn "Unable to emit event with unknown type : " & $sdlEventData.kind
   else:
     case event.eventType
     of EventType.LoadAsset, EventType.UnloadAsset, EventType.GetAsset:

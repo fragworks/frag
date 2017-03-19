@@ -1,6 +1,5 @@
 # TODO: (ZC) BMPs MipMaps
 import
-  logging,
   os
 
 import
@@ -11,7 +10,8 @@ import
 
 import
   ../../assets/asset_types,
-  ../../assets/asset
+  ../../assets/asset,
+  ../../logger
 
 export Texture
 
@@ -44,11 +44,11 @@ proc verifyPNG*(filename: string) : bool =
 
 proc loadPNG*(filename: string) : Texture {.procvar.} =
   if not fileExists(filename):
-    error "Unable to load PNG with filename : " & filename & " file does not exist!"
+    logError "Unable to load PNG with filename : " & filename & " file does not exist!"
     return
 
   if not verifyPNG(filename):
-    error "Unable to load PNG with filename : " & filename & " not a PNG file!"
+    logError "Unable to load PNG with filename : " & filename & " not a PNG file!"
 
   var texture = Texture(assetType: AssetType.Texture)
   texture.filename = filename
@@ -56,7 +56,7 @@ proc loadPNG*(filename: string) : Texture {.procvar.} =
   #result.surface = sdl_image.load(filename)
 
   if texture.data.isNil:
-    error "Error loading Texture!"
+    logError "Error loading Texture!"
     return
 
   if texture.channels == 4:
@@ -72,7 +72,7 @@ proc load*(filename: string): Texture =
   of ".png":
     return loadPNG(filename)
   else:
-    warn "Extension : " & ext & " not recognized."
+    logWarn "Extension : " & ext & " not recognized."
 
 proc unload*(texture: Texture) =
   bgfx_destroy_texture(texture.handle)
