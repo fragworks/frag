@@ -28,9 +28,33 @@ Samsung Galaxy S6 (arm64-v8a)
 
 Examples
 -------
+----------
 
-**Hello World**
+**Desktop**
+
+
+----------
+
+
+[Hello World](https://github.com/fragworks/frag/tree/master/examples/desktop/00-hello-world)
 ![https://github.com/fragworks/frag/tree/master/examples/00-hello-world](http://i.imgur.com/24JvAzP.png)
 
-**Spritebatch**
+[Spritebatch](https://github.com/fragworks/frag/tree/master/examples/desktop/01-sprite-batch)
 ![https://github.com/fragworks/frag/tree/master/examples/01-sprite-batch](http://i.imgur.com/0qYhxLw.png)
+
+[Audio](https://github.com/fragworks/frag/tree/master/examples/desktop/02-audio)
+
+[Input](https://github.com/fragworks/frag/tree/master/examples/desktop/03-input)
+
+
+----------
+
+
+**Android**
+
+
+----------
+
+Hello World
+
+![Placeholder](http://i.imgur.com/Ybqin46.png)
