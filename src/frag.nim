@@ -64,6 +64,9 @@ proc init(ctx: Frag, config: Config) =
   ctx.input = Input()
   ctx.addModule(ctx.input, "input")
 
+  ctx.graphics = Graphics()
+  ctx.addModule(ctx.graphics, "graphics")
+
   ctx.assets = AssetManager()
   ctx.addModule(ctx.assets, "assets")
   ctx.events.registerAssetManager(ctx.assets)
@@ -74,19 +77,6 @@ proc init(ctx: Frag, config: Config) =
       logFatal "Error initializing $1 subsystem." % module.name
       ctx.shutdown(QUIT_FAILURE)
     logDebug "Initialized $1 subsystem." % module.name
-
-  logDebug "Initializing graphics subsystem..."
-  ctx.graphics = Graphics()
-  if not ctx.graphics.init(
-    config.rootWindowTitle,
-    config.rootWindowPosX, config.rootWindowPosY,
-    config.rootWindowWidth, config.rootWindowHeight,
-    config.resetFlags,
-    config.debugMode
-  ):
-    logFatal "Error initializing graphics subsystem."
-    ctx.shutdown(QUIT_FAILURE)
-  logDebug "Graphics subsystem initialized."
 
   ctx.registerEventHandlers()
 
@@ -134,7 +124,7 @@ proc startFrag*[App](config: Config) =
 
     app.updateApp(ctx, deltaTime * 0.001)
     app.renderApp(ctx)
-    ctx.graphics.swap()
+    ctx.graphics.render()
 
     limitFramerate()
 

@@ -8,15 +8,17 @@ import
   sdl2 as sdl
 
 import
+  config,
   event_bus,
   graphics/color,
   graphics/sdl2/version,
   graphics/types,
   graphics/window,
-  logger
+  logger,
+  modules/module
 
 type
-  Graphics* = ref object
+  Graphics* = ref object of Module
     rootWindow*: window.Window
     rootGLContext: sdl.GLContextPtr
 
@@ -70,21 +72,21 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
     bgfx_set_platform_data(pd)
     return true
 
-proc init*(
-  this: Graphics,
-  rootWindowTitle: string = nil,
-  rootWindowPosX, rootWindowPosY: int = window.posUndefined,
-  rootWindowWidth = 960, rootWindowHeight = 540,
-  resetFlags: ResetFlag = ResetFlag.None,
-  debugMode: DebugMode = DebugMode.None
-): bool =
+method init*(this: Graphics, config: Config): bool =
+  var rootWindowPosX = config.rootWindowPosX
+  var rootWindowPosY = config.rootWindowPosY
+  var rootWindowWidth = config.rootWindowWidth
+  var rootWindowHeight = config.rootWindowHeight
+  var resetFlags = config.resetFlags
+  var debugMode = config.debugMode
+
   if sdl.init(INIT_VIDEO) != SdlSuccess:
     logError "Error initializing SDL : " & $getError()
     return false
 
   this.rootWindow = Window()
   this.rootWindow.init(
-    rootWindowTitle,
+    config.rootWindowTitle,
     rootWindowPosX, rootWindowPosY,
     rootWindowWidth, rootWindowHeight,
     window.WindowFlag.WindowShown.ord or window.WindowFlag.WindowResizable.ord
@@ -112,7 +114,7 @@ proc init*(
 proc clearView*(this: Graphics, viewId: uint8, flags: uint16, rgba: uint32, depth: float32, stencil: uint8) =
   bgfx_set_view_clear(viewID, flags, rgba, depth, stencil)
 
-proc swap*(this: Graphics) =
+method render*(this: Graphics) =
   let current = sdl.getPerformanceCounter()
   let frameTime = float((current - lastTime) * 1000) / float sdl.getPerformanceFrequency()
   lastTime = current
@@ -133,8 +135,7 @@ proc handleWindowResizedEvent*(e: EventArgs) {.procvar.} =
   bgfx_reset(width, height, ResetFlag.None.ord)
   bgfx_set_view_rect(0, 0, 0, width , height )
 
-
-proc shutdown*(this: Graphics) =
+method shutdown*(this: Graphics) =
   if this.rootWindow.isNil:
     return
   elif this.rootWindow.handle.isNil:
