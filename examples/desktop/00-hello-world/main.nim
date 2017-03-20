@@ -26,7 +26,7 @@ startFrag[App](Config(
   rootWindowTitle: "Frag Example 00-hello-world",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
-  resetFlags: ResetFlag.None,
+  resetFlags: ResetFlag.VSync,
   logFileName: "example-00.log",
   assetRoot: "../assets",
   debugMode: DebugMode.Text

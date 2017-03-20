@@ -86,5 +86,5 @@ startFrag[App](Config(
   resetFlags: ResetFlag.VSync,
   logFileName: "example-01.log",
   assetRoot: "../assets",
-  debugMode: DebugMode.Text.ord or DebugMode.Stats.ord or DebugMode.IFH.ord
+  debugMode: DebugMode.Text
 ))
