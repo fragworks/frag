@@ -9,4 +9,4 @@ type
     resetFlags*: ResetFlag
     logFileName*: string
     assetRoot*: string
-    debugMode*: DebugMode
+    debugMode*: uint

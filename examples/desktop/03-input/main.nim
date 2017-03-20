@@ -27,6 +27,7 @@ const WIDTH = 960
 const HEIGHT = 540
 const HALF_WIDTH = WIDTH / 2
 const HALF_HEIGHT = HEIGHT / 2
+const PLAYER_SPEED = 100.0
 
 proc initializeApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
@@ -66,10 +67,10 @@ proc shutdownApp(app: App, ctx: Frag) =
   logDebug "App shut down..."
 
 proc updateApp(app: App, ctx: Frag, deltaTime: float) =
-  if ctx.input.down("w", true): app.player.position[1] += 1
-  if ctx.input.down("s", true): app.player.position[1] -= 1
-  if ctx.input.down("d", true): app.player.position[0] += 1
-  if ctx.input.down("a", true): app.player.position[0] -= 1
+  if ctx.input.down("w", true): app.player.position[1] += PLAYER_SPEED * deltaTime
+  if ctx.input.down("s", true): app.player.position[1] -= PLAYER_SPEED * deltaTime
+  if ctx.input.down("d", true): app.player.position[0] += PLAYER_SPEED * deltaTime
+  if ctx.input.down("a", true): app.player.position[0] -= PLAYER_SPEED * deltaTime
 
 proc renderApp(app: App, ctx: Frag) =
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
@@ -82,8 +83,8 @@ startFrag[App](Config(
   rootWindowTitle: "Frag Example 01-sprite-batch",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
-  resetFlags: ResetFlag.None,
+  resetFlags: ResetFlag.VSync,
   logFileName: "example-01.log",
   assetRoot: "../assets",
-  debugMode: DebugMode.Text
+  debugMode: DebugMode.Text.ord or DebugMode.Stats.ord or DebugMode.IFH.ord
 ))

@@ -41,7 +41,7 @@ proc emit*(this: EventBus, event: var Event) =
       let eventMessage  = SDLEventMessage(event: sdlEvent)
       this.emitter.emit($sdlEventData.kind, eventMessage)
     else:
-      logWarn "Unable to emit event with unknown type : " & $sdlEventData.kind
+      discard
   else:
     case event.eventType
     of EventType.LoadAsset, EventType.UnloadAsset, EventType.GetAsset:
