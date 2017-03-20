@@ -6,15 +6,26 @@ when defined(android):
   {.emit: """
     #include <android/log.h>
   """.}
-  proc native_log(level: cstring, a: cstring) =
-      {.emit: """__android_log_write(ANDROID_LOG_INFO, `level`, `a`);""".}
+  proc native_log(level: Level, a: cstring) =
+      case level:
+      of lvlDebug:
+        {.emit: """__android_log_write(ANDROID_LOG_DEBUG, "FRAG", `a`);""".}
+      of lvlInfo:
+        {.emit: """__android_log_write(ANDROID_LOG_INFO, "FRAG", `a`);""".}
+      of lvlWarn:
+        {.emit: """__android_log_write(ANDROID_LOG_WARN, "FRAG", `a`);""".}
+      of lvlError:
+        {.emit: """__android_log_write(ANDROID_LOG_ERROR, "FRAG", `a`);""".}
+      of lvlFatal:
+        {.emit: """__android_log_write(ANDROID_LOG_FATAL, "FRAG", `a`);""".}
+      else:
+        discard
 
-  proc logDebug*(a: varargs[string, `$`]) = native_log(LevelNames[Level.lvlDebug], a.join())
-  proc logInfo*(a: varargs[string, `$`]) = native_log(LevelNames[Level.lvlInfo], a.join())
-  proc logNotice*(a: varargs[string, `$`]) = native_log(LevelNames[Level.lvlNotice], a.join())
-  proc logWarn*(a: varargs[string, `$`]) = native_log(LevelNames[Level.lvlWarn], a.join())
-  proc logError*(a: varargs[string, `$`]) = native_log(LevelNames[Level.lvlError], a.join())
-  proc logFatal*(a: varargs[string, `$`]) = native_log(LevelNames[Level.lvlFatal], a.join())
+  proc logDebug*(a: varargs[string, `$`]) = native_log(Level.lvlDebug, a.join())
+  proc logInfo*(a: varargs[string, `$`]) = native_log(Level.lvlInfo, a.join())
+  proc logWarn*(a: varargs[string, `$`]) = native_log(Level.lvlWarn, a.join())
+  proc logError*(a: varargs[string, `$`]) = native_log(Level.lvlError, a.join())
+  proc logFatal*(a: varargs[string, `$`]) = native_log(Level.lvlFatal, a.join())
   proc log*(a: varargs[string, `$`]) = logDebug(a)
 
   proc init*(logFileName: string) =
@@ -29,9 +40,6 @@ else:
 
   proc logInfo*(args: varargs[string, `$`]) =
     logging.info(args)
-
-  proc logNotice*(args: varargs[string, `$`]) =
-    logging.notice(args)
 
   proc logWarn*(args: varargs[string, `$`]) =
     logging.warn(args)
