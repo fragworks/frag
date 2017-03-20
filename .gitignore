@@ -11,7 +11,7 @@ nimcache/
 ##############
 # SUBMODULES #
 ##############
-assets/fonts
+vendor
 
 ###############
 # ENVIRONMENT #
