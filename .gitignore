@@ -6,7 +6,13 @@
 main
 !main/
 nakefile
-nimcache/
+**/nimcache/**
+
+###########
+# ANDROID #
+###########
+**/jni/src/*.c
+**/jni/src/*.json
 
 ##############
 # SUBMODULES #
