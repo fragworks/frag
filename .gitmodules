@@ -10,3 +10,6 @@
 [submodule "3rdparty/bgfx"]
 	path = 3rdparty/bgfx
 	url = git@github.com:bkaradzic/bgfx.git
+[submodule "android/app/src/main/jni/SDL_image"]
+	path = android/app/src/main/jni/SDL_image
+	url = git@github.com:fragworks/sdl_image.git
