@@ -15,6 +15,9 @@ nakefile
 **/jni/src/*.json
 android/app/src/main/obj/
 android/app/src/main/jniLibs/
+android/app/build
+android/build
+android/local.properties
 
 ##############
 # SUBMODULES #
@@ -27,6 +30,8 @@ vendor
 *.swp
 .DS_store
 .vscode
+*.idea
+*.iml
 
 ##########
 # GRADLE #
