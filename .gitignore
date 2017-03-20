@@ -13,6 +13,8 @@ nakefile
 ###########
 **/jni/src/*.c
 **/jni/src/*.json
+android/app/src/main/obj/
+android/app/src/main/jniLibs/
 
 ##############
 # SUBMODULES #

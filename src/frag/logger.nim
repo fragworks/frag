@@ -6,16 +6,16 @@ when defined(android):
   {.emit: """
     #include <android/log.h>
   """.}
-  proc native_log(level: Level, a: cstring) =
-      {.emit: """__android_log_write(ANDROID_LOG_INFO, $level, `a`);""".}
+  proc native_log(level: cstring, a: cstring) =
+      {.emit: """__android_log_write(ANDROID_LOG_INFO, `level`, `a`);""".}
 
-  proc log*(a: varargs[string, `$`]) = native_log(Level.lvlDebug, a.join())
-  proc logDebug*(a: varargs[string, `$`]) = native_log(Level.lvlDebug, a.join())
-  proc logInfo*(a: varargs[string, `$`]) = native_log(Level.lvlInfo, a.join())
-  proc logNotice*(a: varargs[string, `$`]) = native_log(Level.lvlNotice, a.join())
-  proc logWarn*(a: varargs[string, `$`]) = native_log(Level.lvlWarn, a.join())
-  proc logError*(a: varargs[string, `$`]) = native_log(Level.lvlError, a.join())
-  proc logFatal*(a: varargs[string, `$`]) = native_log(Level.lvlFatal, a.join())
+  proc log*(a: varargs[string, `$`]) = native_log($Level.lvlDebug, a.join())
+  proc logDebug*(a: varargs[string, `$`]) = native_log($Level.lvlDebug, a.join())
+  proc logInfo*(a: varargs[string, `$`]) = native_log($Level.lvlInfo, a.join())
+  proc logNotice*(a: varargs[string, `$`]) = native_log($Level.lvlNotice, a.join())
+  proc logWarn*(a: varargs[string, `$`]) = native_log($Level.lvlWarn, a.join())
+  proc logError*(a: varargs[string, `$`]) = native_log($Level.lvlError, a.join())
+  proc logFatal*(a: varargs[string, `$`]) = native_log($Level.lvlFatal, a.join())
 
   proc init*(logFileName: string) =
     discard
