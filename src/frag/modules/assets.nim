@@ -18,13 +18,7 @@ export
   asset,
   asset_types
 
-type
-  AssetManager* = ref object of Module
-    assetSearchPath: string
-    internalSearchPath: string
-    assets: Table[Hash, ref Asset]
-
-method init*(this: AssetManager, config: Config): bool =
+proc init*(this: AssetManager, config: Config): bool =
   this.assets = initTable[Hash, ref Asset]()
   this.assetSearchPath = getAppDir() & DirSep & config.assetRoot & DirSep
   this.internalSearchPath = getAppDir() & DirSep & engineAssetRoot & DirSep
@@ -38,7 +32,7 @@ proc dispose(this: AssetManager, id: Hash) =
     else:
       logWarn "Unable to unload asset with unknown type."
 
-method shutdown*(this: AssetManager) =
+proc shutdown*(this: AssetManager) =
   for id, _ in this.assets:
     this.dispose(id)
 

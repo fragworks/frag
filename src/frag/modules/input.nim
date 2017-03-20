@@ -10,16 +10,12 @@ import
 
 let defaultKeyboardState = sdl.getKeyboardState(nil)
 
-type Input* = ref object of Module
-  pressedKeys*, releasedKeys: seq[cint]
-  state: ptr array[0 .. SDL_NUM_SCANCODES.int, uint8]
-
-method init*(this: Input, config: Config): bool =
+proc init*(this: Input, config: Config): bool =
   this.pressedKeys = @[]
   this.releasedKeys = @[]
   return true
 
-method update*(this: Input) =
+proc update*(this: Input) =
   this.pressedKeys.setLen(0)
   this.releasedKeys.setLen(0)
   this.state = defaultKeyboardState

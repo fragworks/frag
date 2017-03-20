@@ -9,14 +9,15 @@ import
   ../events/event,
   ../events/event_handlers,
   ../events/sdl_event,
-  ../logger
+  ../logger,
+  module
 
 export
   event,
   event_handlers,
   sdl_event
 
-method init*(this: EventBus, config: Config): bool =
+proc init*(this: EventBus, config: Config): bool =
   this.emitter = events.initEventEmitter()
   return true
 

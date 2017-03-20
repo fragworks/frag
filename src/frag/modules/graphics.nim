@@ -22,11 +22,6 @@ export
   types,
   window
 
-type
-  Graphics* = ref object of Module
-    rootWindow*: window.Window
-    rootGLContext: sdl.GLContextPtr
-
 when defined(macosx):
   type
     SysWMinfoCocoaObj = object
@@ -77,7 +72,7 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
     bgfx_set_platform_data(pd)
     return true
 
-method init*(this: Graphics, config: Config): bool =
+proc init*(this: Graphics, config: Config): bool =
   # TODO: We need to add the defaults back in. I was struggling with the cleanest ways to do so.
   var rootWindowPosX = config.rootWindowPosX
   var rootWindowPosY = config.rootWindowPosY
@@ -120,7 +115,7 @@ method init*(this: Graphics, config: Config): bool =
 proc clearView*(this: Graphics, viewId: uint8, flags: uint16, rgba: uint32, depth: float32, stencil: uint8) =
   bgfx_set_view_clear(viewID, flags, rgba, depth, stencil)
 
-method render*(this: Graphics) =
+proc render*(this: Graphics) =
   let current = sdl.getPerformanceCounter()
   let frameTime = float((current - lastTime) * 1000) / float sdl.getPerformanceFrequency()
   lastTime = current
@@ -141,7 +136,7 @@ proc handleWindowResizedEvent*(e: EventArgs) {.procvar.} =
   bgfx_reset(width, height, ResetFlag.None.ord)
   bgfx_set_view_rect(0, 0, 0, width , height )
 
-method shutdown*(this: Graphics) =
+proc shutdown*(this: Graphics) =
   if this.rootWindow.isNil:
     return
   elif this.rootWindow.handle.isNil:

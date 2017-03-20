@@ -7,7 +7,7 @@ import
   frag/globals,
   frag/logger,
   frag/modules/assets,
-  frag/modules/event_bus,
+  frag/modules/event_bus as events,
   frag/modules/graphics,
   frag/modules/input,
   frag/modules/module
@@ -15,7 +15,7 @@ import
 export
   assets,
   config,
-  event_bus,
+  events,
   globals,
   graphics,
   input,
@@ -28,17 +28,16 @@ type
     events: EventBus
     graphics*: Graphics
     input*: Input
-    modules*: seq[Module]
 
 proc shutdown(ctx: Frag, exitCode: int) =
   logInfo "Shutting down Frag..."
 
   logDebug "Shutting down graphics subsystem..."
-  ctx.graphics.shutdown()
+  graphics.shutdown(ctx.graphics)
   logDebug "Graphics subsystem shut down."
 
   logDebug "Shutting down asset management subsystem..."
-  ctx.assets.shutdown()
+  assets.shutdown(ctx.assets)
   logDebug "Asset management subsystem shut down."
 
   logInfo "Frag shut down. Goodbye."
@@ -52,39 +51,34 @@ proc registerEventHandlers(ctx: Frag) =
   ctx.events.on(SDLEventType.KeyUp, handleKeyUp)
   ctx.events.on(SDLEventType.WindowResize, graphics.handleWindowResizedEvent)
 
-proc addModule(ctx: Frag, module: Module, name: string = ""): void =
-  logDebug "Adding $1 subsystem..." % name
-  if name != "": module.name = name
-  ctx.modules.add(module)
-
 proc init(ctx: Frag, config: Config) =
   echo "Initializing Frag - " & globals.version & "..."
-
-  ctx.modules = @[]
 
   echo "Initializing logging subsystem..."
   logger.init(config.logFileName)
   logDebug "Logging subsystem initialized."
 
-  ctx.events = EventBus()
-  ctx.addModule(ctx.events, "events")
+  ctx.events = EventBus(moduleType: ModuleType.EventBus)
+  if not events.init(ctx.events, config):
+    logError "Error initializing events subsystem."
+    ctx.shutdown(QUIT_FAILURE)
 
-  ctx.input = Input()
-  ctx.addModule(ctx.input, "input")
+  ctx.input = Input(moduleType: ModuleType.Input)
+  if not input.init(ctx.input, config):
+    logError "Error initializing input subsystem."
+    ctx.shutdown(QUIT_FAILURE)
 
-  ctx.graphics = Graphics()
-  ctx.addModule(ctx.graphics, "graphics")
+  ctx.graphics = Graphics(moduleType: ModuleType.Graphics)
+  if not graphics.init(ctx.graphics, config):
+    logError "Error initializing graphics subsystem."
+    ctx.shutdown(QUIT_FAILURE)
 
-  ctx.assets = AssetManager()
-  ctx.addModule(ctx.assets, "assets")
+  ctx.assets = AssetManager(moduleType: ModuleType.Assets)
+  if not assets.init(ctx.assets, config):
+    logError "Error initializing assets subsystem."
+    ctx.shutdown(QUIT_FAILURE)
+
   ctx.events.registerAssetManager(ctx.assets)
-
-  for module in ctx.modules:
-    logDebug "Initializing $1 subsystem..." % module.name
-    if not module.init(config):
-      logFatal "Error initializing $1 subsystem." % module.name
-      ctx.shutdown(QUIT_FAILURE)
-    logDebug "Initialized $1 subsystem." % module.name
 
   ctx.registerEventHandlers()
 

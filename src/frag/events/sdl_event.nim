@@ -3,7 +3,7 @@ import events
 import sdl2 as sdl except Event
 
 import
-  ../modules/input,
+  ../modules/module,
   ./event
 
 type

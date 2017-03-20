@@ -12,10 +12,6 @@ import
   ../modules/module
 
 type
-  EventBus* = ref object of Module
-    emitter*: EventEmitter
-    assetManager*: AssetManager
-
   EventType* {.pure.} = enum
     LoadAsset
     UnloadAsset
