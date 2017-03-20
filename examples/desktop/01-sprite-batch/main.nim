@@ -72,7 +72,7 @@ startFrag[App](Config(
   rootWindowTitle: "Frag Example 01-sprite-batch",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
-  resetFlags: ResetFlag.None,
+  resetFlags: ResetFlag.VSync,
   logFileName: "example-01.log",
   assetRoot: "../assets",
   debugMode: DebugMode.Text

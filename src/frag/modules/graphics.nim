@@ -107,7 +107,7 @@ proc init*(this: Graphics, config: Config): bool =
 
   bgfx_set_view_rect(0, 0, 0, rootWindowWidth.uint16, rootWindowHeight.uint16)
 
-  if not(debugMode == DebugMode.None.ord):
+  if not(debugMode == DebugMode.None):
     bgfx_set_debug(uint32 debugMode)
 
   return true
