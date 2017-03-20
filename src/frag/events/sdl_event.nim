@@ -17,6 +17,8 @@ type
     case sdlEventType*: SDLEventType
     of SDLEventType.KeyDown, SDLEventType.KeyUp:
       input*: Input
+    of SDLEventType.WindowResize:
+      graphics*: Graphics
     else:
       discard
 

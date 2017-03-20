@@ -1,16 +1,15 @@
 import
   ../../../src/frag,
   ../../../src/frag/config,
-  ../../../src/frag/graphics/window,
   ../../../src/frag/logger,
-  ../../../src/frag/modules/graphics
+  ../../../src/frag/graphics/types
 
 type
   App = ref object
 
 proc initializeApp(app: App, ctx: Frag) =
-  logDebug "Initializing app..."
-  logDebug "App initialized."
+  log "Initializing app..."
+  log "App initialized."
 
 proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   discard
@@ -22,15 +21,6 @@ proc shutdownApp(app: App, ctx: Frag) =
   logDebug "Shutting down app..."
   logDebug "App shut down."
 
-startFrag[App](Config(
-  rootWindowTitle: "Frag Example 00-hello-world",
-  rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
-  rootWindowWidth: 960, rootWindowHeight: 540,
-  resetFlags: ResetFlag.VSync,
-  logFileName: "example-00.log",
-  assetRoot: "../assets",
-  debugMode: DebugMode.Text
-))
 
 {.emit: """
 #include <SDL_main.h>
@@ -50,3 +40,9 @@ int main(int argc, char** args) {
 }
 
 """.}
+
+startFrag[App](Config(
+  rootWindowTitle: "Frag Example 00-hello-world",
+  resetFlags: ResetFlag.VSync,
+  debugMode: DebugMode.Text
+))

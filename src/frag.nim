@@ -6,7 +6,6 @@ import
 
 import
   frag/config,
-  frag/framerate/framerate,
   frag/globals,
   frag/logger,
   frag/modules/assets,
@@ -14,6 +13,13 @@ import
   frag/modules/graphics,
   frag/modules/input,
   frag/modules/module
+
+type
+  Frag* = ref object
+    assets*: AssetManager
+    events: EventBus
+    graphics*: Graphics
+    input*: Input
 
 export
   assets,
@@ -25,12 +31,15 @@ export
   logger,
   module
 
-type
-  Frag* = ref object
-    assets*: AssetManager
-    events: EventBus
-    graphics*: Graphics
-    input*: Input
+proc registerEventHandlers(ctx: Frag) =
+  ctx.events.on(EventType.LoadAsset, handleLoadAssetEvent)
+  ctx.events.on(EventType.UnloadAsset, handleUnloadAssetEvent)
+  ctx.events.on(EventType.GetAsset, handleGetAssetEvent)
+  ctx.events.on(SDLEventType.KeyDown, handleKeyDown)
+  ctx.events.on(SDLEventType.KeyUp, handleKeyUp)
+  ctx.events.on(SDLEventType.WindowResize, handleWindowResizeEvent)
+  
+
 
 proc shutdown(ctx: Frag, exitCode: int) =
   logInfo "Shutting down Frag..."
@@ -46,40 +55,46 @@ proc shutdown(ctx: Frag, exitCode: int) =
   logInfo "Frag shut down. Goodbye."
   quit(exitCode)
 
-proc registerEventHandlers(ctx: Frag) =
-  ctx.events.on(EventType.LoadAsset, handleLoadAssetEvent)
-  ctx.events.on(EventType.UnloadAsset, handleUnloadAssetEvent)
-  ctx.events.on(EventType.GetAsset, handleGetAssetEvent)
-  ctx.events.on(SDLEventType.KeyDown, handleKeyDown)
-  ctx.events.on(SDLEventType.KeyUp, handleKeyUp)
-  ctx.events.on(SDLEventType.WindowResize, graphics.handleWindowResizedEvent)
-
 proc init(ctx: Frag, config: Config) =
-  echo "Initializing Frag - " & globals.version & "..."
+  if not defined(android):
+    echo "Initializing Frag - " & globals.version & "..."
+    
+    echo "Initializing logging subsystem..."
+    logger.init(config.logFileName)
+    log "Logging subsystem initialized."
+  
+  else:
+    logInfo "Initializing Frag - " & globals.version & "..."
 
-  echo "Initializing logging subsystem..."
-  logger.init(config.logFileName)
-  logDebug "Logging subsystem initialized."
-
+  log "Initializing events subsystem..."
   ctx.events = EventBus(moduleType: ModuleType.EventBus)
   if not events.init(ctx.events, config):
     logError "Error initializing events subsystem."
     ctx.shutdown(QUIT_FAILURE)
+  log "Events subsystem initialized."
 
+
+  log "Initializing input subsystem..."
   ctx.input = Input(moduleType: ModuleType.Input)
   if not input.init(ctx.input, config):
     logError "Error initializing input subsystem."
     ctx.shutdown(QUIT_FAILURE)
+  log "Input subsystem initialized."
 
+  log "Initializing graphics subsystem..."
   ctx.graphics = Graphics(moduleType: ModuleType.Graphics)
   if not graphics.init(ctx.graphics, config):
     logError "Error initializing graphics subsystem."
     ctx.shutdown(QUIT_FAILURE)
+  log "Graphics subsystem initialized."
 
-  ctx.assets = AssetManager(moduleType: ModuleType.Assets)
-  if not assets.init(ctx.assets, config):
-    logError "Error initializing assets subsystem."
-    ctx.shutdown(QUIT_FAILURE)
+  when not defined(android): # This breaks android and prevents app from starting
+    log "Initializing asset management subsystem..."
+    ctx.assets = AssetManager(moduleType: ModuleType.Assets)
+    if not assets.init(ctx.assets, config):
+      logError "Error initializing assets subsystem."
+      ctx.shutdown(QUIT_FAILURE)
+    log "Asset management subsystem initialized."
 
   ctx.events.registerAssetManager(ctx.assets)
 
@@ -125,6 +140,13 @@ proc startFrag*[App](config: Config) =
         elif event.kind == sdl.KeyDown:
           sdlEvent.sdlEventType = SDLEventType.KeyDown
           sdlEvent.input = ctx.input
+        elif event.kind == sdl.WindowEvent:
+          case event.window.event
+          of WINDOWEVENT_RESIZED:
+            sdlEvent.sdlEventType = SDLEventType.WindowResize
+            sdlEvent.graphics = ctx.graphics
+          else:
+            discard
         ctx.events.emit(sdlEvent)
 
     app.updateApp(ctx, deltaTime)

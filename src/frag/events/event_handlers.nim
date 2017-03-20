@@ -6,6 +6,7 @@ import
   ../assets/asset_types,
   ../modules/assets,
   ../modules/input,
+  ../modules/graphics,
   event,
   sdl_event
 
@@ -36,3 +37,7 @@ proc handleKeyUp*(e: EventArgs) {.procvar.} =
   if not event.input.isNil:
     event.input.onKeyUp(event.sdlEventData)
 
+proc handleWindowResizeEvent*(e: EventArgs) {.procvar.} =
+  let event = SDLEventMessage(e).event
+  if not event.graphics.isNil:
+    event.graphics.onWindowResize(event.sdlEventData)

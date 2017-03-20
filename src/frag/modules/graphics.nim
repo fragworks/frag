@@ -22,22 +22,34 @@ export
   types,
   window
 
-when defined(macosx):
+when defined(macosx) and not defined(android):
   type
     SysWMinfoCocoaObj = object
-      window: pointer ## The Cocoa window
+      window: pointer
 
     SysWMinfoKindObj = object
       cocoa: SysWMinfoCocoaObj
 
-when defined(linux):
+when defined(linux) and not defined(android):
   import x, xlib
   type
-    SysWMmsgX11Obj* = object  ## when defined(SDL_VIDEO_DRIVER_X11)
-      display*: ptr xlib.TXDisplay  ##  The X11 display
-      window*: ptr x.TWindow            ##  The X11 window
-    SysWMinfoKindObj* = object ## when defined(SDL_VIDEO_DRIVER_X11)
+    SysWMmsgX11Obj* = object
+      display*: ptr xlib.TXDisplay
+      window*: ptr x.TWindow
+    SysWMinfoKindObj* = object
       x11*: SysWMMsgX11Obj
+
+when defined(android):
+  import 
+    android.ndk.anative_window
+
+  type
+    SysWMinfoAndroidObj* = object
+      window*: ANativeWindow
+      surface*: pointer
+
+    SysWMinfoKindObj* = object
+      android*: SysWMinfoAndroidObj
 
 var lastTime {.global.} : uint64
 
@@ -53,14 +65,20 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
             pd.nwh = cast[pointer](info.info.win.window)
           pd.ndt = nil
         of SysWM_X11:
-          when defined(linux):
+          when defined(linux) and not defined(android):
             let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
             pd.nwh = info.x11.window
             pd.ndt = info.x11.display
         of SysWM_Cocoa:
-          when defined(macosx):
+          when defined(macosx) and not defined(android):
             let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
             pd.nwh = info.cocoa.window
+          pd.ndt = nil
+        of SysWM_Android:
+          when defined(android):
+            let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
+            log repr info
+            pd.nwh = info.android.window
           pd.ndt = nil
         else:
           logError "Error linking SDL2 and BGFX."
@@ -86,12 +104,22 @@ proc init*(this: Graphics, config: Config): bool =
     return false
 
   this.rootWindow = Window()
-  this.rootWindow.init(
-    config.rootWindowTitle,
-    rootWindowPosX, rootWindowPosY,
-    rootWindowWidth, rootWindowHeight,
-    window.WindowFlag.WindowShown.ord or window.WindowFlag.WindowResizable.ord
-  )
+
+  when defined(android):
+    this.rootWindow.init(
+      config.rootWindowTitle,
+      rootWindowPosX, rootWindowPosY,
+      rootWindowWidth, rootWindowHeight,
+      window.WindowFlag.WindowShown.ord or window.WindowFlag.WindowFullscreen.ord
+    )
+
+  else:
+    this.rootWindow.init(
+      config.rootWindowTitle,
+      rootWindowPosX, rootWindowPosY,
+      rootWindowWidth, rootWindowHeight,
+      window.WindowFlag.WindowShown.ord or window.WindowFlag.WindowResizable.ord
+    )
 
   if this.rootWindow.handle.isNil:
     logError "Error creating root application window."
@@ -103,12 +131,12 @@ proc init*(this: Graphics, config: Config): bool =
   if not bgfx_init(BGFX_RENDERER_TYPE_NOOP, 0'u16, 0, nil, nil):
     logError("Error initializng BGFX.")
 
-  bgfx_reset(rootWindowWidth.uint32, rootWindowHeight.uint32, uint32 resetFlags)
+  let size = sdl.getSize(this.rootWindow.handle)
+  bgfx_reset(size.x.uint32, size.y.uint32, ResetFlag.VSync.ord)
+  bgfx_set_view_rect(0, 0, 0, size.x.uint16, size.y.uint16)
 
-  bgfx_set_view_rect(0, 0, 0, rootWindowWidth.uint16, rootWindowHeight.uint16)
-
-  if not(debugMode == DebugMode.None):
-    bgfx_set_debug(uint32 debugMode)
+  #if not(debugMode == DebugMode.None):
+  bgfx_set_debug(uint32 BGFX_DEBUG_TEXT)
 
   return true
 
@@ -127,12 +155,12 @@ proc render*(this: Graphics) =
 
   discard bgfx_frame(false)
 
-proc handleWindowResizedEvent*(e: EventArgs) {.procvar.} =
-  let
-    sdlEvent = SDLEventMessage(e).event
-    width = uint16 sdlEvent.sdlEventData.window.data1
-    height = uint16 sdlEvent.sdlEventData.window.data2
+proc onWindowResize*(this: Graphics, event: sdl.Event) {.procvar.} =
+  let 
+    width = uint16 event.window.data1 
+    height = uint16 event.window.data2
 
+  discard linkSDL2BGFX(this.rootWindow.handle)
   bgfx_reset(width, height, ResetFlag.VSync.ord)
   bgfx_set_view_rect(0, 0, 0, width , height )
 
