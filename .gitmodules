@@ -13,3 +13,6 @@
 [submodule "android/app/src/main/jni/SDL_image"]
 	path = android/app/src/main/jni/SDL_image
 	url = git@github.com:fragworks/sdl_image.git
+[submodule "3rdparty/bx"]
+	path = 3rdparty/bx
+	url = git@github.com:bkaradzic/bx.git
