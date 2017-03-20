@@ -5,15 +5,20 @@ import
   sdl2 as sdl except EventType, Event
 
 import
-  logger,
-  events/event,
-  events/event_handlers,
-  events/sdl_event
+  ../config,
+  ../events/event,
+  ../events/event_handlers,
+  ../events/sdl_event,
+  ../logger
 
 export
   event,
   event_handlers,
   sdl_event
+
+method init*(this: EventBus, config: Config): bool =
+  this.emitter = events.initEventEmitter()
+  return true
 
 proc on*(
   this: EventBus,
@@ -42,6 +47,3 @@ proc emit*(this: EventBus, event: var Event) =
       event.assetManager = this.assetManager
       let eventMessage = EventMessage(event: event)
       this.emitter.emit($event.eventType, eventMessage)
-
-proc init*(this: EventBus) =
-  this.emitter = events.initEventEmitter()

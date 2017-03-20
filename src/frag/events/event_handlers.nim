@@ -2,12 +2,12 @@ import
   events
 
 import
-  event,
-  sdl_event,
-  ../assets,
   ../assets/asset,
   ../assets/asset_types,
-  ../input
+  ../modules/assets,
+  ../modules/input,
+  event,
+  sdl_event
 
 proc handleLoadAssetEvent*(e: EventArgs) {.procvar.} =
   let event = EventMessage(e).event
@@ -25,7 +25,7 @@ proc handleGetAssetEvent*(e: EventArgs) {.procvar.} =
   if not event.assetManager.isNil:
     let asset = assets.get[Texture](event.assetManager, event.assetId)
     event.getAssetCallback(event.producer, asset)
-  
+
 proc handleKeyDown*(e: EventArgs) {.procvar.} =
   let event = SDLEventMessage(e).event
   if not event.input.isNil:
@@ -35,4 +35,4 @@ proc handleKeyUp*(e: EventArgs) {.procvar.} =
   let event = SDLEventMessage(e).event
   if not event.input.isNil:
     event.input.onKeyUp(event.sdlEventData)
-  
+

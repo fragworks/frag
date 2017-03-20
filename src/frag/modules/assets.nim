@@ -5,25 +5,30 @@ import
   tables
 
 import
-  assets/asset,
-  assets/asset_types,
-  globals,
-  graphics/two_d/texture,
-  graphics/two_d/texture_region,
-  logger
+  ../assets/asset,
+  ../assets/asset_types,
+  ../config,
+  ../globals,
+  ../graphics/two_d/texture,
+  ../graphics/two_d/texture_region,
+  ../logger,
+  module
+
+export
+  asset,
+  asset_types
 
 type
-  AssetManager* = ref object
+  AssetManager* = ref object of Module
     assetSearchPath: string
     internalSearchPath: string
     assets: Table[Hash, ref Asset]
 
-proc get*[T](this: AssetManager, id: Hash): T =
-  if not this.assets.contains(id):
-    logWarn "Asset with filename : " & $id & " not loaded."
-    return
-
-  return cast[T](this.assets[id])
+method init*(this: AssetManager, config: Config): bool =
+  this.assets = initTable[Hash, ref Asset]()
+  this.assetSearchPath = getAppDir() & DirSep & config.assetRoot & DirSep
+  this.internalSearchPath = getAppDir() & DirSep & engineAssetRoot & DirSep
+  return true
 
 proc dispose(this: AssetManager, id: Hash) =
   case this.assets[id].assetType
@@ -32,6 +37,17 @@ proc dispose(this: AssetManager, id: Hash) =
       this.assets.del(id)
     else:
       logWarn "Unable to unload asset with unknown type."
+
+method shutdown*(this: AssetManager) =
+  for id, _ in this.assets:
+    this.dispose(id)
+
+proc get*[T](this: AssetManager, id: Hash): T =
+  if not this.assets.contains(id):
+    logWarn "Asset with filename : " & $id & " not loaded."
+    return
+
+  return cast[T](this.assets[id])
 
 proc unload*(this: AssetManager, id: Hash) =
   if not this.assets.contains(id):
@@ -77,12 +93,3 @@ proc load*(this: AssetManager, filename: string, assetType: AssetType, internal:
     of AssetType.TextureRegion:
       logWarn "Cannot load a texture region... Try loading a texture and creating a texture region."
   return id
-
-proc init*(this: AssetManager, assetRoot: string) =
-  this.assets = initTable[Hash, ref Asset]()
-  this.assetSearchPath = getAppDir() & DirSep & assetRoot & DirSep
-  this.internalSearchPath = getAppDir() & DirSep & engineAssetRoot & DirSep
-
-proc shutdown*(this: AssetManager) =
-  for id, _ in this.assets:
-    this.dispose(id)
