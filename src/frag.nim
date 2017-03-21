@@ -68,22 +68,27 @@ proc init(ctx: Frag, config: Config) =
 
   log "Initializing events subsystem..."
   ctx.events = EventBus(moduleType: ModuleType.EventBus)
-  if not events.init(ctx.events, config):
+  if not events.init(ctx.events):
     logError "Error initializing events subsystem."
     ctx.shutdown(QUIT_FAILURE)
   log "Events subsystem initialized."
 
-
   log "Initializing input subsystem..."
   ctx.input = Input(moduleType: ModuleType.Input)
-  if not input.init(ctx.input, config):
+  if not input.init(ctx.input):
     logError "Error initializing input subsystem."
     ctx.shutdown(QUIT_FAILURE)
   log "Input subsystem initialized."
 
   log "Initializing graphics subsystem..."
   ctx.graphics = Graphics(moduleType: ModuleType.Graphics)
-  if not graphics.init(ctx.graphics, config):
+  if not graphics.init(ctx.graphics,
+    config.rootWindowTitle,
+    config.rootWindowPosX, config.rootWindowPosY,
+    config.rootWindowWidth, config.rootWindowHeight,
+    config.resetFlags,
+    config.debugMode
+  ):
     logError "Error initializing graphics subsystem."
     ctx.shutdown(QUIT_FAILURE)
   log "Graphics subsystem initialized."
@@ -128,6 +133,7 @@ proc startFrag*[App](config: Config) =
     ctx.input.update()
 
     while bool sdl.pollEvent(event):
+      logInfo repr event
       case event.kind
       of sdl.QuitEvent:
         runGame = false
@@ -141,6 +147,7 @@ proc startFrag*[App](config: Config) =
           sdlEvent.sdlEventType = SDLEventType.KeyDown
           sdlEvent.input = ctx.input
         elif event.kind == sdl.WindowEvent:
+          logInfo repr event.window.event
           case event.window.event
           of WINDOWEVENT_RESIZED:
             sdlEvent.sdlEventType = SDLEventType.WindowResize

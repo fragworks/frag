@@ -17,7 +17,7 @@ export
   event_handlers,
   sdl_event
 
-proc init*(this: EventBus, config: Config): bool =
+proc init*(this: EventBus): bool =
   this.emitter = events.initEventEmitter()
   return true
 

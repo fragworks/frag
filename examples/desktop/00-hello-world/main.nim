@@ -1,3 +1,5 @@
+import bgfxdotnim
+
 import
   ../../../src/frag,
   ../../../src/frag/config,
@@ -29,5 +31,5 @@ startFrag[App](Config(
   resetFlags: ResetFlag.VSync,
   logFileName: "example-00.log",
   assetRoot: "../assets",
-  debugMode: DebugMode.Text
+  debugMode: BGFX_DEBUG_WIREFRAME or BGFX_DEBUG_TEXT
 ))

@@ -10,7 +10,7 @@ import
 
 let defaultKeyboardState = sdl.getKeyboardState(nil)
 
-proc init*(this: Input, config: Config): bool =
+proc init*(this: Input): bool =
   this.pressedKeys = @[]
   this.releasedKeys = @[]
   return true

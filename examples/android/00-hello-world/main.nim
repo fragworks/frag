@@ -1,4 +1,7 @@
 import
+  bgfxdotnim
+
+import
   ../../../src/frag,
   ../../../src/frag/config,
   ../../../src/frag/logger,
@@ -18,8 +21,8 @@ proc renderApp(app: App, ctx: Frag) =
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
 proc shutdownApp(app: App, ctx: Frag) =
-  logDebug "Shutting down app..."
-  logDebug "App shut down."
+  log "Shutting down app..."
+  log "App shut down."
 
 
 {.emit: """
@@ -41,8 +44,10 @@ int main(int argc, char** args) {
 
 """.}
 
+log BGFX_DEBUG_WIREFRAME or BGFX_DEBUG_TEXT
+
 startFrag[App](Config(
   rootWindowTitle: "Frag Example 00-hello-world",
-  resetFlags: ResetFlag.VSync,
-  debugMode: DebugMode.Text
+  resetFlags: ResetFlag.None,
+  debugMode: BGFX_DEBUG_WIREFRAME or BGFX_DEBUG_TEXT
 ))
