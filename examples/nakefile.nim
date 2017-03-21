@@ -1,10 +1,9 @@
 import algorithm, nake, os, strutils
 
 const
-  fragBin = "src/frag"
-  desktopExDir = "examples/desktop"
-  androidExDir = "examples/android"
-  androidAppDir = "android/app/src/main"
+  desktopExDir = "desktop"
+  androidExDir = "android"
+  androidAppDir = "../android/app/src/main"
   exBin = "main"
 
 proc run(bin: string) = direShell(nimExe, "c", "-r", bin)
@@ -44,12 +43,12 @@ proc registerExample(name, path: string) =
 var desktopExamples: seq[string] = @[]
 var androidExamples: seq[string] = @[]
 
-for kind, path in walkDir("examples/desktop", true):
+for kind, path in walkDir("desktop", true):
   if path.contains("assets"): continue
   desktopExamples.add(path)
 sort(desktopExamples, cmp[string])
 
-for kind, path in walkDir("examples/android", true):
+for kind, path in walkDir("android", true):
   if path.contains("assets"): continue
   androidExamples.add(path)
 sort(androidExamples, cmp[string])
