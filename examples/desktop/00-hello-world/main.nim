@@ -24,8 +24,6 @@ proc shutdownApp(app: App, ctx: Frag) =
   logDebug "Shutting down app..."
   logDebug "App shut down."
 
-echo BGFX_DEBUG_WIREFRAME or BGFX_DEBUG_TEXT
-
 startFrag[App](Config(
   rootWindowTitle: "Frag Example 00-hello-world",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
