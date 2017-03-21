@@ -20,7 +20,7 @@ type
     sRGBBackbuffer = BGFX_RESET_SRGB_BACKBUFFER
 
   DebugMode* {.pure.} = enum
-    None = 0u32
+    None = BGFX_DEBUG_NONE
     Wireframe = BGFX_DEBUG_WIREFRAME
     IFH = BGFX_DEBUG_IFH
     Stats = BGFX_DEBUG_STATS

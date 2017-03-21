@@ -8,7 +8,6 @@ import
   sdl2 as sdl
 
 import
-  ../config,
   ../events/sdl_event,
   ../graphics/color,
   ../graphics/sdl2/version,
@@ -77,8 +76,8 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
         of SysWM_Android:
           when defined(android):
             let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
-            log repr info
             pd.nwh = info.android.window
+            #pd.nwh = getNativeAndroidWindow()
           pd.ndt = nil
         else:
           logError "Error linking SDL2 and BGFX."
@@ -90,15 +89,14 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
     bgfx_set_platform_data(pd)
     return true
 
-proc init*(this: Graphics, config: Config): bool =
-  # TODO: We need to add the defaults back in. I was struggling with the cleanest ways to do so.
-  var rootWindowPosX = config.rootWindowPosX
-  var rootWindowPosY = config.rootWindowPosY
-  var rootWindowWidth = config.rootWindowWidth
-  var rootWindowHeight = config.rootWindowHeight
-  var resetFlags = config.resetFlags
-  var debugMode = config.debugMode
-
+proc init*(
+  this: Graphics,
+  rootWindowTitle: string = nil,
+  rootWindowPosX, rootWindowPosY: int = window.posUndefined,
+  rootWindowWidth = 960, rootWindowHeight = 540,
+  resetFlags: ResetFlag = ResetFlag.None,
+  debugMode: uint32 = BGFX_DEBUG_NONE
+): bool =
   if sdl.init(INIT_VIDEO) != SdlSuccess:
     logError "Error initializing SDL : " & $getError()
     return false
@@ -107,7 +105,7 @@ proc init*(this: Graphics, config: Config): bool =
 
   when defined(android):
     this.rootWindow.init(
-      config.rootWindowTitle,
+      rootWindowTitle,
       rootWindowPosX, rootWindowPosY,
       rootWindowWidth, rootWindowHeight,
       window.WindowFlag.WindowShown.ord or window.WindowFlag.WindowFullscreen.ord
@@ -115,7 +113,7 @@ proc init*(this: Graphics, config: Config): bool =
 
   else:
     this.rootWindow.init(
-      config.rootWindowTitle,
+      rootWindowTitle,
       rootWindowPosX, rootWindowPosY,
       rootWindowWidth, rootWindowHeight,
       window.WindowFlag.WindowShown.ord or window.WindowFlag.WindowResizable.ord
@@ -135,8 +133,7 @@ proc init*(this: Graphics, config: Config): bool =
   bgfx_reset(size.x.uint32, size.y.uint32, ResetFlag.VSync.ord)
   bgfx_set_view_rect(0, 0, 0, size.x.uint16, size.y.uint16)
 
-  #if not(debugMode == DebugMode.None):
-  bgfx_set_debug(uint32 BGFX_DEBUG_TEXT)
+  bgfx_set_debug(debugMode)
 
   return true
 

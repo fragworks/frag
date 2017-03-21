@@ -34,5 +34,11 @@ proc init*(
     flags
   )
 
+when defined(android):
+  import android.ndk.anative_window
+
+  proc getNativeAndroidWindow*() : ANativeWindow {. importc: "Android_JNI_GetNativeWindow", dynlib: "libSDL2.so".} 
+
 proc destroy*(window: Window) =
   sdl.destroyWindow(window.handle)
+

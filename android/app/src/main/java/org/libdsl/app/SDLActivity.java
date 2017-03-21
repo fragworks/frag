@@ -248,6 +248,7 @@ public class SDLActivity extends Activity {
         SDLActivity.nativeLowMemory();
     }
 
+
     @Override
     protected void onDestroy() {
         Log.v(TAG, "onDestroy()");
