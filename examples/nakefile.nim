@@ -20,7 +20,7 @@ proc compileJNI() =
   if not existsEnv("ANDROID_NDK_ROOT"):
     echo "Please set ANDROID_NDK_ROOT environment varaible before trying to run this task."
     return
-  
+
   let ndkRoot = getEnv("ANDROID_NDK_ROOT")
   direShell(ndkRoot & "/ndk-build NDK_PROJECT_PATH=" & androidAppDir & " NDK_LIBS_OUT=" & androidAppDir & "/jniLibs")
   copyFile(ndkRoot & "/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a/libc++_shared.so", androidAppDir & "/jniLibs/armeabi-v7a/libc++_shared.so")
@@ -29,7 +29,7 @@ proc registerExample(name, path: string) =
   var parts = path.split('-')
   let id = parts[0]
   parts.delete(0)
-  task name[0] & id, name & " : run example " & parts.join("-"):
+  task name[0] & id, name & " : Run example " & parts.join("-"):
     case name[0]
     of 'D':
       runDesktopExample(path)
@@ -43,12 +43,12 @@ proc registerExample(name, path: string) =
 var desktopExamples: seq[string] = @[]
 var androidExamples: seq[string] = @[]
 
-for kind, path in walkDir("desktop", true):
+for kind, path in walkDir(desktopExDir, true):
   if path.contains("assets"): continue
   desktopExamples.add(path)
 sort(desktopExamples, cmp[string])
 
-for kind, path in walkDir("android", true):
+for kind, path in walkDir(androidExDir, true):
   if path.contains("assets"): continue
   androidExamples.add(path)
 sort(androidExamples, cmp[string])
