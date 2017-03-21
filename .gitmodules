@@ -1,15 +1,12 @@
 [submodule "google"]
 	path = assets/fonts/fonts
 	url = https://github.com/google/fonts.git
-[submodule "android/app/src/main/jni/SDL"]
-	path = android/app/src/main/jni/SDL
-	url = git@github.com:fragworks/sdl2.git
 [submodule "3rdparty/bgfx"]
 	path = vendor/bgfx
 	url = git@github.com:bkaradzic/bgfx.git
-[submodule "android/app/src/main/jni/SDL_image"]
-	path = android/app/src/main/jni/SDL_image
-	url = git@github.com:fragworks/sdl_image.git
 [submodule "3rdparty/bx"]
 	path = vendor/bx
 	url = git@github.com:bkaradzic/bx.git
+[submodule "platforms/android"]
+	path = platforms/android
+	url = git@github.com:fragworks/frag-android.git
