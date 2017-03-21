@@ -1,16 +1,35 @@
 #######
 # NIM #
 #######
+
 # generated
 *.log
 main
 !main/
 nakefile
-**/nimcache/**
+nimcache/
+
+##############
+# SUBMODULES #
+##############
+
+vendor
+assets/fonts
+
+###############
+# ENVIRONMENT #
+###############
+
+*.swp
+.DS_store
+.vscode
+*.idea
+*.iml
 
 ###########
 # ANDROID #
 ###########
+
 **/jni/src/*.c
 **/jni/src/*.json
 android/app/src/main/obj/
@@ -19,23 +38,10 @@ android/app/build
 android/build
 android/local.properties
 
-##############
-# SUBMODULES #
-##############
-vendor
-
-###############
-# ENVIRONMENT #
-###############
-*.swp
-.DS_store
-.vscode
-*.idea
-*.iml
-
 ##########
 # GRADLE #
 ##########
+
 .gradle
 /build/
 

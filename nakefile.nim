@@ -30,7 +30,7 @@ proc registerExample(name, path: string) =
   var parts = path.split('-')
   let id = parts[0]
   parts.delete(0)
-  task name[0] & id, name & " : run example " & parts.join("-"):
+  task name[0] & id, name & " : Run example " & parts.join("-"):
     case name[0]
     of 'D':
       runDesktopExample(path)
