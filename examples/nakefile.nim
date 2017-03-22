@@ -9,7 +9,8 @@ const
 proc run(bin: string) = 
   when defined(linux):
     direShell(nimExe, "c", "-r -d:linux", bin)
-  when defined(osx):
+  when defined(macosx):
+    echo "HERE"
     direShell(nimExe, "c", "-r -d:osx", bin)
   else:
     direShell(nimExe, "c", "-r", bin)
