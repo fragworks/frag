@@ -2,10 +2,11 @@ import algorithm, nake, os, strutils
 
 const
   desktopExDir = "desktop"
-  androidExDir = "android"
-  androidAppDir = "../android/app/src/main"
+  androidExDir = "../platforms/android/examples"
+  androidAppDir = "../platforms/android/app/src/main"
   exBin = "main"
 
+proc compile(src: string) = direShell(nimExe, "c", src)
 proc run(bin: string) = direShell(nimExe, "c", "-r", bin)
 proc runDesktopExample(name: string) = run(join(@[ desktopExDir, name, exBin ], "/"))
 
@@ -15,7 +16,7 @@ proc clean() =
     if fileExt  == ".c" or fileExt == ".json":
       removeFile(path)
 
-proc compileAndroidExample(name: string) = run(join(@[ androidExDir, name, exBin ], "/"))
+proc compileAndroidExample(name: string) = compile(join(@[ androidExDir, name, exBin ], "/"))
 proc compileJNI() =
   if not existsEnv("ANDROID_NDK_ROOT"):
     echo "Please set ANDROID_NDK_ROOT environment varaible before trying to run this task."
@@ -48,10 +49,11 @@ for kind, path in walkDir(desktopExDir, true):
   desktopExamples.add(path)
 sort(desktopExamples, cmp[string])
 
-for kind, path in walkDir(androidExDir, true):
-  if path.contains("assets"): continue
-  androidExamples.add(path)
-sort(androidExamples, cmp[string])
+if dirExists("../platforms/android"):
+  for kind, path in walkDir(androidExDir, true):
+    if path.contains("assets"): continue
+    androidExamples.add(path)
+  sort(androidExamples, cmp[string])
 
 for path in desktopExamples:
   registerExample("Desktop", path)
