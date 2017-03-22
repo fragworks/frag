@@ -6,14 +6,14 @@ type
   Targets = enum
     OSXDebug32, OSXDebug64, AndroidARM32
 
-proc verifyBxExists(): bool =
+proc verifyBx(): bool =
   dirExists("vendor/bx")
 
-proc verifyBgfxExists(): bool =
+proc verifyBgfx(): bool =
   dirExists("vendor/bgfx")
 
-proc verifyDependenciesExist(): bool =
-  if verifyBxExists() and verifyBgfxExists():
+proc verifyDependencies(): bool =
+  if verifyBx() and verifyBgfx():
     return true
 
 proc genAndroidARMGmake() =
@@ -42,7 +42,12 @@ proc installBgfx(target: Targets) =
 proc installDependencies(target: Targets) =
   installBgfx(target)
 
-if not verifyDependenciesExist():
+proc verifyAndroidEnvVars() =
+  if not existsEnv("ANDROID_NDK_ROOT") or not existsEnv("ANDROID_NDK_CLANG") or not existsEnv("ANDROID_NDK_ARM"):
+    echo "Please make sure ANDROID_NDK_ROOT, ANDROID_NDK_CLANG and ANDROID_NDK_ARM environment variables are set for your platform."
+    quit(QUIT_SUCCESS)
+
+if not verifyDependencies():
   echo "Ensure submodules are initialized and updated before proceeding."
   quit(QUIT_SUCCESS)
 
@@ -50,6 +55,7 @@ if not verifyDependenciesExist():
 # ANDROID #
 ###########
 task "android-arm32", "Build debug versions of FRAG dependencies for ARM 32-bit instruction set":
+  verifyAndroidEnvVars()
   installDependencies(AndroidARM32)
 
 #######
