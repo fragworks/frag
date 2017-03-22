@@ -3,7 +3,7 @@
 	url = https://github.com/google/fonts.git
 [submodule "3rdparty/bgfx"]
 	path = vendor/bgfx
-	url = git@github.com:bkaradzic/bgfx.git
+	url = git@github.com:fragworks/bgfx.git
 [submodule "3rdparty/bx"]
 	path = vendor/bx
 	url = git@github.com:bkaradzic/bx.git
