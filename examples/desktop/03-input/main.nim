@@ -3,6 +3,7 @@ import
   tables
 
 import
+  bgfxdotnim,
   sdl2 as sdl
 
 import
@@ -86,5 +87,5 @@ startFrag[App](Config(
   resetFlags: ResetFlag.VSync,
   logFileName: "example-01.log",
   assetRoot: "../assets",
-  debugMode: DebugMode.Text
+  debugMode: BGFX_DEBUG_TEXT
 ))

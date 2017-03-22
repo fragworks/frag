@@ -6,6 +6,7 @@ import
 
 import
   frag/config,
+  frag/framerate/framerate,
   frag/globals,
   frag/logger,
   frag/modules/assets,
@@ -160,7 +161,7 @@ proc startFrag*[App](config: Config) =
     app.renderApp(ctx)
     ctx.graphics.render()
 
-    #limitFramerate()
+    limitFramerate()
 
   app.shutdownApp(ctx)
 

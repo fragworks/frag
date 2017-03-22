@@ -2,6 +2,8 @@ import
   hashes,
   tables
 
+import bgfxdotnim
+
 import
   sound.sound
 
@@ -82,5 +84,5 @@ startFrag[App](Config(
   resetFlags: ResetFlag.VSync,
   logFileName: "example-01.log",
   assetRoot: "../assets",
-  debugMode: DebugMode.Text
+  debugMode: BGFX_DEBUG_TEXT
 ))

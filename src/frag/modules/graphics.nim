@@ -130,7 +130,7 @@ proc init*(
     logError("Error initializng BGFX.")
 
   let size = sdl.getSize(this.rootWindow.handle)
-  bgfx_reset(size.x.uint32, size.y.uint32, ResetFlag.VSync.ord)
+  bgfx_reset(size.x.uint32, size.y.uint32, BGFX_RESET_VSYNC)
   bgfx_set_view_rect(0, 0, 0, size.x.uint16, size.y.uint16)
 
   bgfx_set_debug(debugMode)
