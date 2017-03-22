@@ -15,6 +15,7 @@ skipDirs      = @[ "examples" ]
 requires "nim >= 0.16.0"
 requires "sdl2 >= 1.1"
 requires "https://github.com/yglukhov/android.git"
+requires "x11 >= 1.0"
 requires "https://github.com/zacharycarter/bgfx.nim.git"
 requires "sound >= 0.1.0"
 requires "stb_image >= 1.1"
