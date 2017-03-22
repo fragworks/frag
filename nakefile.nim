@@ -50,7 +50,7 @@ proc verifyAndroidEnvVars() =
     quit(QUIT_SUCCESS)
 
 if not verifyDependencies():
-  echo "Ensure submodules are initialized and updated before proceeding."
+  echo "Ensure submodules are initialized and updated before proceeding - |$ git submodule update --init --recursive"
   quit(QUIT_SUCCESS)
 
 ###########
