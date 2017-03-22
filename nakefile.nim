@@ -8,10 +8,10 @@ type
     AndroidARMDebug32, OSXDebug32, OSXDebug64, LinuxDebug32, LinuxDebug64
 
 proc verifyBx(): bool =
-  dirExists("vendor/bx")
+  dirExists("vendor/bx/scripts")
 
 proc verifyBgfx(): bool =
-  dirExists("vendor/bgfx")
+  dirExists("vendor/bgfx/scripts")
 
 proc verifyDependencies(): bool =
   if verifyBx() and verifyBgfx():
