@@ -6,8 +6,16 @@ const
   androidAppDir = "../platforms/android/app/src/main"
   exBin = "main"
 
+proc run(bin: string) = 
+  when defined(linux):
+    direShell(nimExe, "c", "-r -d:linux", bin)
+  when defined(osx):
+    direShell(nimExe, "c", "-r -d:osx", bin)
+  else:
+    direShell(nimExe, "c", "-r", bin)
+
 proc compile(src: string) = direShell(nimExe, "c", src)
-proc run(bin: string) = direShell(nimExe, "c", "-r", bin)
+
 proc runDesktopExample(name: string) = run(join(@[ desktopExDir, name, exBin ], "/"))
 
 proc clean() =
