@@ -39,7 +39,7 @@ when defined(linux) and not defined(android):
       x11*: SysWMMsgX11Obj
 
 when defined(android):
-  import 
+  import
     android.ndk.anative_window
 
   type
@@ -153,8 +153,8 @@ proc render*(this: Graphics) =
   discard bgfx_frame(false)
 
 proc onWindowResize*(this: Graphics, event: sdl.Event) {.procvar.} =
-  let 
-    width = uint16 event.window.data1 
+  let
+    width = uint16 event.window.data1
     height = uint16 event.window.data2
 
   discard linkSDL2BGFX(this.rootWindow.handle)
