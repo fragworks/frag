@@ -3,7 +3,6 @@ import
 
 import
   freetype,
-  glm,
   bgfxdotnim as bgfx
   #sdl2 as sdl
 
