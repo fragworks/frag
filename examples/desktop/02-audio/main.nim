@@ -43,7 +43,7 @@ proc initializeApp(app: App, ctx: Frag) =
   app.batch.init(1000, 0)
 
 
-  var snd = sound.newSoundWithFile("examples/desktop/assets/sounds/test.ogg")
+  var snd = sound.newSoundWithFile("./desktop/assets/sounds/test.ogg")
   snd.`gain=`(0.5)
 
   snd.play()

@@ -50,8 +50,6 @@ when defined(android):
     SysWMinfoKindObj* = object
       android*: SysWMinfoAndroidObj
 
-var lastTime {.global.} : uint64
-
 proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
     var pd: ptr bgfx_platform_data_t = create(bgfx_platform_data_t)
     var info: sdl.WMinfo
@@ -141,6 +139,7 @@ proc clearView*(this: Graphics, viewId: uint8, flags: uint16, rgba: uint32, dept
   bgfx_set_view_clear(viewID, flags, rgba, depth, stencil)
 
 proc render*(this: Graphics) =
+  var lastTime {.global.} : uint64
   let current = sdl.getPerformanceCounter()
   let frameTime = float((current - lastTime) * 1000) / float sdl.getPerformanceFrequency()
   lastTime = current
@@ -153,12 +152,13 @@ proc render*(this: Graphics) =
   discard bgfx_frame(false)
 
 proc onWindowResize*(this: Graphics, event: sdl.Event) {.procvar.} =
+  echo "RESIZING"
   let
     width = uint16 event.window.data1
     height = uint16 event.window.data2
 
   discard linkSDL2BGFX(this.rootWindow.handle)
-  bgfx_reset(width, height, ResetFlag.VSync.ord)
+  bgfx_reset(width, height, BGFX_RESET_VSYNC)
   bgfx_set_view_rect(0, 0, 0, width , height )
 
 proc shutdown*(this: Graphics) =

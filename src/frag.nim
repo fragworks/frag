@@ -41,7 +41,6 @@ proc registerEventHandlers(ctx: Frag) =
   ctx.events.on(SDLEventType.WindowResize, handleWindowResizeEvent)
   
 
-
 proc shutdown(ctx: Frag, exitCode: int) =
   logInfo "Shutting down Frag..."
 
@@ -134,7 +133,6 @@ proc startFrag*[App](config: Config) =
     ctx.input.update()
 
     while bool sdl.pollEvent(event):
-      logInfo repr event
       case event.kind
       of sdl.QuitEvent:
         runGame = false
@@ -148,7 +146,6 @@ proc startFrag*[App](config: Config) =
           sdlEvent.sdlEventType = SDLEventType.KeyDown
           sdlEvent.input = ctx.input
         elif event.kind == sdl.WindowEvent:
-          logInfo repr event.window.event
           case event.window.event
           of WINDOWEVENT_RESIZED:
             sdlEvent.sdlEventType = SDLEventType.WindowResize
