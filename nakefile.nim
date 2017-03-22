@@ -35,10 +35,10 @@ proc installBgfx(target: Targets) =
     genGmakeProjectsAndCd("osx")
     direShell("make config=debug64 bgfx-shared-lib")
   of LinuxDebug32:
-    genGmakeProjectsAndCd("linux")
+    genGmakeProjectsAndCd("linux-gcc")
     direShell("make config=debug32 bgfx-shared-lib")
   of LinuxDebug64:
-    genGmakeProjectsAndCd("linux")
+    genGmakeProjectsAndCd("linux-gcc")
     direShell("make config=debug64 bgfx-shared-lib")
 
 proc installDependencies(target: Targets) =
