@@ -58,6 +58,11 @@ proc verifyAndroidEnvVars() =
     echo "Please make sure ANDROID_NDK_ROOT, ANDROID_NDK_CLANG and ANDROID_NDK_ARM environment variables are set for your platform."
     quit(QUIT_SUCCESS)
 
+proc verifyWindowsEnvVars() =
+  if not existsEnv("MINGW"):
+    echo "Please make sure MINGW environment variable is set with a value pointing to your MinGW installation."
+    quit(QUIT_SUCCESS)
+
 if not verifyDependencies():
   echo "Ensure submodules are initialized and updated before proceeding - |$ git submodule update --init --recursive"
   quit(QUIT_SUCCESS)
@@ -91,7 +96,9 @@ task "osx-debug64", "Build debug verisons of FRAG dependencies for OSX 64-bit in
 # WINDOWS #
 ###########
 task "win-debug32", "Build debug verisons of FRAG dependencies for Windows 32-bit instruction set":
+  verifyWindowsEnvVars()
   installDependencies(WinDebug32)
   
 task "win-debug64", "Build debug verisons of FRAG dependencies for Windows 64-bit instruction set":
+  verifyWindowsEnvVars()
   installDependencies(WinDebug64)
