@@ -20,7 +20,10 @@ proc verifyDependencies(): bool =
 proc genGmakeProjectsAndCd(gcc: string) =
   if not shell("genie --with-shared-lib --gcc=$1 gmake" % gcc):
       echo "Ensure GENie is installed before proceeding: https://github.com/bkaradzic/GENie"
-  cd(".build/projects/gmake-$1" % gcc.replace("-gcc", ""))
+  if not(gcc == "mingw-gcc"):
+    cd(".build/projects/gmake-$1" % gcc.replace("-gcc", ""))
+  else:
+    cd(".build/projects/gmake-$1" % gcc)
 
 proc installBgfx(target: Targets) =
   cd("vendor/bgfx")
