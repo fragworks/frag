@@ -10,8 +10,8 @@ import
   
 when defined(windows):
   import
-    dx/fs_default_dx11,
-    dx/vs_default_dx11
+    dx/fs_default_dx11 as fs_default,
+    dx/vs_default_dx11 as vs_default
 
 else:
   import
