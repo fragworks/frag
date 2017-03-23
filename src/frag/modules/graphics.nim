@@ -26,7 +26,7 @@ when defined(windows) and not defined(android):
     SysWMMsgWinObj* = object  ##  when defined(SDL_VIDEO_DRIVER_WINDOWS)
       hwnd*: pointer
 
-    SysWMmsgKindObj* = object ##  when defined(SDL_VIDEO_DRIVER_WINDOWS)
+    SysWMinfoKindObj* = object ##  when defined(SDL_VIDEO_DRIVER_WINDOWS)
       win*: SysWMMsgWinObj
 
 when defined(macosx) and not defined(android):
