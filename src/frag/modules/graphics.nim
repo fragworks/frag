@@ -21,6 +21,18 @@ export
   types,
   window
 
+when defined(windows) and not defined(android):
+  import windows
+  type
+    SysWMMsgWinObj* = object  ##  when defined(SDL_VIDEO_DRIVER_WINDOWS)
+      hwnd*: HWND     ## The window for the message
+      msg*: WINUINT   ## The type of message
+      wParam*: WPARAM ## WORD message parameter
+      lParam*: LPARAM ## LONG message parameter
+
+    SysWMmsgKindObj* = object ##  when defined(SDL_VIDEO_DRIVER_WINDOWS)
+      win*: SysWMMsgWinObj
+
 when defined(macosx) and not defined(android):
   type
     SysWMinfoCocoaObj = object
@@ -58,8 +70,9 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
 
     case(info.subsystem):
         of SysWM_Windows:
-          when defined(windows):
-            pd.nwh = cast[pointer](info.info.win.window)
+          when defined(windows) and not defined (android):
+            let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
+            pd.nwh = info.win.hwnd
           pd.ndt = nil
         of SysWM_X11:
           when defined(linux) and not defined(android):
