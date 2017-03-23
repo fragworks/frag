@@ -166,7 +166,9 @@ proc onWindowResize*(this: Graphics, event: sdl.Event) {.procvar.} =
     width = uint16 event.window.data1
     height = uint16 event.window.data2
 
-  discard linkSDL2BGFX(this.rootWindow.handle)
+  when defined(android):
+    discard linkSDL2BGFX(this.rootWindow.handle)
+    
   bgfx_reset(width, height, BGFX_RESET_VSYNC)
   bgfx_set_view_rect(0, 0, 0, width , height )
 
