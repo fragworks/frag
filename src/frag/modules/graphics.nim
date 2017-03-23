@@ -22,13 +22,9 @@ export
   window
 
 when defined(windows) and not defined(android):
-  import windows
   type
     SysWMMsgWinObj* = object  ##  when defined(SDL_VIDEO_DRIVER_WINDOWS)
-      hwnd*: HWND     ## The window for the message
-      msg*: WINUINT   ## The type of message
-      wParam*: WPARAM ## WORD message parameter
-      lParam*: LPARAM ## LONG message parameter
+      hwnd*: pointer
 
     SysWMmsgKindObj* = object ##  when defined(SDL_VIDEO_DRIVER_WINDOWS)
       win*: SysWMMsgWinObj
