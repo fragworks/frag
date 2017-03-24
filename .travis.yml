@@ -29,8 +29,10 @@ install:
         # Recompile Nim (using itself), only if there were new changes
         bin/nim c koch
         ./koch boot -d:release
-        ./koch nimble
       fi
+    fi
+    if [ ! -x nim-master/bin/nimble ]; then
+      ./koch nimble
     fi
     cd ..
 before_script:
