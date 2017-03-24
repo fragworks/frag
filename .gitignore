@@ -15,7 +15,6 @@ nimcache/
 
 vendor
 platforms
-assets/fonts
 
 ###############
 # ENVIRONMENT #

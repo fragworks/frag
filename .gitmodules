@@ -1,6 +1,3 @@
-[submodule "google"]
-	path = assets/fonts/fonts
-	url = https://github.com/google/fonts.git
 [submodule "3rdparty/bgfx"]
 	path = vendor/bgfx
 	url = git@github.com:fragworks/bgfx.git
