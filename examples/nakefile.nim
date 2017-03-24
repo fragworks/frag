@@ -14,7 +14,7 @@ proc run(bin: string) =
     direShell(nimExe, "c", "-r -d:osx", bin)
     return
   else:
-    direShell(nimExe, "c", "-r", bin)
+    direShell(nimExe, "c", "-r -d:windows", bin)
     return
 
 proc compile(src: string) = direShell(nimExe, "c", src)
