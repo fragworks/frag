@@ -13,8 +13,11 @@ proc run(bin: string) =
   when defined(macosx):
     direShell(nimExe, "c", "-r -d:osx", bin)
     return
-  else:
+  when defined(windows):
     direShell(nimExe, "c", "-r -d:windows", bin)
+    return
+  else:
+    direShell(nimExe, "c", "-r", bin)
     return
 
 proc compile(src: string) = direShell(nimExe, "c", src)
