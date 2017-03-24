@@ -6,9 +6,18 @@ import
   ../../math/fpu_math as fpumath,
   ../../modules/graphics,
   ../types,
-  fs_default,
-  texture,
-  vs_default
+  texture
+  
+when defined(windows):
+  import
+    dx/fs_default_dx11,
+    dx/vs_default_dx11
+
+else:
+  import
+    gl/fs_default,
+    gl/vs_default
+
 
 type
   SpriteBatch* = ref object

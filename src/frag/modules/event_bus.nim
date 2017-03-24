@@ -26,7 +26,6 @@ proc on*(
   eventType: enum,
   eventHandler: event.EventHandler
 ) =
-  echo repr eventType
   events.on(this.emitter, $eventType, eventHandler)
 
 proc emit*(this: EventBus, event: var Event) =

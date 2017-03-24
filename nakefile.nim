@@ -5,7 +5,7 @@ import
 
 type
   Targets = enum
-    AndroidARMDebug32, LinuxDebug32, LinuxDebug64, OSXDebug32, OSXDebug64, WinDebug32, WinDebug64, 
+    AndroidARMDebug32, LinuxDebug32, LinuxDebug64, OSXDebug32, OSXRelease32, OSXRelease64, OSXDebug64, WinDebug32, WinDebug64, 
 
 proc verifyBx(): bool =
   dirExists("vendor/bx/scripts")
@@ -18,7 +18,7 @@ proc verifyDependencies(): bool =
     return true
 
 proc genGmakeProjectsAndCd(gcc: string) =
-  if not shell("genie --with-shared-lib --gcc=$1 gmake" % gcc):
+  if not shell("genie --with-shared-lib --with-tools --gcc=$1 gmake" % gcc):
       echo "Ensure GENie is installed before proceeding: https://github.com/bkaradzic/GENie"
   if not(gcc == "mingw-gcc"):
     cd(".build/projects/gmake-$1" % gcc.replace("-gcc", ""))
@@ -30,25 +30,31 @@ proc installBgfx(target: Targets) =
   case target
   of AndroidARMDebug32:
     genGmakeProjectsAndCd("android-arm")
-    direShell("make config=debug32 bgfx-shared-lib")
+    direShell("make config=debug32 bgfx-shared-lib shaderc")
   of OSXDebug32:
     genGmakeProjectsAndCd("osx")
-    direShell("make config=debug32 bgfx-shared-lib")
+    direShell("make config=debug32 bgfx-shared-lib shaderc")
   of OSXDebug64:
     genGmakeProjectsAndCd("osx")
-    direShell("make config=debug64 bgfx-shared-lib")
+    direShell("make config=debug64 bgfx-shared-lib shaderc")
+  of OSXRelease32:
+    genGmakeProjectsAndCd("osx")
+    direShell("make config=release32 bgfx-shared-lib shaderc")
+  of OSXRelease64:
+    genGmakeProjectsAndCd("osx")
+    direShell("make config=release64 bgfx-shared-lib shaderc")
   of LinuxDebug32:
     genGmakeProjectsAndCd("linux-gcc")
-    direShell("make config=debug32 bgfx-shared-lib")
+    direShell("make config=debug32 bgfx-shared-lib shaderc")
   of LinuxDebug64:
     genGmakeProjectsAndCd("linux-gcc")
-    direShell("make config=debug64 bgfx-shared-lib")
+    direShell("make config=debug64 bgfx-shared-lib shaderc")
   of WinDebug32:
     genGmakeProjectsAndCd("mingw-gcc")
-    direShell("make config=debug32 bgfx-shared-lib")
+    direShell("make config=debug32 bgfx-shared-lib shaderc")
   of WinDebug64:
     genGmakeProjectsAndCd("mingw-gcc")
-    direShell("make config=debug64 bgfx-shared-lib")
+    direShell("make config=debug64 bgfx-shared-lib shaderc")
 
 proc installDependencies(target: Targets) =
   installBgfx(target)
@@ -91,6 +97,12 @@ task "osx-debug32", "Build debug verisons of FRAG dependencies for OSX 32-bit in
   
 task "osx-debug64", "Build debug verisons of FRAG dependencies for OSX 64-bit instruction set":
   installDependencies(OSXDebug64)
+
+task "osx-release32", "Build release verisons of FRAG dependencies for OSX 32-bit instruction set":
+  installDependencies(OSXRelease32)
+  
+task "osx-release64", "Build release verisons of FRAG dependencies for OSX 64-bit instruction set":
+  installDependencies(OSXRelease64)
 
 ###########
 # WINDOWS #
