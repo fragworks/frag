@@ -51,7 +51,7 @@ proc initializeApp(app: App, ctx: Frag) =
   app.player = Player()
   app.player.texture = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
 
-  app.player.position = [float32 HALF_WIDTH - (app.player.texture.width / 2), HALF_HEIGHT - (app.player.texture.height / 2)]
+  app.player.position = [float32 HALF_WIDTH - (app.player.texture.data.w / 2), HALF_HEIGHT - (app.player.texture.data.h / 2)]
 
   logDebug "App initialized."
 
@@ -77,7 +77,7 @@ proc renderApp(app: App, ctx: Frag) =
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
   app.batch.begin()
-  app.batch.draw(app.player.texture, app.player.position[0], app.player.position[1], float32 app.player.texture.width, float32 app.player.texture.height)
+  app.batch.draw(app.player.texture, app.player.position[0], app.player.position[1], float32 app.player.texture.data.w, float32 app.player.texture.data.h)
   app.batch.`end`()
 
 startFrag[App](Config(

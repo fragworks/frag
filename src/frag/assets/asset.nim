@@ -3,8 +3,8 @@ import
 
 import
   freetype,
-  bgfxdotnim as bgfx
-  #sdl2 as sdl
+  bgfxdotnim as bgfx,
+  sdl2 as sdl
 
 import
   asset_types
@@ -23,11 +23,7 @@ type
     of AssetType.Texture:
       handle*: bgfx_texture_handle_t
       filename*: string
-      data*: seq[uint8]
-      channels*: int
-      #data*: sdl.SurfacePtr
-      width*: int
-      height*: int
+      data*: sdl.SurfacePtr
     of AssetType.TextureRegion:
       texture*: ref Asset
       u*, v*, u2*, v2*: float

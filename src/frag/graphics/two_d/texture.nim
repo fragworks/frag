@@ -5,8 +5,7 @@ import
 import
   bgfxdotnim as bgfx,
   sdl2 as sdl,
-  #sdl2.image as sdl_img
-  stb_image/read as stbi
+  sdl2.image as sdl_img
 
 import
   ../../assets/asset_types,
@@ -52,17 +51,16 @@ proc loadPNG*(filename: string) : Texture {.procvar.} =
 
   var texture = Texture(assetType: AssetType.Texture)
   texture.filename = filename
-  texture.data = stbi.load(filename, texture.width, texture.height, texture.channels, stbi.Default)
-  #result.surface = sdl_image.load(filename)
+  texture.data = sdl_img.load(filename)
 
   if texture.data.isNil:
     logError "Error loading Texture!"
     return
 
-  if texture.channels == 4:
-    texture.handle = bgfx_create_texture_2d(uint16 texture.width, uint16 texture.height, false, 1, BGFX_TEXTURE_FORMAT_RGBA8, 0, bgfx_copy(addr texture.data[0], uint32 texture.width * texture.height * 4))
+  if texture.data.format.BytesPerPixel == 4:
+    texture.handle = bgfx_create_texture_2d(uint16 texture.data.w, uint16 texture.data.h, false, 1, BGFX_TEXTURE_FORMAT_RGBA8, 0, bgfx_copy(texture.data.pixels, uint32 texture.data.w * texture.data.h * 4))
   else:
-    texture.handle = bgfx.bgfx_create_texture_2d(uint16 texture.width, uint16 texture.height, false, 1, BGFX_TEXTURE_FORMAT_RGB8, 0, bgfx_copy(addr texture.data[0], uint32 texture.width * texture.height * 4))
+    texture.handle = bgfx.bgfx_create_texture_2d(uint16 texture.data.w, uint16 texture.data.h, false, 1, BGFX_TEXTURE_FORMAT_RGB8, 0, bgfx_copy(texture.data.pixels, uint32 texture.data.w * texture.data.h * 3))
 
   return texture
 
