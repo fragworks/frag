@@ -123,8 +123,8 @@ task "win-debug64", "Build debug verisons of FRAG dependencies for Windows 64-bi
 
 task "win-release32", "Build debug verisons of FRAG dependencies for Windows 32-bit instruction set":
   verifyWindowsEnvVars()
-  installDependencies(WinDebug32)
+  installDependencies(WinRelease32)
   
 task "win-release64", "Build debug verisons of FRAG dependencies for Windows 64-bit instruction set":
   verifyWindowsEnvVars()
-  installDependencies(WinDebug64)
+  installDependencies(WinRelease64)
