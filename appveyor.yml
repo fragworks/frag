@@ -28,7 +28,7 @@ install:
   - SET PATH=%CD%\tools_tmp\%NIM_DIR%\bin;%CD%\tools_tmp\%MINGW_DIR%\bin;%PATH%
 
 build_script:
-  - nimble.exe install -y
+  - nimble.exe install -y --verbose --debug
   - nim.exe c .\examples\desktop\00-hello-world\main.nim
 
 test_script:
