@@ -36,10 +36,10 @@ install:
     fi
     cd ..
 before_script:
-  - export PATH="nim-master/bin${PATH:+:$PATH}"
+  - export PATH="nim-devel/bin${PATH:+:$PATH}"
 script:
   - nimble install -y
   - nim compile --verbosity:0 examples/desktop/00-hello-world/main.nim
 cache:
   directories:
-    - nim-master
+    - nim-devel
