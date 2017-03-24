@@ -5,7 +5,7 @@ import
 
 type
   Targets = enum
-    AndroidARMDebug32, LinuxDebug32, LinuxDebug64, OSXDebug32, OSXRelease32, OSXRelease64, OSXDebug64, WinDebug32, WinDebug64, 
+    AndroidARMDebug32, LinuxDebug32, LinuxDebug64, OSXDebug32, OSXRelease32, OSXRelease64, OSXDebug64, WinDebug32, WinDebug64, WinRelease32, WinRelease64
 
 proc verifyBx(): bool =
   dirExists("vendor/bx/scripts")
@@ -55,6 +55,12 @@ proc installBgfx(target: Targets) =
   of WinDebug64:
     genGmakeProjectsAndCd("mingw-gcc")
     direShell("make config=debug64 bgfx-shared-lib shaderc")
+  of WinRelease32:
+    genGmakeProjectsAndCd("mingw-gcc")
+    direShell("make config=release32 bgfx-shared-lib shaderc")
+  of WinRelease64:
+    genGmakeProjectsAndCd("mingw-gcc")
+    direShell("make config=release64 bgfx-shared-lib shaderc")
 
 proc installDependencies(target: Targets) =
   installBgfx(target)
@@ -107,6 +113,14 @@ task "osx-release64", "Build release verisons of FRAG dependencies for OSX 64-bi
 ###########
 # WINDOWS #
 ###########
+task "win-debug32", "Build debug verisons of FRAG dependencies for Windows 32-bit instruction set":
+  verifyWindowsEnvVars()
+  installDependencies(WinDebug32)
+  
+task "win-debug64", "Build debug verisons of FRAG dependencies for Windows 64-bit instruction set":
+  verifyWindowsEnvVars()
+  installDependencies(WinDebug64)
+
 task "win-debug32", "Build debug verisons of FRAG dependencies for Windows 32-bit instruction set":
   verifyWindowsEnvVars()
   installDependencies(WinDebug32)
