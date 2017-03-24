@@ -10,8 +10,8 @@ import
   
 when defined(windows):
   import
-    dx/fs_default_dx11 as fs_default,
-    dx/vs_default_dx11 as vs_default
+    dx/fs_default_dx11,
+    dx/vs_default_dx11
 
 else:
   import
@@ -136,8 +136,17 @@ proc init*(spriteBatch: SpriteBatch, maxSprites: int, view: uint8) =
 
   spriteBatch.texHandle = bgfx_create_uniform("s_texColor", BGFX_UNIFORM_TYPE_INT1, 1)
 
-  let vsh = bgfx_create_shader(bgfx_make_ref(addr vs_default.vs[0], uint32 sizeof(vs_default.vs)))
-  let fsh = bgfx_create_shader(bgfx_make_ref(addr fs_default.fs[0], uint32 sizeof(fs_default.fs)))
+  var vsh, fsh : bgfx_shader_handle_t
+  when defined(windows):
+    case bgfx_get_renderer_type()
+    of BGFX_RENDERER_TYPE_DIRECT3D11:
+      vsh = bgfx_create_shader(bgfx_make_ref(addr vs_default_dx11.vs[0], uint32 sizeof(vs_default_dx11.vs)))
+      fsh = bgfx_create_shader(bgfx_make_ref(addr fs_default_dx11.fs[0], uint32 sizeof(fs_default_dx11.fs)))
+    else:
+      discard
+  else:
+    vsh = bgfx_create_shader(bgfx_make_ref(addr vs_default.vs[0], uint32 sizeof(vs_default.vs)))
+    fsh = bgfx_create_shader(bgfx_make_ref(addr fs_default.fs[0], uint32 sizeof(fs_default.fs)))
   spriteBatch.programHandle = bgfx_create_program(vsh, fsh, true)
 
   var proj: fpumath.Mat4
