@@ -38,7 +38,7 @@ install:
 before_script:
   - export PATH="nim-master/bin${PATH:+:$PATH}"
 script:
-  - nimble install
+  - nimble install -y
   - nim compile --verbosity:0 examples/desktop/00-hello-world/main.nim
 cache:
   directories:
