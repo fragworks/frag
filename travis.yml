@@ -1,0 +1,34 @@
+language: c
+install:
+  - |
+    if [ ! -x nim-master/bin/nim ]; then
+      # If the Nim executable does not exist (means we haven't installed Nim yet)
+      # (do what we did before)
+      git clone -b master --depth 1 git://github.com/nim-lang/nim nim-master/
+      cd nim-master
+      git clone -b master --depth 1 git://github.com/nim-lang/csources csources/
+      cd csources
+      sh build.sh
+      cd ..
+      rm -rf csources
+      bin/nim c koch
+      ./koch boot -d:release
+    else
+      # We already have the repository, go to it
+      cd nim-master
+      # Download latest commits from the repository
+      git fetch origin
+      if ! git merge FETCH_HEAD | grep "Already up-to-date"; then
+        # Recompile Nim (using itself), only if there were new changes
+        bin/nim c koch
+        ./koch boot -d:release
+      fi
+    fi
+    cd ..
+before_script:
+  - export PATH="nim-master/bin${PATH:+:$PATH}"
+script:
+  - nim compile --verbosity:0 examples/desktop/00-hello-world/main.nim
+cache:
+  directories:
+    - nim-master
