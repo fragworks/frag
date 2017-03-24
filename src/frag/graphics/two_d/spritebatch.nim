@@ -176,5 +176,6 @@ proc `end`*(spriteBatch: SpriteBatch) =
 proc dispose*(spriteBatch: SpriteBatch) =
   bgfx_destroy_uniform(spriteBatch.texHandle)
   bgfx_destroy_index_buffer(spriteBatch.ibh)
-  when not defined(windows):
+  let rendererType = bgfx_get_renderer_type()
+  if rendererType in [BGFX_RENDERER_TYPE_OPENGL, BGFX_RENDERER_TYPE_OPENGLES]:
     bgfx_destroy_program(spriteBatch.programHandle)
