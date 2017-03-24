@@ -1,6 +1,6 @@
 **FRAG**
 =======
-
+[![Build Status](https://travis-ci.org/fragworks/frag.svg?branch=master)](https://travis-ci.org/fragworks/frag)
 [![Join the chat at https://gitter.im/fragworks/frag](https://badges.gitter.im/fragworks/frag.svg)](https://gitter.im/fragworks/frag?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Framework for Rather Awesome Games
