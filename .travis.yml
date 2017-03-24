@@ -12,7 +12,7 @@ install:
       # If the Nim executable does not exist (means we haven't installed Nim yet)
       # (do what we did before)
       git clone -b devel --depth 1 git://github.com/nim-lang/nim nim-devel/
-      cd nim-master
+      cd nim-devel
       git clone -b master --depth 1 git://github.com/nim-lang/csources csources/
       cd csources
       sh build.sh
