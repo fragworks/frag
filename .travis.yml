@@ -11,9 +11,9 @@ install:
     if [ ! -x nim-devel/bin/nim ]; then
       # If the Nim executable does not exist (means we haven't installed Nim yet)
       # (do what we did before)
-      git clone -b devel --depth 1 git://github.com/nim-lang/nim nim-devel/
-      cd nim-devel
-      git clone -b devel --depth 1 git://github.com/nim-lang/csources csources/
+      git clone -b devel --depth 1 git://github.com/nim-lang/nim nim-master/
+      cd nim-master
+      git clone -b master --depth 1 git://github.com/nim-lang/csources csources/
       cd csources
       sh build.sh
       cd ..
@@ -22,7 +22,7 @@ install:
       ./koch boot -d:release
     else
       # We already have the repository, go to it
-      cd nim-devel
+      cd nim-master
       # Download latest commits from the repository
       git fetch origin
       if ! git merge FETCH_HEAD | grep "Already up-to-date"; then
@@ -31,15 +31,15 @@ install:
         ./koch boot -d:release
       fi
     fi
-    if [ ! -x nim-devel/bin/nimble ]; then
+    if [ ! -x nim-master/bin/nimble ]; then
       ./koch nimble
     fi
     cd ..
 before_script:
-  - export PATH="nim-devel/bin${PATH:+:$PATH}"
+  - export PATH="nim-master/bin${PATH:+:$PATH}"
 script:
   - nimble install -y
   - nim compile --verbosity:0 examples/desktop/00-hello-world/main.nim
 cache:
   directories:
-    - nim-devel
+    - nim-master
