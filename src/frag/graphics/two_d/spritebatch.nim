@@ -167,4 +167,5 @@ proc `end`*(spriteBatch: SpriteBatch) =
 proc dispose*(spriteBatch: SpriteBatch) =
   bgfx_destroy_uniform(spriteBatch.texHandle)
   bgfx_destroy_index_buffer(spriteBatch.ibh)
-  bgfx_destroy_program(spriteBatch.programHandle)
+  when not defined(windows):
+    bgfx_destroy_program(spriteBatch.programHandle)
