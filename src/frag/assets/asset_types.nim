@@ -1,3 +1,3 @@
 type
   AssetType* {.pure.} = enum
-    Texture, TextureRegion
+    Texture, TextureRegion, TextureAtlas

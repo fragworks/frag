@@ -19,15 +19,21 @@ type
     height*: GLuint]#
 
   Asset* = object
+    filename*: string
     case assetType*: AssetType
     of AssetType.Texture:
       handle*: bgfx_texture_handle_t
-      filename*: string
       data*: sdl.SurfacePtr
     of AssetType.TextureRegion:
       texture*: ref Asset
       u*, v*, u2*, v2*: float
       regionWidth*, regionHeight*: int
+      name*: string
+    of AssetType.TextureAtlas:
+      regions*: seq[TextureRegion]
+      numRegions*: int
+      textureFilename*: string
 
   Texture* = ref Asset
   TextureRegion* = ref Asset
+  TextureAtlas* = ref Asset

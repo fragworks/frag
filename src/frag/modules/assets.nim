@@ -10,6 +10,7 @@ import
   ../config,
   ../globals,
   ../graphics/two_d/texture,
+  ../graphics/two_d/texture_atlas,
   ../graphics/two_d/texture_region,
   ../logger,
   module
@@ -36,9 +37,17 @@ proc shutdown*(this: AssetManager) =
   for id, _ in this.assets:
     this.dispose(id)
 
+proc get*[T](this: AssetManager, filename: string): T =
+  let id = hash(filename)
+  if not this.assets.contains(id):
+    logWarn "Asset with filename : " & filename & " not loaded."
+    return
+
+  return cast[T](this.assets[id])
+
 proc get*[T](this: AssetManager, id: Hash): T =
   if not this.assets.contains(id):
-    logWarn "Asset with filename : " & $id & " not loaded."
+    logWarn "Asset with id : " & $id & " not loaded."
     return
 
   return cast[T](this.assets[id])
@@ -75,15 +84,45 @@ proc load*(this: AssetManager, filename: string, assetType: AssetType, internal:
     logWarn "File with filepath : " & filepath & " does not exist."
     return
 
-  let id = hash(filepath)
-  if this.assets.contains(id):
+  let newAssetId = hash(filepath)
+  if this.assets.contains(newAssetId):
     logWarn "Asset with filepath : " & filepath & " already loaded."
     return
 
   case assetType
     of AssetType.Texture:
       var texture = texture.load(filepath)
-      this.assets.add(id, texture)
+      this.assets.add(newAssetId, texture)
+      return newAssetId
     of AssetType.TextureRegion:
       logWarn "Cannot load a texture region... Try loading a texture and creating a texture region."
-  return id
+      return
+    of AssetType.TextureAtlas:
+      var atlasInfo = texture_atlas.load(filepath)
+      
+      let atlasDir = splitFile(filename).dir
+      let texturePath = atlasDir & DirSep &  atlasInfo.atlas.textureFilename
+      
+      var textureId = hash(texturePath)
+      var atlasTexture = get[Texture](this, textureId)
+      if atlasTexture.isNil:
+        textureId = this.load(texturePath, AssetType.Texture, false)
+        atlasTexture = get[Texture](this, textureId)
+
+
+        for regionInfo in atlasInfo.regions:
+          atlasInfo.atlas.regions.add(texture_region.fromTexture(
+            atlasTexture,
+            regionInfo.name,
+            regionInfo.w,
+            regionInfo.h,
+            regionInfo.u,
+            regionInfo.u2,
+            regionInfo.v,
+            regionInfo.v2
+          ))
+        
+        this.assets.add(newAssetId, atlasInfo.atlas)
+        return newAssetId
+      else:
+        logWarn "Texture with " & texturePath & " does not exist."

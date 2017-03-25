@@ -155,7 +155,7 @@ proc startFrag*[App](config: Config) =
         ctx.events.emit(sdlEvent)
 
     app.updateApp(ctx, deltaTime)
-    app.renderApp(ctx)
+    app.renderApp(ctx, deltaTime)
     ctx.graphics.render()
 
     limitFramerate()

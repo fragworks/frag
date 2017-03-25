@@ -6,7 +6,9 @@ import
   ../../math/fpu_math as fpumath,
   ../../modules/graphics,
   ../types,
-  texture
+  texture,
+  texture_atlas,
+  texture_region
   
 when defined(windows):
   import
@@ -68,11 +70,13 @@ proc flush(spriteBatch: SpriteBatch) =
 proc switchTexture(spriteBatch: SpriteBatch, texture: Texture) =
   flush(spriteBatch)
   spriteBatch.lastTexture = texture
-#[
+
 proc draw*(spriteBatch: SpriteBatch, textureRegion: TextureRegion, x, y: float32, color: uint32 = 0xffffffff'u32) =
   if not spriteBatch.drawing:
     logError "Spritebatch not in drawing mode. Call begin before calling draw."
     return
+
+  echo repr textureRegion
 
   let texture = textureRegion.texture
 
@@ -80,12 +84,12 @@ proc draw*(spriteBatch: SpriteBatch, textureRegion: TextureRegion, x, y: float32
     switchTexture(spriteBatch, texture)
 
   spriteBatch.vertices.add([
-    PosUVColorVertex(x: x, y: y, u:textureRegion.u, v:textureRegion.v, z: 0.0'f32, abgr: color ),
-    PosUVColorVertex(x: x + float textureRegion.regionWidth, y: y, u:textureRegion.u2, v:textureRegion.v, z: 0.0'f32, abgr: color ),
-    PosUVColorVertex(x: x + float textureRegion.regionWidth, y: y + float textureRegion.regionHeight, u:textureRegion.u2, v:textureRegion.v2, z: 0.0'f32, abgr: color ),
-    PosUVColorVertex(x: x, y: y + float textureRegion.regionHeight, u:textureRegion.u, v:textureRegion.v2, z: 0.0'f32, abgr: color ),
+    PosUVColorVertex(x: x, y: y, z: 0.0'f32, u:textureRegion.u, v:textureRegion.v, abgr: color ),
+    PosUVColorVertex(x: x + float textureRegion.regionWidth, y: y, z: 0.0'f32, u:textureRegion.u2, v:textureRegion.v, abgr: color ),
+    PosUVColorVertex(x: x + float textureRegion.regionWidth, y: y + float textureRegion.regionHeight, z: 0.0'f32, u:textureRegion.u2, v:textureRegion.v2, abgr: color ),
+    PosUVColorVertex(x: x, y: y + float textureRegion.regionHeight, z: 0.0'f32, u:textureRegion.u, v:textureRegion.v2, abgr: color ),
   ])
-]#
+
 proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: float32, color: uint32 = 0xffffffff'u32, scale: Vec3 = [1.0'f32, 1.0'f32, 1.0'f32]) =
   if not spriteBatch.drawing:
     logError "Spritebatch not in drawing mode. Call begin before calling draw."
