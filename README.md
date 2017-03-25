@@ -46,7 +46,7 @@ Examples
 ![https://github.com/fragworks/frag/tree/master/examples/00-hello-world](http://i.imgur.com/24JvAzP.png)
 
 [Spritebatch](https://github.com/fragworks/frag/tree/master/examples/desktop/01-sprite-batch)
-![https://github.com/fragworks/frag/tree/master/examples/01-sprite-batch](http://i.imgur.com/0qYhxLw.png)
+![https://github.com/fragworks/frag/tree/master/examples/01-sprite-batch](http://i.imgur.com/lD0AtpL.png)
 
 [Audio](https://github.com/fragworks/frag/tree/master/examples/desktop/02-audio)
 
