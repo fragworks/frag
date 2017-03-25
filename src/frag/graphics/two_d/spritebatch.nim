@@ -150,9 +150,6 @@ proc init*(spriteBatch: SpriteBatch, maxSprites: int, view: uint8) =
     inc(j, 4)
     inc(i, 6)
 
-  
-  echo repr indexdata
-
   spriteBatch.ibh = bgfx_create_index_buffer(bgfx_copy(addr indexdata[0], uint32 indexdata.len * sizeof(uint16)), BGFX_BUFFER_NONE)
 
   bgfx_vertex_decl_begin(spriteBatch.vDecl, BGFX_RENDERER_TYPE_NOOP)

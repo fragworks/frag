@@ -29,9 +29,11 @@ proc initializeApp(app: App, ctx: Frag) =
   app.assetIds = initTable[string, Hash]()
 
   let filename = "textures/test01.png"
+  let filename2 = "textures/test02.png"
 
   logDebug "Loading assets..."
   app.assetIds.add(filename, ctx.assets.load(filename, AssetType.Texture))
+  app.assetIds.add(filename2, ctx.assets.load(filename2, AssetType.Texture))
   logDebug "Assets loaded."
 
   app.batch = SpriteBatch(
@@ -69,13 +71,14 @@ proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
   let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
+  let tex2 = assets.get[Texture](ctx.assets, app.assetIds["textures/test02.png"])
 
   let texHalfW = tex.data.w / 2
   let texHalfH = tex.data.h / 2
 
   app.batch.begin()
   app.batch.draw(tex, HALF_WIDTH - texHalfW, HALF_HEIGHT - texHalfH, float tex.data.w, float tex.data.h)
-  app.batch.draw(tex, HALF_WIDTH + texHalfW, HALF_HEIGHT - texHalfH, float tex.data.w, float tex.data.h)
+  app.batch.draw(tex2, HALF_WIDTH + texHalfW, HALF_HEIGHT - texHalfH, float tex.data.w, float tex.data.h)
   app.batch.`end`()
 
 startFrag[App](Config(
