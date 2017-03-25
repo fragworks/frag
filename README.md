@@ -24,6 +24,7 @@ Support for 3D is planned for post-alpha releases of FRAG.
 - [BGFX](https://github.com/bkaradzic/bgfx)
 - [SDL2](https://www.libsdl.org/download-2.0.php)
 - [SDL_image](https://www.libsdl.org/projects/SDL_image/)
+- [Chipmunk2D (Optional)](https://chipmunk-physics.net/)
 
 **Some technical details about FRAG**:
 
