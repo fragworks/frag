@@ -42,8 +42,9 @@ type
     abgr*: uint32
 
 proc setProjectionMatrix*(batch: SpriteBatch, projectionMatrix: fpumath.Mat4) =
+  discard
   batch.projectionMatrix = projectionMatrix
-  bgfx_set_view_transform(0, nil, addr batch.projectionMatrix[0])
+  bgfx_set_view_transform(batch.view, nil, addr batch.projectionMatrix[0])
 
 proc flush(spriteBatch: SpriteBatch) =
   if spriteBatch.lastTexture.isNil:
@@ -66,7 +67,7 @@ proc flush(spriteBatch: SpriteBatch) =
 
   if spriteBatch.blendingEnabled:
     bgfx_set_state(0'u64 or BGFX_STATE_RGB_WRITE or BGFX_STATE_ALPHA_WRITE or BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA
-      , BGFX_STATE_BLEND_INV_SRC_ALPHA), 0);
+      , BGFX_STATE_BLEND_INV_SRC_ALPHA), 0)
 
   discard bgfx_submit(spriteBatch.view, spriteBatch.programHandle, 0, false)
 

@@ -9,11 +9,12 @@ import
 import
   ../assets/asset,
   ../config,
-  ../graphics/window
+  ../graphics/window,
+  ../gui/imgui
 
 type 
   ModuleType* {.pure.} = enum
-    Assets, EventBus, Graphics, Input
+    Assets, EventBus, Graphics, GUI, Input
 
   Module* = object
     case moduleType*: ModuleType
@@ -30,6 +31,9 @@ type
     of ModuleType.Graphics:
       rootWindow*: window.Window
       rootGLContext8: sdl.GLContextPtr
+    of ModuleType.GUI:
+      imgui*: IMGUI
+      view*: uint8
     else:
       discard
 
@@ -37,3 +41,4 @@ type
   EventBus* = ref Module
   Input* = ref Module
   Graphics* = ref Module
+  GUI* = ref Module

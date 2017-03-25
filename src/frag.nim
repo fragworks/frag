@@ -12,6 +12,7 @@ import
   frag/modules/assets,
   frag/modules/event_bus as events,
   frag/modules/graphics,
+  frag/modules/gui,
   frag/modules/input,
   frag/modules/module
 
@@ -20,6 +21,7 @@ type
     assets*: AssetManager
     events: EventBus
     graphics*: Graphics
+    gui*: GUI
     input*: Input
 
 export
@@ -28,6 +30,7 @@ export
   events,
   globals,
   graphics,
+  gui,
   input,
   logger,
   module
@@ -103,6 +106,13 @@ proc init(ctx: Frag, config: Config) =
 
   ctx.events.registerAssetManager(ctx.assets)
 
+  log "Initializing GUI subsystem..."
+  ctx.gui = GUI(moduleType: ModuleType.GUI)
+  if not gui.init(ctx.gui):
+    logError "Error initializing GUI subsystem."
+    ctx.shutdown(QUIT_FAILURE)
+  log "GUI susbsystem initialized."
+
   ctx.registerEventHandlers()
 
   logInfo "Frag initialized."
@@ -156,7 +166,8 @@ proc startFrag*[App](config: Config) =
 
     app.updateApp(ctx, deltaTime)
     app.renderApp(ctx, deltaTime)
-    ctx.graphics.render()
+    graphics.render(ctx.graphics)
+    gui.render(ctx.gui)
 
     limitFramerate()
 

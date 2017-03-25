@@ -1,4 +1,7 @@
 import
+  bgfxdotnim
+
+import
   ../logger,
   ../math/fpu_math as fpumath
 
@@ -20,6 +23,7 @@ type
     viewportWidth, viewportHeight: float
     position, direction, lookAt, up: Vec3
     initialized*: bool
+    viewId*: uint8
 
 proc update*(camera: Camera) =
   if camera.cameraType == CameraType.Orthographic:
@@ -47,10 +51,14 @@ proc update*(camera: Camera) =
   else:
     discard
 
-proc ortho*(camera: Camera, far, viewportWidth, viewportHeight: float) =
+proc ortho*(camera: Camera, far, viewportWidth, viewportHeight: float, yDown: bool = false) =
   if not camera.initialized:
     logWarn "Camera must be initialized before calling ortho."
     return
+
+  if yDown:
+    camera.up[1] = -1.0f32
+    camera.direction[2] = 1.0f32
 
   camera.cameraType = CameraType.Orthographic
   camera.near = 0.0
@@ -66,8 +74,11 @@ proc ortho*(camera: Camera, far, viewportWidth, viewportHeight: float) =
     0.0
   ]
 
+  bgfx_set_view_rect(camera.viewId, 0, 0, uint16 viewportWidth, uint16 viewportHeight)
 
-proc init*(camera: Camera) =
+
+proc init*(camera: Camera, viewId: uint8) =
+  camera.viewId = viewId
   camera.cameraType = CameraType.Perspective
   mtxIdentity(camera.projection)
   mtxIdentity(camera.view)
