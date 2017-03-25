@@ -49,6 +49,9 @@ Examples
 
 [Input](https://github.com/fragworks/frag/tree/master/examples/desktop/03-input)
 
+[Sprite Animation](https://github.com/fragworks/frag/tree/master/examples/desktop/04-sprite-animation)
+
+![https://github.com/fragworks/frag/tree/master/examples/04-sprite-animation](http://i.imgur.com/qIXCc0E.gif)
 
 ----------
 
