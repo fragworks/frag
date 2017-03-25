@@ -24,6 +24,7 @@ Support for 3D is planned for post-alpha releases of FRAG.
 - [BGFX](https://github.com/bkaradzic/bgfx)
 - [SDL2](https://www.libsdl.org/download-2.0.php)
 - [SDL_image](https://www.libsdl.org/projects/SDL_image/)
+- [Chipmunk2D (Optional)](https://chipmunk-physics.net/)
 
 **Some technical details about FRAG**:
 
@@ -58,6 +59,10 @@ Examples
 [GUI](https://github.com/fragworks/frag/tree/master/examples/desktop/05-gui)
 
 ![https://github.com/fragworks/frag/tree/master/examples/05-gui](http://i.imgur.com/ui9PFKD.png)
+
+[Physics](https://github.com/fragworks/frag/tree/master/examples/desktop/06-physics)
+
+![https://github.com/fragworks/frag/tree/master/examples/06-physics](http://i.imgur.com/DQaRdgc.gif)
 
 
 **Android**
