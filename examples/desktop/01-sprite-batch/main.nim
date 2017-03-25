@@ -56,7 +56,7 @@ proc shutdownApp(app: App, ctx: Frag) =
 proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   discard
 
-proc renderApp(app: App, ctx: Frag) =
+proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   if ctx.input.pressed("q"): echo "quit"
 
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)

@@ -43,10 +43,19 @@ proc initializeApp(app: App, ctx: Frag) =
 
   app.anim = animation.fromTextureRegions(
     @[
-        atlas.getRegion("test01")
-        , atlas.getRegion("test02")
+        atlas.getRegion("p1_walk01")
+        , atlas.getRegion("p1_walk02")
+        , atlas.getRegion("p1_walk03")
+        , atlas.getRegion("p1_walk04")
+        , atlas.getRegion("p1_walk05")
+        , atlas.getRegion("p1_walk06")
+        , atlas.getRegion("p1_walk07")
+        , atlas.getRegion("p1_walk08")
+        , atlas.getRegion("p1_walk09")
+        , atlas.getRegion("p1_walk10")
+        , atlas.getRegion("p1_walk11")
     ]
-    , 0.5
+    , 0.1
   )
 
   app.batch = SpriteBatch(
@@ -86,7 +95,7 @@ proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   app.stateTime += deltaTime
 
 startFrag[App](Config(
-  rootWindowTitle: "Frag Example 01-sprite-batch",
+  rootWindowTitle: "Frag Example 04-sprite-animation",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
   resetFlags: ResetFlag.VSync,

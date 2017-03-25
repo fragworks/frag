@@ -21,18 +21,32 @@ proc tdMakeAtlas*(out_path_image: cstring; out_path_atlas_txt: cstring;
 when isMainModule:
   let names = allocCStringArray(
     [
-      "test01.png"
-      , "test02.png"
-      , "test03.png"
-      , "test04.png"
+      "p1_walk01.png"
+      , "p1_walk02.png"
+      , "p1_walk03.png"
+      , "p1_walk04.png"
+      , "p1_walk05.png"
+      , "p1_walk06.png"
+      , "p1_walk07.png"
+      , "p1_walk08.png"
+      , "p1_walk09.png"
+      , "p1_walk10.png"
+      , "p1_walk11.png"
     ]
   )
   var img = [
-    tdLoadPNG("test01.png")
-    , tdLoadPNG("test02.png")
-    , tdLoadPNG("test03.png")
-    , tdLoadPNG("test04.png")
+    tdLoadPNG("p1_walk01.png")
+    , tdLoadPNG("p1_walk02.png")
+    , tdLoadPNG("p1_walk03.png")
+    , tdLoadPNG("p1_walk04.png")
+    , tdLoadPNG("p1_walk05.png")
+    , tdLoadPNG("p1_walk06.png")
+    , tdLoadPNG("p1_walk07.png")
+    , tdLoadPNG("p1_walk08.png")
+    , tdLoadPNG("p1_walk09.png")
+    , tdLoadPNG("p1_walk10.png")
+    , tdLoadPNG("p1_walk11.png")
   ]
   echo repr img
-  echo tdMakeAtlas("spritesheet.png", "spritesheet.atlas", 128, 128, addr img[0], 4, names)
+  echo tdMakeAtlas("spritesheet.png", "spritesheet.atlas", 512, 512, addr img[0], 11, names)
   deallocCStringArray(names)

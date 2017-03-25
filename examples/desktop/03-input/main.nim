@@ -73,7 +73,7 @@ proc updateApp(app: App, ctx: Frag, deltaTime: float) =
   if ctx.input.down("d", true): app.player.position[0] += PLAYER_SPEED * deltaTime
   if ctx.input.down("a", true): app.player.position[0] -= PLAYER_SPEED * deltaTime
 
-proc renderApp(app: App, ctx: Frag) =
+proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
   app.batch.begin()
