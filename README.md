@@ -7,7 +7,7 @@ Framework for Rather Awesome Games
 ----------------------------------
 
 FRAG is a game creation framework being developed using the [Nim](https://nim-lang.org/) programming language, and is currently in pre-alpha status.
-The immediate development focus for FRAG is supporting the creation of 2D mobile and desktop games.
+The immediate development focus for FRAG is supporting the creation of 2D mobile and desktop games. Console support is planned for post-alpha releases of FRAG.
 
 Support for 3D is planned for post-alpha releases of FRAG.
 
@@ -29,6 +29,7 @@ Support for 3D is planned for post-alpha releases of FRAG.
 
  - Planned support for a multitude of rendering backends via [BGFX](https://github.com/bkaradzic/bgfx)
  - SDL2
+ - Immediate Mode GUI via [Nuklear](https://github.com/vurtun/nuklear)
 
 Examples
 -------
