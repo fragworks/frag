@@ -59,6 +59,10 @@ Examples
 
 ![https://github.com/fragworks/frag/tree/master/examples/05-gui](http://i.imgur.com/ui9PFKD.png)
 
+[Physics](https://github.com/fragworks/frag/tree/master/examples/desktop/06-physics)
+
+![https://github.com/fragworks/frag/tree/master/examples/06-physics](http://i.imgur.com/DQaRdgc.gif)
+
 
 **Android**
 
