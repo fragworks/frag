@@ -23,6 +23,7 @@ Support for 3D is planned for post-alpha releases of FRAG.
 - [Nim v0.16.1](https://github.com/nim-lang/Nim)
 - [BGFX](https://github.com/bkaradzic/bgfx)
 - [SDL2](https://www.libsdl.org/download-2.0.php)
+- [SDL_image](https://www.libsdl.org/projects/SDL_image/)
 
 **Some technical details about FRAG**:
 
