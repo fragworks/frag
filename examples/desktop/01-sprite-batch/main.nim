@@ -42,7 +42,7 @@ proc initializeApp(app: App, ctx: Frag) =
   app.batch.init(1000, 0)
 
   app.camera = Camera()
-  app.camera.init()
+  app.camera.init(0)
   app.camera.ortho(1.0, WIDTH, HEIGHT)
 
   logDebug "App initialized."
