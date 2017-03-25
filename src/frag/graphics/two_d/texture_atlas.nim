@@ -1,6 +1,7 @@
 import
-  nre,
   os,
+  parsecfg,
+  streams,
   strutils
 
 import
@@ -28,31 +29,43 @@ proc getRegion*(atlas: TextureAtlas, regionName: string): TextureRegion =
       return region
 
 proc loadTextureAtlas(filename: string): AtlasInfo =
-  var 
-    f: File
-    atlas = TextureAtlas(assetType: AssetType.TextureAtlas)
-  
+  var atlas = TextureAtlas(assetType: AssetType.TextureAtlas)
   atlas.filename = filename
   atlas.regions = @[]
-  var regions : seq[RegionInfo] = @[]
 
-  if open(f, filename):
-    defer: close(f)
-    atlas.textureFilename = readLine(f)
-    atlas.numRegions = parseInt(readLine(f))
-    discard readLine(f)
-    for i in 0..<atlas.numRegions:
-      let regionInfo = readLine(f)
-      let region = RegionInfo(
-        name: regionInfo.split('"')[1].split('.')[0],
-        w: parseInt(regionInfo.find(re"""w = (.+?(?=,))""").get.captures[0]),
-        h: parseInt(regionInfo.find(re"""h = (.+?(?=,))""").get.captures[0]),
-        u: parseFloat(regionInfo.find(re"""u = { (.+?(?=,))""").get.captures[0]),
-        v: parseFloat(regionInfo.find(re""", (\d+[^ ]*)""").get.captures[0]),
-        u2: parseFloat(regionInfo.find(re"""v = { (.+?(?=,))""").get.captures[0]),
-        v2: parseFloat(regionInfo.find(re""", (\d+[^ ]*) } }""").get.captures[0])
-      )
-      regions.add(region)
+  var regions : seq[RegionInfo] = @[]
+  var f = newFileStream(filename, fmRead)
+  if f != nil:
+    var dict = loadConfig("config.ini")
+    var p: CfgParser
+    open(p, f, filename)
+    while true:
+      var e = next(p)
+      case e.kind
+      of cfgEof:
+        break
+      of cfgSectionStart:   ## a ``[section]`` has been parsed
+        let region = RegionInfo(
+          name: e.section,
+          w: parseInt(p.next.value),
+          h: parseInt(p.next.value),
+          u: parseFloat(p.next.value),
+          v: parseFloat(p.next.value),
+          u2: parseFloat(p.next.value),
+          v2: parseFloat(p.next.value)
+        )
+        regions.add(region)
+      of cfgKeyValuePair:
+        if e.key == "name":
+          if atlas.textureFilename.isNil:
+            atlas.textureFilename = e.value
+      of cfgError:
+        logError("Cfg parsing error : " & e.msg)
+      else:
+        discard
+    close(p)
+  else:
+    logWarn "Cannot open texture atlas: " & filename
   
   return AtlasInfo(
     atlas: atlas, 

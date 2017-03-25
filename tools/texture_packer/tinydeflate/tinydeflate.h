@@ -2242,7 +2242,8 @@ int tdMakeAtlas( const char* out_path_image, const char* out_path_atlas_txt, int
 	wTol = w0 * div;
 	hTol = h0 * div;
 
-	fprintf( fp, "%s\n%d\n\n", out_path_image, png_count );
+	fprintf( fp, "%s\n\n", "# FRAG Texture Packer v.1.0");
+	fprintf( fp, "name=%s\ncount=%d\n\n", out_path_image, png_count );
 
 	for ( int i = 0; i < png_count; ++i )
 	{
@@ -2268,9 +2269,17 @@ int tdMakeAtlas( const char* out_path_image, const char* out_path_atlas_txt, int
 				min_y = max_y;
 				max_y = tmp;
 			}
-
-			if ( names ) fprintf( fp, "{ \"%s\", w = %d, h = %d, u = { %.10f, %.10f }, v = { %.10f, %.10f } }\n", names[ i ], width, height, min_x, min_y, max_x, max_y );
-			else fprintf( fp, "{ w = %d, h = %d, u = { %.10f, %.10f }, v = { %.10f, %.10f } }\n", width, height, min_x, min_y, max_x, max_y );
+			
+			if (names)
+				fprintf( fp, "[%s]\n", names[i]);
+			else
+				fprintf( fp, "%d\n", i);
+			fprintf( fp, "w=%d\n", width );
+			fprintf( fp, "h=%d\n", height );
+			fprintf( fp, "u=%.10f\n", min_x );
+			fprintf( fp, "v=%.10f\n", min_y );
+			fprintf( fp, "u2=%.10f\n", max_x );
+			fprintf( fp, "u2=%.10f\n\n", max_y );
 		}
 	}
 

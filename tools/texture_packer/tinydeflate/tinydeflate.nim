@@ -21,17 +21,17 @@ proc tdMakeAtlas*(out_path_image: cstring; out_path_atlas_txt: cstring;
 when isMainModule:
   let names = allocCStringArray(
     [
-      "p1_walk01.png"
-      , "p1_walk02.png"
-      , "p1_walk03.png"
-      , "p1_walk04.png"
-      , "p1_walk05.png"
-      , "p1_walk06.png"
-      , "p1_walk07.png"
-      , "p1_walk08.png"
-      , "p1_walk09.png"
-      , "p1_walk10.png"
-      , "p1_walk11.png"
+      "p1_walk01"
+      , "p1_walk02"
+      , "p1_walk03"
+      , "p1_walk04"
+      , "p1_walk05"
+      , "p1_walk06"
+      , "p1_walk07"
+      , "p1_walk08"
+      , "p1_walk09"
+      , "p1_walk10"
+      , "p1_walk11"
     ]
   )
   var img = [
