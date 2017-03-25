@@ -6,6 +6,7 @@ import bgfxdotnim
 
 import
   ../../../src/frag,
+  ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
   ../../../src/frag/graphics/window,
@@ -14,6 +15,7 @@ import
 type
   App = ref object
     batch: SpriteBatch
+    camera: Camera
     assetIds: Table[string, Hash]
 
 const WIDTH = 960
@@ -39,6 +41,10 @@ proc initializeApp(app: App, ctx: Frag) =
   )
   app.batch.init(1000, 0)
 
+  app.camera = Camera()
+  app.camera.init()
+  app.camera.ortho(1.0, WIDTH, HEIGHT)
+
   logDebug "App initialized."
 
 proc shutdownApp(app: App, ctx: Frag) =
@@ -54,7 +60,8 @@ proc shutdownApp(app: App, ctx: Frag) =
   logDebug "App shut down..."
 
 proc updateApp(app:App, ctx: Frag, deltaTime: float) =
-  discard
+  app.camera.update()
+  app.batch.setProjectionMatrix(app.camera.combined)
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   if ctx.input.pressed("q"): echo "quit"

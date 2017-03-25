@@ -9,6 +9,7 @@ import
 
 import
   ../../../src/frag,
+  ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
   ../../../src/frag/graphics/window,
@@ -18,6 +19,7 @@ type
   App = ref object
     batch: SpriteBatch
     assetIds: Table[string, Hash]
+    camera: Camera
 
 const WIDTH = 960
 const HEIGHT = 540
@@ -42,6 +44,10 @@ proc initializeApp(app: App, ctx: Frag) =
   )
   app.batch.init(1000, 0)
 
+  app.camera = Camera()
+  app.camera.init()
+  app.camera.ortho(1.0, WIDTH, HEIGHT)
+
 
   var snd = sound.newSoundWithFile("./desktop/assets/sounds/test.ogg")
   snd.`gain=`(0.5)
@@ -63,7 +69,8 @@ proc shutdownApp(app: App, ctx: Frag) =
   logDebug "App shut down..."
 
 proc updateApp(app:App, ctx: Frag, deltaTime: float) =
-  discard
+  app.camera.update()
+  app.batch.setProjectionMatrix(app.camera.combined)
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)

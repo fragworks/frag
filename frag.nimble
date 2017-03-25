@@ -8,7 +8,7 @@ license       = "MIT"
 # Settings
 
 srcDir        = "src"
-skipDirs      = @[ "examples" ]
+skipDirs      = @[ "examples", "samples" ]
 
 # Dependencies
 

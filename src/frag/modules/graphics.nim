@@ -161,7 +161,6 @@ proc render*(this: Graphics) =
   discard bgfx_frame(false)
 
 proc onWindowResize*(this: Graphics, event: sdl.Event) {.procvar.} =
-  echo "RESIZING"
   let
     width = uint16 event.window.data1
     height = uint16 event.window.data2

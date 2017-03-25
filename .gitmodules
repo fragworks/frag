@@ -7,3 +7,6 @@
 [submodule "platforms/android"]
 	path = platforms/android
 	url = git@github.com:fragworks/frag-android.git
+[submodule "samples"]
+	path = samples
+	url = git@github.com:fragworks/frag-samples.git

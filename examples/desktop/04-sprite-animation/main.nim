@@ -6,6 +6,7 @@ import bgfxdotnim
 
 import
   ../../../src/frag,
+  ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/animation,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
@@ -17,6 +18,7 @@ import
 type
   App = ref object
     batch: SpriteBatch
+    camera: Camera
     assetIds: Table[string, Hash]
     stateTime: float
     anim: Animation
@@ -38,8 +40,6 @@ proc initializeApp(app: App, ctx: Frag) =
   logDebug "Assets loaded."
 
   let atlas = assets.get[TextureAtlas](ctx.assets, app.assetIds[filename])
-
-  echo repr atlas
 
   app.anim = animation.fromTextureRegions(
     @[
@@ -65,6 +65,10 @@ proc initializeApp(app: App, ctx: Frag) =
   )
   app.batch.init(1000, 0)
 
+  app.camera = Camera()
+  app.camera.init()
+  app.camera.ortho(1.0, WIDTH, HEIGHT)
+
   logDebug "App initialized."
 
 proc shutdownApp(app: App, ctx: Frag) =
@@ -80,7 +84,8 @@ proc shutdownApp(app: App, ctx: Frag) =
   logDebug "App shut down..."
 
 proc updateApp(app:App, ctx: Frag, deltaTime: float) =
-  discard
+  app.camera.update()
+  app.batch.setProjectionMatrix(app.camera.combined)
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   if ctx.input.pressed("q"): echo "quit"
@@ -89,7 +94,7 @@ proc renderApp(app: App, ctx: Frag, deltaTime: float) =
 
   let region = app.anim.getFrame(app.stateTime)
   app.batch.begin()
-  app.batch.draw(region, HALF_WIDTH - region.regionWidth / 2, HALF_HEIGHT - region.regionHeight / 2)
+  app.batch.drawRegion(region, HALF_WIDTH - region.regionWidth / 2, HALF_HEIGHT - region.regionHeight / 2)
   app.batch.`end`()
 
   app.stateTime += deltaTime

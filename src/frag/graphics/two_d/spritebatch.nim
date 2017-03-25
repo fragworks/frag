@@ -34,11 +34,16 @@ type
     view: uint8
     blendSrcFunc*, blendDstFunc*: BlendFunc
     blendingEnabled*: bool
+    projectionMatrix*: fpumath.Mat4
 
   PosUVColorVertex {.packed, pure.} = object
     x*, y*, z*: float32
     u*, v*: float32
     abgr*: uint32
+
+proc setProjectionMatrix*(batch: SpriteBatch, projectionMatrix: fpumath.Mat4) =
+  batch.projectionMatrix = projectionMatrix
+  bgfx_set_view_transform(0, nil, addr batch.projectionMatrix[0])
 
 proc flush(spriteBatch: SpriteBatch) =
   if spriteBatch.lastTexture.isNil:
@@ -71,12 +76,10 @@ proc switchTexture(spriteBatch: SpriteBatch, texture: Texture) =
   flush(spriteBatch)
   spriteBatch.lastTexture = texture
 
-proc draw*(spriteBatch: SpriteBatch, textureRegion: TextureRegion, x, y: float32, color: uint32 = 0xffffffff'u32) =
+proc drawRegion*(spriteBatch: SpriteBatch, textureRegion: TextureRegion, x, y: float32, color: uint32 = 0xffffffff'u32) =
   if not spriteBatch.drawing:
     logError "Spritebatch not in drawing mode. Call begin before calling draw."
     return
-
-  echo repr textureRegion
 
   let texture = textureRegion.texture
 
@@ -90,7 +93,7 @@ proc draw*(spriteBatch: SpriteBatch, textureRegion: TextureRegion, x, y: float32
     PosUVColorVertex(x: x, y: y + float textureRegion.regionHeight, z: 0.0'f32, u:textureRegion.u, v:textureRegion.v2, abgr: color ),
   ])
 
-proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: float32, color: uint32 = 0xffffffff'u32, scale: Vec3 = [1.0'f32, 1.0'f32, 1.0'f32]) =
+proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: float32, tiled: bool = false, color: uint32 = 0xffffffff'u32, scale: Vec3 = [1.0'f32, 1.0'f32, 1.0'f32]) =
   if not spriteBatch.drawing:
     logError "Spritebatch not in drawing mode. Call begin before calling draw."
     return
@@ -109,11 +112,12 @@ proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: floa
     y1 *= scale[0]
     y2 *= scale[0]
 
-
+  var maxUV = 1.0
+  if tiled: maxUV = 8.0
   spriteBatch.vertices.add([
-    PosUVColorVertex(x: x1, y: y1, u:0.0, v:1.0, z: 0.0'f32, abgr: color ),
-    PosUVColorVertex(x: x2, y: y1, u:1.0, v:1.0, z: 0.0'f32, abgr: color ),
-    PosUVColorVertex(x: x2, y: y2, u:1.0, v:0.0, z: 0.0'f32, abgr: color ),
+    PosUVColorVertex(x: x1, y: y1, u:0.0, v:maxUV, z: 0.0'f32, abgr: color ),
+    PosUVColorVertex(x: x2, y: y1, u:maxUV, v:maxUV, z: 0.0'f32, abgr: color ),
+    PosUVColorVertex(x: x2, y: y2, u:maxUV, v:0.0, z: 0.0'f32, abgr: color ),
     PosUVColorVertex(x: x1, y: y2, u:0.0, v:0.0, z: 0.0'f32, abgr: color )
   ])
 
@@ -122,6 +126,8 @@ proc init*(spriteBatch: SpriteBatch, maxSprites: int, view: uint8) =
   spriteBatch.maxSprites = maxSprites
   spriteBatch.vertices = @[]
   spriteBatch.view = view
+   
+  mtxIdentity(spriteBatch.projectionMatrix)
 
   spriteBatch.vDecl = create(bgfx_vertex_decl_t)
 
@@ -152,12 +158,6 @@ proc init*(spriteBatch: SpriteBatch, maxSprites: int, view: uint8) =
     vsh = bgfx_create_shader(bgfx_make_ref(addr vs_default.vs[0], uint32 sizeof(vs_default.vs)))
     fsh = bgfx_create_shader(bgfx_make_ref(addr fs_default.fs[0], uint32 sizeof(fs_default.fs)))
   spriteBatch.programHandle = bgfx_create_program(vsh, fsh, true)
-
-  var proj: fpumath.Mat4
-  fpumath.mtxOrtho(proj, 0.0, 960.0, 0.0, 540.0, -1.0'f32, 1.0'f32)
-  bgfx_set_view_transform(0, nil, unsafeAddr(proj[0]))
-
-  bgfx_set_view_rect(0, 0, 0, cast[uint16](960), cast[uint16](540))
 
 proc begin*(spriteBatch: SpriteBatch) =
   if spriteBatch.drawing:

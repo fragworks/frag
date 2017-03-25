@@ -8,6 +8,7 @@ import
 
 import
   ../../../src/frag,
+  ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
   ../../../src/frag/graphics/window,
@@ -17,6 +18,7 @@ import
 type
   App = ref object
     batch: SpriteBatch
+    camera: Camera
     assetIds: Table[string, Hash]
     player: Player
 
@@ -48,6 +50,10 @@ proc initializeApp(app: App, ctx: Frag) =
   )
   app.batch.init(1000, 0)
 
+  app.camera = Camera()
+  app.camera.init()
+  app.camera.ortho(1.0, WIDTH, HEIGHT)
+
   app.player = Player()
   app.player.texture = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
 
@@ -68,6 +74,9 @@ proc shutdownApp(app: App, ctx: Frag) =
   logDebug "App shut down..."
 
 proc updateApp(app: App, ctx: Frag, deltaTime: float) =
+  app.camera.update()
+  app.batch.setProjectionMatrix(app.camera.combined)
+
   if ctx.input.down("w", true): app.player.position[1] += PLAYER_SPEED * deltaTime
   if ctx.input.down("s", true): app.player.position[1] -= PLAYER_SPEED * deltaTime
   if ctx.input.down("d", true): app.player.position[0] += PLAYER_SPEED * deltaTime
