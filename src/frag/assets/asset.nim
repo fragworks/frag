@@ -2,7 +2,6 @@ import
   tables
 
 import
-  freetype,
   bgfxdotnim as bgfx,
   sdl2 as sdl
 
