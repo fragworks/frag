@@ -66,7 +66,7 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
 
     case(info.subsystem):
         of SysWM_Windows:
-          when defined(windows) and not defined (android):
+          when defined(windows) and not defined(android):
             let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
             pd.nwh = info.win.hwnd
           pd.ndt = nil
@@ -143,6 +143,12 @@ proc init*(
   bgfx_set_debug(debugMode)
 
   return true
+
+proc getDisplayData*(this: Graphics): DisplayMode =
+  var displayData : sdl.DisplayMode
+  if sdl.getCurrentDisplayMode(0, displayData) != sdl.SdlSuccess:
+    logError "Error retrieving display data from SDL2."
+  return displayData
 
 proc clearView*(this: Graphics, viewId: uint8, flags: uint16, rgba: uint32, depth: float32, stencil: uint8) =
   bgfx_set_view_clear(viewID, flags, rgba, depth, stencil)

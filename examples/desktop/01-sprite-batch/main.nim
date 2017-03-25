@@ -75,6 +75,7 @@ proc renderApp(app: App, ctx: Frag, deltaTime: float) =
 
   app.batch.begin()
   app.batch.draw(tex, HALF_WIDTH - texHalfW, HALF_HEIGHT - texHalfH, float tex.data.w, float tex.data.h)
+  app.batch.draw(tex, HALF_WIDTH + texHalfW, HALF_HEIGHT - texHalfH, float tex.data.w, float tex.data.h)
   app.batch.`end`()
 
 startFrag[App](Config(

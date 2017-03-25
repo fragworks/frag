@@ -61,9 +61,23 @@ proc installBgfx(target: Targets) =
   of WinRelease64:
     genGmakeProjectsAndCd("mingw-gcc")
     direShell("make config=release64 bgfx-shared-lib shaderc")
+  
+  cd(getAppDir())
+
+proc installChipmunk() = 
+  cd("vendor/Chipmunk2D")
+  createDir(".build")
+  cd(".build")
+  if not shell("cmake .."):
+      echo "Ensure CMake is installed before proceeding: https://cmake.org/"
+      return
+  direShell("make")
+
+
 
 proc installDependencies(target: Targets) =
   installBgfx(target)
+  installChipmunk()
 
 proc verifyAndroidEnvVars() =
   if not existsEnv("ANDROID_NDK_ROOT") or not existsEnv("ANDROID_NDK_CLANG") or not existsEnv("ANDROID_NDK_ARM"):

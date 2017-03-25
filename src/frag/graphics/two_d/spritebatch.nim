@@ -52,13 +52,15 @@ proc flush(spriteBatch: SpriteBatch) =
 
   discard bgfx_touch(0)
 
+  let spriteCount = spriteBatch.vertices.len / 4
+
   var vb : bgfx_transient_vertex_buffer_t
-  bgfx_alloc_transient_vertex_buffer(addr vb, 4, spriteBatch.vDecl);
+  bgfx_alloc_transient_vertex_buffer(addr vb, uint32 spriteBatch.vertices.len, spriteBatch.vDecl);
   copyMem(vb.data, addr spriteBatch.vertices[0], sizeof(PosUVColorVertex) * spriteBatch.vertices.len)
 
   bgfx_set_texture(0, spriteBatch.texHandle, spriteBatch.lastTexture.handle, high(uint32))
   bgfx_set_transient_vertex_buffer(addr vb, 0u32, uint32 spriteBatch.vertices.len)
-  bgfx_set_index_buffer(spriteBatch.ibh, 0, 6)
+  bgfx_set_index_buffer(spriteBatch.ibh, 0, uint32 spriteCount * 6)
 
   var mtx: fpumath.Mat4
   mtxIdentity(mtx)
@@ -126,16 +128,30 @@ proc init*(spriteBatch: SpriteBatch, maxSprites: int, view: uint8) =
   spriteBatch.drawing = false
   spriteBatch.maxSprites = maxSprites
   spriteBatch.vertices = @[]
+  
   spriteBatch.view = view
    
   mtxIdentity(spriteBatch.projectionMatrix)
 
   spriteBatch.vDecl = create(bgfx_vertex_decl_t)
 
-  var indexdata = [
-    0'u16, 1'u16, 2'u16,
-    3'u16, 0'u16, 2'u16
-  ]
+  let indicesCount = maxSprites * 6
+
+  var indexdata = newSeq[uint16](indicesCount)
+  var i = 0
+  var j = 0u16
+  while i < indicesCount:
+    indexdata[i] = j
+    indexdata[i + 1] = j + 1
+    indexdata[i + 2] = j + 2
+    indexdata[i + 3] = j + 3
+    indexdata[i + 4] = j
+    indexdata[i + 5] = j + 2
+    inc(j, 4)
+    inc(i, 6)
+
+  
+  echo repr indexdata
 
   spriteBatch.ibh = bgfx_create_index_buffer(bgfx_copy(addr indexdata[0], uint32 indexdata.len * sizeof(uint16)), BGFX_BUFFER_NONE)
 
