@@ -254,7 +254,7 @@ startFrag[App](Config(
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
   resetFlags: ResetFlag.VSync,
-  logFileName: "example-00.log",
+  logFileName: "example-06.log",
   assetRoot: "../assets",
   debugMode: BGFX_DEBUG_TEXT
 ))
