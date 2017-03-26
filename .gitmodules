@@ -7,9 +7,6 @@
 [submodule "platforms/android"]
 	path = platforms/android
 	url = git@github.com:fragworks/frag-android.git
-[submodule "samples"]
-	path = samples
-	url = git@github.com:fragworks/frag-samples.git
 [submodule "vendor/Chipmunk2D"]
 	path = vendor/Chipmunk2D
 	url = https://github.com/slembcke/Chipmunk2D.git
