@@ -51,6 +51,9 @@ proc update*(camera: Camera) =
   else:
     discard
 
+proc zoom*(camera: Camera, zoom: float) =
+  camera.zoom = zoom
+
 proc ortho*(camera: Camera, far, viewportWidth, viewportHeight: float, yDown: bool = false) =
   if not camera.initialized:
     logWarn "Camera must be initialized before calling ortho."
@@ -60,10 +63,13 @@ proc ortho*(camera: Camera, far, viewportWidth, viewportHeight: float, yDown: bo
     camera.up[1] = -1.0f32
     camera.direction[2] = 1.0f32
 
-  camera.cameraType = CameraType.Orthographic
+  if camera.cameraType == CameraType.Perspective:
+    camera.cameraType = CameraType.Orthographic
+    camera.zoom = 1.0
+  
   camera.near = 0.0
   camera.far = far
-  camera.zoom = 1.0
+    
 
   camera.viewportWidth = viewportWidth
   camera.viewportHeight = viewportHeight
@@ -76,6 +82,11 @@ proc ortho*(camera: Camera, far, viewportWidth, viewportHeight: float, yDown: bo
 
   bgfx_set_view_rect(camera.viewId, 0, 0, uint16 viewportWidth, uint16 viewportHeight)
 
+proc updateViewport*(camera: Camera, viewportWidth, viewportHeight: float) =
+  camera.viewportWidth = viewportWidth
+  camera.viewportHeight = viewportHeight
+  
+  bgfx_set_view_rect(camera.viewId, 0, 0, uint16 viewportWidth, uint16 viewportHeight)
 
 proc init*(camera: Camera, viewId: uint8) =
   camera.viewId = viewId

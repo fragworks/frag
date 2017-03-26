@@ -75,4 +75,4 @@ proc load*(filename: string): Texture =
 proc unload*(texture: Texture) =
   bgfx_destroy_texture(texture.handle)
 
-  #sdl.destroy(texture.data)
+  sdl.destroy(texture.data)

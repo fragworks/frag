@@ -14,7 +14,7 @@ proc setTheme*(imgui: IMGUI, theme: GUITheme) =
   case theme:
   of GUITheme.White:
     style[COLOR_TEXT.ord] = newColorRGBA(255, 255, 255, 255)
-    style[COLOR_WINDOW.ord] = newColorRGBA(255, 255, 255, 255)
+    style[COLOR_WINDOW.ord] = newColorRGBA(0, 0, 0, 0)
     style[COLOR_HEADER.ord] = newColorRGBA(175, 175, 175, 255)
     style[COLOR_BORDER.ord] = newColorRGBA(0, 0, 0, 255)
     style[COLOR_BUTTON.ord] = newColorRGBA(185, 185, 185, 255)

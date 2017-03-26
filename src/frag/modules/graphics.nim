@@ -153,6 +153,19 @@ proc getDisplayData*(this: Graphics): DisplayMode =
 proc clearView*(this: Graphics, viewId: uint8, flags: uint16, rgba: uint32, depth: float32, stencil: uint8) =
   bgfx_set_view_clear(viewID, flags, rgba, depth, stencil)
 
+proc drawDebugImage*(this: Graphics, image: var openarray[uint8], x, y, width, height, pitch: uint16) =
+  bgfx_dbg_text_image(
+    x, 
+    y,
+    width,
+    height,
+    image.addr,
+    pitch
+  )
+
+proc startFrame*(this: Graphics) =
+  bgfx_dbg_text_clear(0, false)
+
 proc render*(this: Graphics) =
   var lastTime {.global.} : uint64
   let current = sdl.getPerformanceCounter()
@@ -161,7 +174,6 @@ proc render*(this: Graphics) =
 
   discard bgfx_touch(0)
 
-  bgfx_dbg_text_clear(0, false)
   bgfx_dbg_text_printf(1, 1, 0x0f, "Frame: %7.3f[ms] FPS: %7.3f", float32(frameTime), (1.0 / frameTime) * 1000)
 
   discard bgfx_frame(false)
@@ -175,7 +187,12 @@ proc onWindowResize*(this: Graphics, event: sdl.Event) {.procvar.} =
     discard linkSDL2BGFX(this.rootWindow.handle)
     
   bgfx_reset(width, height, BGFX_RESET_VSYNC)
-  bgfx_set_view_rect(0, 0, 0, width , height )
+
+proc getSize*(this: Graphics): tuple =
+  sdl.getSize(this.rootWindow.handle)
+
+proc setViewRect*(this: Graphics, viewId: uint8, x, y, width, height: uint16) =
+  bgfx_set_view_rect(viewId, x, y, width, height)
 
 proc shutdown*(this: Graphics) =
   if this.rootWindow.isNil:

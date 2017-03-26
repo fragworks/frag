@@ -1,4 +1,5 @@
 import
+  events,
   hashes,
   math,
   strutils,
@@ -6,10 +7,12 @@ import
 
 import 
   bgfxdotnim,
-  chipmunk
+  chipmunk,
+  sdl2 as sdl
 
 import
   ../../../src/frag,
+  ../../../src/frag/events/app_event_handler,
   ../../../src/frag/config,
   ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/spritebatch,
@@ -169,15 +172,30 @@ proc init_space() =
 
 type
   App = ref object
+    eventHandler: AppEventHandler
     batch: SpriteBatch
     camera: Camera
     assetIds: Table[string, Hash]
 
 var tex: Texture
 
+proc resize*(e: EventArgs) =
+  let event = SDLEventMessage(e).event
+  let sdlEventData = event.sdlEventData
+  
+  let app = cast[App](event.userData)
+  
+  let w = sdlEventData.window.data1.float
+  let h = sdlEventData.window.data2.float
+
+  app.camera.ortho(1.0, w, h)
+
 proc initializeApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
   
+  app.eventHandler = AppEventHandler()
+  app.eventHandler.init(resize)
+
   init_space()
 
   app.assetIds = initTable[string, Hash]()

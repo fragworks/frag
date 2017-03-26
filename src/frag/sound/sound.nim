@@ -12,6 +12,9 @@ proc load*(filepath: string): asset.Sound =
   s.snd = newSoundWithFile(filepath)
   return s
 
+proc loop*(sound: asset.Sound, loop: bool) =
+  sound.snd.setLooping(loop)
+
 proc play*(sound: asset.Sound) =
   sound.snd.play()
 

@@ -39,26 +39,30 @@ proc registerEventHandlers(ctx: Frag) =
   ctx.events.on(EventType.LoadAsset, handleLoadAssetEvent)
   ctx.events.on(EventType.UnloadAsset, handleUnloadAssetEvent)
   ctx.events.on(EventType.GetAsset, handleGetAssetEvent)
+  
   ctx.events.on(SDLEventType.KeyDown, handleKeyDown)
   ctx.events.on(SDLEventType.KeyUp, handleKeyUp)
-  ctx.events.on(SDLEventType.WindowResize, handleWindowResizeEvent)
   
+  ctx.events.on(SDLEventType.WindowResize, handleWindowResizeEvent)
+
+proc registerAppEventHandlers[App](app: App, ctx: Frag) =
+  ctx.events.on(SDLEventType.WindowResize, app.eventHandler.handleResize)
 
 proc shutdown(ctx: Frag, exitCode: int) =
   logInfo "Shutting down Frag..."
-
-  logDebug "Shutting down graphics subsystem..."
-  graphics.shutdown(ctx.graphics)
-  logDebug "Graphics subsystem shut down."
 
   logDebug "Shutting down asset management subsystem..."
   assets.shutdown(ctx.assets)
   logDebug "Asset management subsystem shut down."
 
+  logDebug "Shutting down graphics subsystem..."
+  graphics.shutdown(ctx.graphics)
+  logDebug "Graphics subsystem shut down."
+
   logInfo "Frag shut down. Goodbye."
   quit(exitCode)
 
-proc init(ctx: Frag, config: Config) =
+proc init[App](ctx: Frag, config: Config, app: App) =
   if not defined(android):
     echo "Initializing Frag - " & globals.version & "..."
     
@@ -124,11 +128,14 @@ var now = sdl.getPerformanceCounter()
 proc startFrag*[App](config: Config) =
   var ctx = Frag()
 
-  ctx.init(config)
-
   var app = App()
 
+  ctx.init(config, app)
+
   app.initializeApp(ctx)
+
+  when compiles(app.eventHandler):
+    registerAppEventHandlers(app, ctx)
 
   var
     event = sdl.defaultEvent
@@ -160,10 +167,12 @@ proc startFrag*[App](config: Config) =
           of WINDOWEVENT_RESIZED:
             sdlEvent.sdlEventType = SDLEventType.WindowResize
             sdlEvent.graphics = ctx.graphics
+            sdlEvent.userData = cast[pointer](app)
           else:
             discard
         ctx.events.emit(sdlEvent)
 
+    ctx.graphics.startFrame()
     app.updateApp(ctx, deltaTime)
     app.renderApp(ctx, deltaTime)
     graphics.render(ctx.graphics)

@@ -1,4 +1,5 @@
 import
+  events,
   hashes,
   tables
 
@@ -8,6 +9,7 @@ import
 
 import
   ../../../src/frag,
+  ../../../src/frag/events/app_event_handler,
   ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
@@ -17,6 +19,7 @@ import
 
 type
   App = ref object
+    eventHandler: AppEventHandler
     batch: SpriteBatch
     camera: Camera
     assetIds: Table[string, Hash]
@@ -32,8 +35,17 @@ const HALF_WIDTH = WIDTH / 2
 const HALF_HEIGHT = HEIGHT / 2
 const PLAYER_SPEED = 100.0
 
+proc resize*(e: EventArgs) =
+  let event = SDLEventMessage(e).event
+  let sdlEventData = event.sdlEventData
+  let app = cast[App](event.userData)
+  app.camera.updateViewport(sdlEventData.window.data1.float, sdlEventData.window.data2.float)
+
 proc initializeApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
+
+  app.eventHandler = AppEventHandler()
+  app.eventHandler.init(resize)
 
   app.assetIds = initTable[string, Hash]()
 
@@ -90,11 +102,11 @@ proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   app.batch.`end`()
 
 startFrag[App](Config(
-  rootWindowTitle: "Frag Example 01-sprite-batch",
+  rootWindowTitle: "Frag Example 03-input",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,
   resetFlags: ResetFlag.VSync,
-  logFileName: "example-01.log",
+  logFileName: "example-03.log",
   assetRoot: "../assets",
   debugMode: BGFX_DEBUG_TEXT
 ))

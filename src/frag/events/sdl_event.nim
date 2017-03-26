@@ -1,12 +1,17 @@
 import events
 
-import sdl2 as sdl except Event
+import 
+  sdl2 as sdl except Event
 
 import
-  ../modules/module,
-  ./event
+  event,
+  app_event_handler,
+  ../modules/module
 
 type
+  EventAwareApp = concept a
+    a.eventHandler is AppEventHandler
+
   SDLEventType* {.pure.} = enum
     KeyDown
     KeyUp
@@ -19,6 +24,7 @@ type
       input*: Input
     of SDLEventType.WindowResize:
       graphics*: Graphics
+      userData*: pointer
     else:
       discard
 

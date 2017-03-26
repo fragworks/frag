@@ -1,17 +1,36 @@
-import bgfxdotnim
+import
+  events
+
+import 
+  bgfxdotnim,
+  sdl2 as sdl
 
 import
   ../../../src/frag,
+  ../../../src/frag/events/app_event_handler,
   ../../../src/frag/config,
   ../../../src/frag/graphics/window,
   ../../../src/frag/logger,
   ../../../src/frag/modules/graphics
 
+import
+  logo
+
 type
   App = ref object
+    eventHandler: AppEventHandler
+
+proc resize*(e: EventArgs) =
+  let event = SDLEventMessage(e).event
+  let sdlEventData = event.sdlEventData
+  # let app = cast[App](event.userData)
+  let graphics = event.graphics
+  graphics.setViewRect(0, 0, 0, uint16 sdlEventData.window.data1, uint16 sdlEventData.window.data2)
 
 proc initializeApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
+  app.eventHandler = AppEventHandler()
+  app.eventHandler.init(resize)
   logDebug "App initialized."
 
 proc updateApp(app:App, ctx: Frag, deltaTime: float) =
@@ -19,6 +38,17 @@ proc updateApp(app:App, ctx: Frag, deltaTime: float) =
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
+
+  let size = ctx.graphics.getSize()
+
+  ctx.graphics.drawDebugImage(
+    logo.fragLogo,
+    uint16 max(size[0] / 2 / 8, 40) - 40,
+    uint16 max(size[1] / 2 / 16, 12.5) - 12.5,
+    80,
+    25,
+    160
+  )
 
 proc shutdownApp(app: App, ctx: Frag) =
   logDebug "Shutting down app..."

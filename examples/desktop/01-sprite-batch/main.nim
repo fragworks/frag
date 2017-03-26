@@ -1,11 +1,17 @@
 import
+  events
+
+import
   hashes,
   tables
 
-import bgfxdotnim
+import 
+  bgfxdotnim,
+  sdl2 as sdl
 
 import
   ../../../src/frag,
+  ../../../src/frag/events/app_event_handler,
   ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
@@ -14,6 +20,7 @@ import
 
 type
   App = ref object
+    eventHandler: AppEventHandler
     batch: SpriteBatch
     camera: Camera
     assetIds: Table[string, Hash]
@@ -23,8 +30,16 @@ const HEIGHT = 540
 const HALF_WIDTH = WIDTH / 2
 const HALF_HEIGHT = HEIGHT / 2
 
+proc resize*(e: EventArgs) =
+  let event = SDLEventMessage(e).event
+  let sdlEventData = event.sdlEventData
+  let app = cast[App](event.userData)
+  app.camera.updateViewport(sdlEventData.window.data1.float, sdlEventData.window.data2.float)
+
 proc initializeApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
+  app.eventHandler = AppEventHandler()
+  app.eventHandler.init(resize)
 
   app.assetIds = initTable[string, Hash]()
 
