@@ -13,7 +13,8 @@ import
   ../graphics/two_d/texture_atlas,
   ../graphics/two_d/texture_region,
   ../logger,
-  module
+  module,
+  ../sound/sound
 
 export
   asset,
@@ -28,7 +29,8 @@ proc init*(this: AssetManager, config: Config): bool =
 proc dispose(this: AssetManager, id: Hash) =
   case this.assets[id].assetType
     of AssetType.Texture:
-      texture.unload(this.assets[id])
+      if not this.assets[id].isNil:
+        texture.unload(this.assets[id])
       this.assets.del(id)
     else:
       logWarn "Unable to unload asset with unknown type."
@@ -90,6 +92,10 @@ proc load*(this: AssetManager, filename: string, assetType: AssetType, internal:
     return
 
   case assetType
+    of AssetType.Sound:
+      var sound = sound.load(filepath)
+      this.assets.add(newAssetId, sound)
+      return newAssetId
     of AssetType.Texture:
       var texture = texture.load(filepath)
       this.assets.add(newAssetId, texture)

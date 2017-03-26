@@ -3,7 +3,8 @@ import
 
 import
   bgfxdotnim as bgfx,
-  sdl2 as sdl
+  sdl2 as sdl,
+  sound.sound as snd
 
 import
   asset_types
@@ -20,6 +21,8 @@ type
   Asset* = object
     filename*: string
     case assetType*: AssetType
+    of AssetType.Sound:
+      snd*: snd.Sound
     of AssetType.Texture:
       handle*: bgfx_texture_handle_t
       data*: sdl.SurfacePtr
@@ -33,6 +36,7 @@ type
       numRegions*: int
       textureFilename*: string
 
+  Sound* = ref Asset
   Texture* = ref Asset
   TextureRegion* = ref Asset
   TextureAtlas* = ref Asset

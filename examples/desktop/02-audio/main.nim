@@ -5,15 +5,13 @@ import
 import bgfxdotnim
 
 import
-  sound.sound
-
-import
   ../../../src/frag,
   ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
   ../../../src/frag/graphics/window,
-  ../../../src/frag/modules/assets
+  ../../../src/frag/modules/assets,
+  ../../../src/frag/sound/sound
 
 type
   App = ref object
@@ -35,6 +33,7 @@ proc initializeApp(app: App, ctx: Frag) =
 
   logDebug "Loading assets..."
   app.assetIds.add(filename, ctx.assets.load(filename, AssetType.Texture))
+  app.assetIds.add("sounds/test.ogg", ctx.assets.load("sounds/test.ogg", AssetType.Sound))
   logDebug "Assets loaded."
 
   app.batch = SpriteBatch(
@@ -49,10 +48,10 @@ proc initializeApp(app: App, ctx: Frag) =
   app.camera.ortho(1.0, WIDTH, HEIGHT)
 
 
-  var snd = sound.newSoundWithFile("./desktop/assets/sounds/test.ogg")
-  snd.`gain=`(0.5)
+  var sound = assets.get[Sound](ctx.assets, app.assetIds["sounds/test.ogg"])
+  sound.setGain(0.5)
 
-  snd.play()
+  sound.play()
 
   logDebug "App initialized."
 
