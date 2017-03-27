@@ -36,7 +36,7 @@ type
     blendingEnabled*: bool
     projectionMatrix*: fpumath.Mat4
 
-  PosUVColorVertex {.packed, pure.} = object
+  PosUVColorVertex* {.packed, pure.} = object
     x*, y*, z*: float32
     u*, v*: float32
     abgr*: uint32
@@ -95,6 +95,16 @@ proc drawRegion*(spriteBatch: SpriteBatch, textureRegion: TextureRegion, x, y: f
     PosUVColorVertex(x: x + float textureRegion.regionWidth, y: y + float textureRegion.regionHeight, z: 0.0'f32, u:textureRegion.u2, v:textureRegion.v2, abgr: color ),
     PosUVColorVertex(x: x, y: y + float textureRegion.regionHeight, z: 0.0'f32, u:textureRegion.u, v:textureRegion.v2, abgr: color ),
   ])
+
+proc draw*(spriteBatch: SpriteBatch, texture: Texture, vertices: openArray[PosUVColorVertex]) =
+  if not spriteBatch.drawing:
+    logError "Spritebatch not in drawing mode. Call begin before calling draw."
+    return
+
+  if texture != spriteBatch.lastTexture:
+    switchTexture(spriteBatch, texture)
+
+  spriteBatch.vertices.add(vertices)
 
 proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: float32, tiled: bool = false, color: uint32 = 0xffffffff'u32, scale: Vec3 = [1.0'f32, 1.0'f32, 1.0'f32]) =
   if not spriteBatch.drawing:
