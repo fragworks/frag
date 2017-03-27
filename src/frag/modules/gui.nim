@@ -33,3 +33,6 @@ proc setTheme*(gui: GUI, theme: GUITheme) =
 
 proc setProjectionMatrix*(gui: GUI, projection: Mat4) =
   gui.imgui.setProjectionMatrix(projection, gui.view)
+
+proc shutdown*(gui: GUI) =
+  gui.imgui.dispose()

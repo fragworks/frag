@@ -51,6 +51,10 @@ proc registerAppEventHandlers[App](app: App, ctx: Frag) =
 proc shutdown(ctx: Frag, exitCode: int) =
   logInfo "Shutting down Frag..."
 
+  logDebug "Shutting down GUI subsystem..."
+  gui.shutdown(ctx.gui)
+  logDebug "GUI subsystem shut down."
+
   logDebug "Shutting down asset management subsystem..."
   assets.shutdown(ctx.assets)
   logDebug "Asset management subsystem shut down."
@@ -147,7 +151,7 @@ proc startFrag*[App](config: Config) =
     now = sdl.getPerformanceCounter()
     deltaTime = float64(now - last) / float64(sdl.getPerformanceFrequency())
 
-    ctx.input.update()
+    input.update(ctx.input)
 
     while bool sdl.pollEvent(event):
       case event.kind

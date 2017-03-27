@@ -29,8 +29,7 @@ proc init*(this: AssetManager, config: Config): bool =
 proc dispose(this: AssetManager, id: Hash) =
   case this.assets[id].assetType
     of AssetType.Texture:
-      if not this.assets[id].isNil:
-        texture.unload(this.assets[id])
+      texture.unload(this.assets[id])
       this.assets.del(id)
     else:
       logWarn "Unable to unload asset with unknown type."
