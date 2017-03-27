@@ -2,7 +2,8 @@
 
 import 
   bgfxdotnim as bgfx, 
-  nuklear
+  nuklear,
+  sdl2 as sdl
 
 import
   font/roboto_mono_regular,
@@ -54,19 +55,6 @@ proc get_avail_transient_buffers(vertexCount: uint32, vdecl: ptr bgfx_vertex_dec
   if bgfx_get_avail_transient_vertex_buffer(vertexCount, vdecl) >= vertexCount and bgfx_get_avail_transient_index_buffer(indexCount) >= indexCount:
     return true
   return false
-
-#[proc updateText(nkbgfx: var NuklearBGFX, character: var char) =
-  if nkbgfx.textLen < TEXT_MAX:
-    nkbgfx.text[nkbgfx.textLen] = character
-    inc(nkbgfx.textLen)]#
-
-#template testKey(key: int, window: Window) : cint =
-  #(glfw.GetKey(window, key) == PRESS).cint
-
-#[proc glfw_char_callback(window: Window; character: cuint) {.cdecl.} =
-  setupForeignThreadGc()
-  var c = char character
-  updateText(c)]#
 
 proc getContextRef*(ctx: context): ref context =
   new(result); result[] = ctx
@@ -149,69 +137,6 @@ proc init*(imgui: var IMGUI): bool =
 proc setProjectionMatrix*(imgui: IMGUI, projectionMatrix: Mat4, view: uint8) =
   imgui.projection = projectionMatrix
   bgfx_set_view_transform(view, nil, addr imgui.projection[0])
-
-proc newFrame*(imgui: IMGUI) =
-  discard
-  #[var x, y : float
-  openInput(imgui.ctx)
-  for i in 0..<imgui.textLen:
-    inputUnicode(imgui.ctx, uint32 imgui.text[i])
-
-  if bool nkbgfx.ctx.input.mouse.grab:
-    glfw.SetInputMode(graphics.rootWindow, CURSOR, CURSOR_HIDDEN)
-  elif bool nkbgfx.ctx.input.mouse.ungrab:
-    glfw.SetInputMode(graphics.rootWindow, CURSOR, CURSOR_NORMAL)
-  
-  inputKey(nkbgfx.ctx, keys.KEY_DEL, testKey(glfw.KEY_DELETE, graphics.rootWindow))
-  inputKey(nkbgfx.ctx, keys.KEY_ENTER, testKey(glfw.KEY_ENTER, graphics.rootWindow))
-  inputKey(nkbgfx.ctx, keys.KEY_TAB, testKey(glfw.KEY_TAB, graphics.rootWindow))
-  inputKey(nkbgfx.ctx, keys.KEY_BACKSPACE, testKey(glfw.KEY_BACKSPACE, graphics.rootWindow))
-  inputKey(nkbgfx.ctx, keys.KEY_UP, testKey(glfw.KEY_UP, graphics.rootWindow))
-  inputKey(nkbgfx.ctx, keys.KEY_DOWN, testKey(glfw.KEY_DOWN, graphics.rootWindow))
-  inputKey(nkbgfx.ctx, keys.KEY_TEXT_START, testKey(glfw.KEY_HOME, graphics.rootWindow))
-  inputKey(nkbgfx.ctx, keys.KEY_TEXT_END, testKey(glfw.KEY_END, graphics.rootWindow))
-  inputKey(nkbgfx.ctx, keys.KEY_SCROLL_START, testKey(glfw.KEY_HOME, graphics.rootWindow))
-  inputKey(nkbgfx.ctx, keys.KEY_SCROLL_END, testKey(glfw.KEY_END, graphics.rootWindow))
-  inputKey(nkbgfx.ctx, keys.KEY_SCROLL_DOWN, testKey(glfw.KEY_PAGE_DOWN, graphics.rootWindow))
-  inputKey(nkbgfx.ctx, keys.KEY_SCROLL_UP, testKey(glfw.KEY_PAGE_UP, graphics.rootWindow))
-  inputKey(nkbgfx.ctx, keys.KEY_SHIFT, testKey(glfw.KEY_LEFT_SHIFT, graphics.rootWindow) or testKey(KEY_RIGHT_SHIFT, graphics.rootWindow))
-
-  if testKey(glfw.KEY_LEFT_CONTROL, graphics.rootWindow) == 1 or testKey(glfw.KEY_RIGHT_CONTROL, graphics.rootWindow) == 1:
-    inputKey(nkbgfx.ctx, keys.KEY_COPY, testKey(glfw.KEY_C, graphics.rootWindow))
-    inputKey(nkbgfx.ctx, keys.KEY_PASTE, testKey(glfw.KEY_V, graphics.rootWindow))
-    inputKey(nkbgfx.ctx, keys.KEY_CUT, testKey(glfw.KEY_X, graphics.rootWindow))
-    inputKey(nkbgfx.ctx, keys.KEY_TEXT_UNDO, testKey(glfw.KEY_Z, graphics.rootWindow))
-    inputKey(nkbgfx.ctx, keys.KEY_TEXT_REDO, testKey(glfw.KEY_R, graphics.rootWindow))
-    inputKey(nkbgfx.ctx, keys.KEY_TEXT_WORD_LEFT, testKey(glfw.KEY_LEFT, graphics.rootWindow))
-    inputKey(nkbgfx.ctx, keys.KEY_TEXT_WORD_RIGHT, testKey(glfw.KEY_RIGHT, graphics.rootWindow))
-    inputKey(nkbgfx.ctx, keys.KEY_TEXT_LINE_START, testKey(glfw.KEY_B, graphics.rootWindow))
-    inputKey(nkbgfx.ctx, keys.KEY_TEXT_LINE_END, testKey(glfw.KEY_E, graphics.rootWindow))
-
-  else:
-    inputKey(nkbgfx.ctx, keys.KEY_LEFT, testKey(glfw.KEY_LEFT, graphics.rootWindow))
-    inputKey(nkbgfx.ctx, keys.KEY_RIGHT, testKey(glfw.KEY_RIGHT, graphics.rootWindow))
-    inputKey(nkbgfx.ctx, keys.KEY_COPY, 0)
-    inputKey(nkbgfx.ctx, keys.KEY_PASTE, 0)
-    inputKey(nkbgfx.ctx, keys.KEY_CUT, 0)
-    inputKey(nkbgfx.ctx, keys.KEY_SHIFT, 0)
-  
-
-  glfw.GetCursorPos(graphics.rootWindow, addr x, addr y);
-  input_motion(nkbgfx.ctx, cint x, cint y);
-
-  if bool nkbgfx.ctx.input.mouse.grabbed:
-    glfw.SetCursorPos(graphics.rootWindow, nkbgfx.ctx.input.mouse.prev.x, nkbgfx.ctx.input.mouse.prev.y)
-    nkbgfx.ctx.input.mouse.pos.x = nkbgfx.ctx.input.mouse.prev.x
-    nkbgfx.ctx.input.mouse.pos.y = nkbgfx.ctx.input.mouse.prev.y
-
-  input_button(nkbgfx.ctx, BUTTON_LEFT, cint x, cint y, (glfw.GetMouseButton(graphics.rootWindow, MOUSE_BUTTON_LEFT) == PRESS).cint)
-  input_button(nkbgfx.ctx, BUTTON_MIDDLE, cint x, cint y, (glfw.GetMouseButton(graphics.rootWindow, MOUSE_BUTTON_MIDDLE) == PRESS).cint)
-  input_button(nkbgfx.ctx, BUTTON_RIGHT, cint x, cint y, (glfw.GetMouseButton(graphics.rootWindow, MOUSE_BUTTON_RIGHT) == PRESS).cint)
-  input_scroll(nkbgfx.ctx, nkbgfx.scroll)
-  closeInput(nkbgfx.ctx)
-  
-  nkbgfx.textLen = 0
-  nkbgfx.scroll = 0]#
 
 proc render*(imgui: var IMGUI) =
   init(imgui.dev.vb)

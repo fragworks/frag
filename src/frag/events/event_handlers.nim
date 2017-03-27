@@ -5,6 +5,7 @@ import
   ../assets/asset,
   ../assets/asset_types,
   ../modules/assets,
+  ../modules/gui,
   ../modules/input,
   ../modules/graphics,
   event,
@@ -30,7 +31,9 @@ proc handleGetAssetEvent*(e: EventArgs) {.procvar.} =
 proc handleKeyDown*(e: EventArgs) {.procvar.} =
   let event = SDLEventMessage(e).event
   if not event.input.isNil:
-    event.input.onKeyDown(event.sdlEventData)
+    input.onKeyDown(event.input, event.sdlEventData)
+  if not event.gui.isNil:
+    gui.onkeyDown(event.gui, event.sdlEventData)
 
 proc handleKeyUp*(e: EventArgs) {.procvar.} =
   let event = SDLEventMessage(e).event

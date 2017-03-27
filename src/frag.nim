@@ -163,9 +163,11 @@ proc startFrag*[App](config: Config) =
         if event.kind == sdl.KeyUp:
           sdlEvent.sdlEventType = SDLEventType.KeyUp
           sdlEvent.input = ctx.input
+          sdlEvent.gui = ctx.gui
         elif event.kind == sdl.KeyDown:
           sdlEvent.sdlEventType = SDLEventType.KeyDown
           sdlEvent.input = ctx.input
+          sdlEvent.gui = ctx.gui
         elif event.kind == sdl.WindowEvent:
           case event.window.event
           of WINDOWEVENT_RESIZED:

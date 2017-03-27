@@ -1,7 +1,8 @@
 {.experimental.}
 
 import
-  nuklear
+  nuklear,
+  sdl2 as sdl
 
 export panel_flags
 
@@ -36,3 +37,12 @@ proc setProjectionMatrix*(gui: GUI, projection: Mat4) =
 
 proc shutdown*(gui: GUI) =
   gui.imgui.dispose()
+
+proc layoutDynamicRow*(gui: GUI, height: float32, cols: int32) =
+  gui.imgui.ctx.layoutDynamicRow(height, cols)
+
+proc buttonLabel*(gui: GUI, label: string): bool =
+  gui.imgui.ctx.buttonLabel(label)
+
+proc onKeyDown*(this: GUI, event: sdl.Event) {.procvar.} =
+  echo "HERE"

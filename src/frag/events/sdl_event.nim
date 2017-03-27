@@ -22,6 +22,7 @@ type
     case sdlEventType*: SDLEventType
     of SDLEventType.KeyDown, SDLEventType.KeyUp:
       input*: Input
+      gui*: GUI
     of SDLEventType.WindowResize:
       graphics*: Graphics
       userData*: pointer
