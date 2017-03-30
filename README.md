@@ -66,7 +66,7 @@ Examples
 
 [Spine](https://github.com/fragworks/frag/tree/master/examples/desktop/07-spine)
 
-![https://github.com/fragworks/frag/tree/master/examples/desktop/07-spine]([http://i.imgur.com/gmjkuB1.gif)
+![https://github.com/fragworks/frag/tree/master/examples/desktop/07-spine](http://i.imgur.com/gmjkuB1.gif)
 
 **Android**
 
