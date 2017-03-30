@@ -64,8 +64,9 @@ Examples
 
 ![https://github.com/fragworks/frag/tree/master/examples/06-physics](http://i.imgur.com/DQaRdgc.gif)
 
-[Spine]()
-![Placeholder]([http://i.imgur.com/gmjkuB1.gif)
+[Spine](https://github.com/fragworks/frag/tree/master/examples/desktop/07-spine)
+
+![https://github.com/fragworks/frag/tree/master/examples/desktop/07-spine]([http://i.imgur.com/gmjkuB1.gif)
 
 **Android**
 
