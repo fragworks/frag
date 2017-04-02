@@ -5,13 +5,9 @@ import
 
 import
   event,
-  app_event_handler,
   ../modules/module
 
 type
-  EventAwareApp = concept a
-    a.eventHandler is AppEventHandler
-
   SDLEventType* {.pure.} = enum
     KeyDown
     KeyUp

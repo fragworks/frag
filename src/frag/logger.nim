@@ -2,6 +2,9 @@ import
   logging,
   strutils
 
+import
+  globals
+
 when defined(android):
   {.emit: """
     #include <android/log.h>
@@ -55,6 +58,9 @@ else:
 
   proc init*(logFileName: string) =
     consoleLogger = newConsoleLogger()
-    fileLogger = newFileLogger(logFileName)
+    if logFileName.isNil:
+      fileLogger = newFileLogger(defaultLogFileName)
+    else:  
+      fileLogger = newFileLogger(logFileName)
     logging.addHandler(consoleLogger)
     logging.addHandler(fileLogger)

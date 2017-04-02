@@ -8,7 +8,9 @@ import
   ../types,
   texture,
   texture_atlas,
-  texture_region
+  texture_region,
+  ../../util,
+  vertex
   
 when defined(windows):
   import
@@ -35,11 +37,6 @@ type
     blendSrcFunc*, blendDstFunc*: BlendFunc
     blendingEnabled*: bool
     projectionMatrix*: fpumath.Mat4
-
-  PosUVColorVertex* {.packed, pure.} = object
-    x*, y*, z*: float32
-    u*, v*: float32
-    abgr*: uint32
 
 proc setProjectionMatrix*(batch: SpriteBatch, projectionMatrix: fpumath.Mat4) =
   discard
@@ -143,7 +140,7 @@ proc init*(spriteBatch: SpriteBatch, maxSprites: int, view: uint8) =
    
   mtxIdentity(spriteBatch.projectionMatrix)
 
-  spriteBatch.vDecl = create(bgfx_vertex_decl_t)
+  spriteBatch.vDecl = workaround_createShared[bgfx_vertex_decl_t]()
 
   let indicesCount = maxSprites * 6
 
@@ -207,3 +204,5 @@ proc dispose*(spriteBatch: SpriteBatch) =
   let rendererType = bgfx_get_renderer_type()
   if rendererType in [BGFX_RENDERER_TYPE_OPENGL, BGFX_RENDERER_TYPE_OPENGLES]:
     bgfx_destroy_program(spriteBatch.programHandle)
+
+  freeShared(spriteBatch.vDecl)

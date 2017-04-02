@@ -45,4 +45,4 @@ proc buttonLabel*(gui: GUI, label: string): bool =
   gui.imgui.ctx.buttonLabel(label)
 
 proc onKeyDown*(this: GUI, event: sdl.Event) {.procvar.} =
-  echo "HERE"
+  discard

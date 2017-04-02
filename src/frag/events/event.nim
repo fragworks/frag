@@ -1,3 +1,16 @@
+#   FRAG - Framework for Rather Awesome Games
+#   (c) Copyright 2017 Fragworks
+#
+#   See the file "LICENSE", included in this
+#   distribution, for details about the copyright.
+
+## ===============
+## Module frag.events.event
+## ===============
+##
+## The variant type ``Event`` and its discriminator ``EventType`` define
+## all of the framework-specific (non-SDL2) events raised by FRAG.
+
 import
   events,
   hashes
@@ -13,19 +26,18 @@ import
 
 type
   EventType* {.pure.} = enum
+    ## Types of the various framework-specific events raised by FRAG
     LoadAsset
     UnloadAsset
     GetAsset
 
-  EventProducerType* {.pure.} = enum
-    NONE
-
   EventProducer* = object
 
   Event* = object of RootObj
-    eventBus*: EventBus
-    producer*: ref EventProducer
-    case eventType*: EventType
+    ## Variant type defining all framework-specific events
+    eventBus*: EventBus ## ``EventBus`` the event is emitted through
+    producer*: ref EventProducer ## Producer of the event
+    case eventType*: EventType ## Type of event
     of EventType.LoadAsset, EventType.UnloadAsset, EventType.GetAsset:
       filename*: string
       assetManager*: AssetManager

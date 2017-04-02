@@ -1,3 +1,16 @@
+#   FRAG - Framework for Rather Awesome Games
+#   (c) Copyright 2017 Fragworks
+#
+#   See the file "LICENSE", included in this
+#   distribution, for details about the copyright.
+
+## ===============
+## Module frag.events.event_handlers
+## ===============
+##
+## Framework level event handlers are contained within this module.
+## Both framework-specific and SDL2 event handlers are found within.
+
 import
   events
 

@@ -13,6 +13,7 @@ skipDirs      = @[ "examples", "samples" ]
 # Dependencies
 
 requires "nim >= 0.16.0"
+requires "nake >= 1.9"
 requires "sdl2 >= 1.1"
 requires "https://github.com/yglukhov/android.git"
 requires "x11 >= 1.0"

@@ -9,7 +9,6 @@ import
 
 import
   ../../../src/frag,
-  ../../../src/frag/events/app_event_handler,
   ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
@@ -19,7 +18,6 @@ import
 
 type
   App = ref object
-    eventHandler: AppEventHandler
     batch: SpriteBatch
     camera: Camera
     assetIds: Table[string, Hash]
@@ -41,11 +39,10 @@ proc resize*(e: EventArgs) =
   let app = cast[App](event.userData)
   app.camera.updateViewport(sdlEventData.window.data1.float, sdlEventData.window.data2.float)
 
-proc initializeApp(app: App, ctx: Frag) =
+proc initApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
 
-  app.eventHandler = AppEventHandler()
-  app.eventHandler.init(resize)
+  ctx.events.on(SDLEventType.WindowResize, resize)
 
   app.assetIds = initTable[string, Hash]()
 
@@ -101,7 +98,7 @@ proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   app.batch.draw(app.player.texture, app.player.position[0], app.player.position[1], float32 app.player.texture.data.w, float32 app.player.texture.data.h)
   app.batch.`end`()
 
-startFrag[App](Config(
+startFrag(App(), Config(
   rootWindowTitle: "Frag Example 03-input",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,

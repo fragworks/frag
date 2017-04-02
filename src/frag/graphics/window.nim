@@ -23,14 +23,17 @@ const posUndefined* = sdl.SDL_WINDOWPOS_UNDEFINED
 proc init*(
   window: Window,
   title: string = "FRAG - " & globals.version,
-  windowPosX, windowPosY: int,
+  windowPosX, windowPosY: int32,
   width, height: int,
   flags: uint32
 ) =
+  let windowTitle = if title.isNil: "FRAG - " & globals.version
+    else: title
+
   window.handle = sdl.createWindow(
-    title,
-    windowPosX.cint, windowPosY.cint,
-    width.cint, height.cint,
+    windowTitle,
+    windowPosX, windowPosY,
+    width.int32, height.int32,
     flags
   )
 

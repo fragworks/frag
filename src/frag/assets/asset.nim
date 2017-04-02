@@ -1,3 +1,17 @@
+#   FRAG - Framework for Rather Awesome Games
+#   (c) Copyright 2017 Fragworks
+#
+#   See the file "LICENSE", included in this
+#   distribution, for details about the copyright.
+
+## ===============
+## Module frag.assets.asset
+## ===============
+##
+## Contains variant type ``Asset`` which defines fields for
+## the various asset types FRAG supports. See ``frag.assets.asset.AssetType`` for
+## an enumeration of asset types supported by FRAG.
+
 import
   tables
 
@@ -10,15 +24,8 @@ import
   asset_types
 
 type
-  #[
-  Character* = object
-    textureID*: GLuint
-    size*: Vec2i
-    bearing*: Vec2i
-    advance*: GLuint
-    height*: GLuint]#
-
   Asset* = object
+    ## Variant type for all FRAG assets
     filename*: string
     case assetType*: AssetType
     of AssetType.Sound:

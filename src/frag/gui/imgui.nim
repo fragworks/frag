@@ -9,7 +9,8 @@ import
   font/roboto_mono_regular,
   imgui_fs,
   imgui_vs,
-  ../math/fpu_math as fpumath
+  ../math/fpu_math as fpumath,
+  ../util
 
 template offsetof(typ, field): untyped = (var dummy: typ; cast[uint](addr(dummy.field)) - cast[uint](addr(dummy)))
 
@@ -67,7 +68,7 @@ proc init*(imgui: var IMGUI): bool =
   imgui.dev.vsh = bgfx_create_shader(bgfx_make_ref(addr imgui_vs.vs[0], uint32 sizeof(imgui_vs.vs)))
   imgui.dev.fsh = bgfx_create_shader(bgfx_make_ref(addr imgui_fs.fs[0], uint32 sizeof(imgui_fs.fs)))
   imgui.dev.sph = bgfx_create_program(imgui.dev.vsh, imgui.dev.fsh, true)
-  imgui.dev.vdecl = createShared(bgfx_vertex_decl_t)
+  imgui.dev.vdecl = workaround_createShared[bgfx_vertex_decl_t]()
   bgfx_vertex_decl_begin(imgui.dev.vdecl, BGFX_RENDERER_TYPE_NOOP)
   bgfx_vertex_decl_add(imgui.dev.vdecl, BGFX_ATTRIB_POSITION, 2, BGFX_ATTRIB_TYPE_FLOAT, false, false)
   bgfx_vertex_decl_add(imgui.dev.vdecl, BGFX_ATTRIB_TEXCOORD0, 2, BGFX_ATTRIB_TYPE_FLOAT, false, false)
@@ -196,8 +197,4 @@ proc dispose*(imgui: var IMGUI) =
   bgfx_destroy_uniform(imgui.dev.uh)
   bgfx_destroy_program(imgui.dev.sph)
 
-  free(imgui.dev.cmds)
-  free(imgui.dev.vb)
-  free(imgui.dev.ib)
-  imgui.fa.clear()
-  imgui.ctx.free()
+  freeShared(imgui.dev.vdecl)

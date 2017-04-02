@@ -7,7 +7,6 @@ import
 
 import
   ../../../src/frag,
-  ../../../src/frag/events/app_event_handler,
   ../../../src/frag/config,
   ../../../src/frag/graphics/window,
   ../../../src/frag/logger,
@@ -18,7 +17,6 @@ import
 
 type
   App = ref object
-    eventHandler: AppEventHandler
 
 proc resize*(e: EventArgs) =
   let event = SDLEventMessage(e).event
@@ -27,10 +25,9 @@ proc resize*(e: EventArgs) =
   let graphics = event.graphics
   graphics.setViewRect(0, 0, 0, uint16 sdlEventData.window.data1, uint16 sdlEventData.window.data2)
 
-proc initializeApp(app: App, ctx: Frag) =
+proc initApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
-  app.eventHandler = AppEventHandler()
-  app.eventHandler.init(resize)
+  ctx.events.on(SDLEventType.WindowResize, resize)
   logDebug "App initialized."
 
 proc updateApp(app:App, ctx: Frag, deltaTime: float) =
@@ -54,7 +51,7 @@ proc shutdownApp(app: App, ctx: Frag) =
   logDebug "Shutting down app..."
   logDebug "App shut down."
 
-startFrag[App](Config(
+startFrag(App(), Config(
   rootWindowTitle: "Frag Example 00-hello-world",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,

@@ -9,7 +9,6 @@ import
 
 import
   ../../../src/frag,
-  ../../../src/frag/events/app_event_handler,
   ../../../src/frag/modules/gui,
   ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/spritebatch,
@@ -20,7 +19,6 @@ import
 
 type
   App = ref object
-    eventHandler: AppEventHandler
     batch: SpriteBatch
     batchCamera: Camera
     guiCamera: Camera
@@ -46,11 +44,10 @@ proc resize*(e: EventArgs) =
   HALF_WIDTH = w / 2
   HALF_HEIGHT = h / 2
 
-proc initializeApp(app: App, ctx: Frag) =
+proc initApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
 
-  app.eventHandler = AppEventHandler()
-  app.eventHandler.init(resize)
+  ctx.events.on(SDLEventType.WindowResize, resize)
 
   app.assetIds = initTable[string, Hash]()
 
@@ -99,8 +96,6 @@ proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   gui.setProjectionMatrix(ctx.gui, app.guiCamera.combined)
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
-  if ctx.input.pressed("q"): echo "quit"
-
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
   let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
@@ -116,7 +111,7 @@ proc renderApp(app: App, ctx: Frag, deltaTime: float) =
     
     ctx.gui.closeWindow()
 
-startFrag[App](Config(
+startFrag(App(), Config(
   rootWindowTitle: "Frag Example 05-gui",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,

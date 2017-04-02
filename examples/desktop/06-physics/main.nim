@@ -12,7 +12,6 @@ import
 
 import
   ../../../src/frag,
-  ../../../src/frag/events/app_event_handler,
   ../../../src/frag/config,
   ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/spritebatch,
@@ -172,7 +171,6 @@ proc init_space() =
 
 type
   App = ref object
-    eventHandler: AppEventHandler
     batch: SpriteBatch
     camera: Camera
     assetIds: Table[string, Hash]
@@ -190,11 +188,10 @@ proc resize*(e: EventArgs) =
 
   app.camera.ortho(1.0, w, h)
 
-proc initializeApp(app: App, ctx: Frag) =
+proc initApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
   
-  app.eventHandler = AppEventHandler()
-  app.eventHandler.init(resize)
+  ctx.events.on(SDLEventType.WindowResize, resize)
 
   init_space()
 
@@ -249,7 +246,7 @@ proc shutdownApp(app: App, ctx: Frag) =
   app.batch.dispose()
   logDebug "App shut down."
 
-startFrag[App](Config(
+startFrag(App(), Config(
   rootWindowTitle: "Frag Example 06-physics",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,

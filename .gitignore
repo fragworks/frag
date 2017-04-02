@@ -25,3 +25,15 @@ platforms
 .vscode
 *.idea
 *.iml
+
+#################
+# DOCUMENTATION #
+#################
+
+docout
+
+###########
+# SAMPLES #
+###########
+
+frag-samples

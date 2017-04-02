@@ -9,7 +9,6 @@ import
 
 import
   ../../../src/frag,
-  ../../../src/frag/events/app_event_handler,
   ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/animation,
   ../../../src/frag/graphics/two_d/spritebatch,
@@ -21,7 +20,6 @@ import
 
 type
   App = ref object
-    eventHandler: AppEventHandler
     batch: SpriteBatch
     camera: Camera
     assetIds: Table[string, Hash]
@@ -39,11 +37,10 @@ proc resize*(e: EventArgs) =
   let app = cast[App](event.userData)
   app.camera.updateViewport(sdlEventData.window.data1.float, sdlEventData.window.data2.float)
 
-proc initializeApp(app: App, ctx: Frag) =
+proc initApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
 
-  app.eventHandler = AppEventHandler()
-  app.eventHandler.init(resize)
+  ctx.events.on(SDLEventType.WindowResize, resize)
 
   app.assetIds = initTable[string, Hash]()
 
@@ -102,8 +99,6 @@ proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   app.batch.setProjectionMatrix(app.camera.combined)
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
-  if ctx.input.pressed("q"): echo "quit"
-
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
   let region = app.anim.getFrame(app.stateTime)
@@ -113,7 +108,7 @@ proc renderApp(app: App, ctx: Frag, deltaTime: float) =
 
   app.stateTime += deltaTime
 
-startFrag[App](Config(
+startFrag(App(), Config(
   rootWindowTitle: "Frag Example 04-sprite-animation",
   rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
   rootWindowWidth: 960, rootWindowHeight: 540,

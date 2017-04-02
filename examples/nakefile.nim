@@ -20,7 +20,7 @@ proc run(bin: string) =
     direShell(nimExe, "c", "-r", bin)
     return
 
-proc compile(src: string) = direShell(nimExe, "c", src)
+proc compile(src: string) = direShell(nimExe, "c --reportConceptFailures:on", src)
 
 proc runDesktopExample(name: string) = run(join(@[ desktopExDir, name, exBin ], "/"))
 
@@ -59,7 +59,7 @@ var desktopExamples: seq[string] = @[]
 var androidExamples: seq[string] = @[]
 
 for kind, path in walkDir(desktopExDir, true):
-  if path.contains("assets"): continue
+  if kind == pcFile or path.contains("assets"): continue
   desktopExamples.add(path)
 sort(desktopExamples, cmp[string])
 

@@ -14,7 +14,8 @@ import
   ../graphics/types,
   ../graphics/window,
   ../logger,
-  module
+  module,
+  ../util
 
 export
   color,
@@ -59,7 +60,7 @@ when defined(android):
       android*: SysWMinfoAndroidObj
 
 proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
-    var pd: ptr bgfx_platform_data_t = create(bgfx_platform_data_t)
+    var pd: ptr bgfx_platform_data_t = workaround_createShared[bgfx_platform_data_t]()
     var info: sdl.WMinfo
     version(info.version)
     assert sdl.getWMInfo(window, info)
@@ -94,12 +95,13 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
     pd.backBufferDS = nil
     pd.context = nil
     bgfx_set_platform_data(pd)
+    freeShared(pd)
     return true
 
 proc init*(
   this: Graphics,
-  rootWindowTitle: string = nil,
-  rootWindowPosX, rootWindowPosY: int = window.posUndefined,
+  rootWindowTitle: string,
+  rootWindowPosX = window.posUndefined, rootWindowPosY = window.posUndefined,
   rootWindowWidth = 960, rootWindowHeight = 540,
   resetFlags: ResetFlag = ResetFlag.None,
   debugMode: uint32 = BGFX_DEBUG_NONE

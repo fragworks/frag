@@ -2,6 +2,7 @@ import
   events,
   hashes,
   os,
+  strutils,
   tables
 
 import
@@ -21,9 +22,11 @@ export
   asset_types
 
 proc init*(this: AssetManager, config: Config): bool =
+  let appAssetRoot = if config.assetRoot.isNil: globals.defaultAppAssetRoot
+    else: config.assetRoot
   this.assets = initTable[Hash, ref Asset]()
-  this.assetSearchPath = getAppDir() & DirSep & config.assetRoot & DirSep
-  this.internalSearchPath = getAppDir() & DirSep & engineAssetRoot & DirSep
+  this.assetSearchPath = getAppDir() & $DirSep & appAssetRoot & $DirSep
+  this.internalSearchPath = getAppDir() & $DirSep & globals.engineAssetRoot & $DirSep
   return true
 
 proc dispose(this: AssetManager, id: Hash) =

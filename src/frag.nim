@@ -19,7 +19,7 @@ import
 type
   Frag* = ref object
     assets*: AssetManager
-    events: EventBus
+    events*: EventBus
     graphics*: Graphics
     gui*: GUI
     input*: Input
@@ -44,9 +44,6 @@ proc registerEventHandlers(ctx: Frag) =
   ctx.events.on(SDLEventType.KeyUp, handleKeyUp)
   
   ctx.events.on(SDLEventType.WindowResize, handleWindowResizeEvent)
-
-proc registerAppEventHandlers[App](app: App, ctx: Frag) =
-  ctx.events.on(SDLEventType.WindowResize, app.eventHandler.handleResize)
 
 proc shutdown(ctx: Frag, exitCode: int) =
   logInfo "Shutting down Frag..."
@@ -129,17 +126,12 @@ var last = 0'u64
 var deltaTime = 0'f64
 var now = sdl.getPerformanceCounter()
 
-proc startFrag*[App](config: Config) =
+proc startFrag*[T](app: T, config: Config) =
   var ctx = Frag()
-
-  var app = App()
 
   ctx.init(config, app)
 
-  app.initializeApp(ctx)
-
-  when compiles(app.eventHandler):
-    registerAppEventHandlers(app, ctx)
+  app.initApp(ctx)
 
   var
     event = sdl.defaultEvent

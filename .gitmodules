@@ -1,7 +1,7 @@
-[submodule "3rdparty/bgfx"]
+[submodule "vendor/bgfx"]
 	path = vendor/bgfx
 	url = git@github.com:fragworks/bgfx.git
-[submodule "3rdparty/bx"]
+[submodule "vendor/bx"]
 	path = vendor/bx
 	url = git@github.com:bkaradzic/bx.git
 [submodule "platforms/android"]

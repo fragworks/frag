@@ -20,6 +20,7 @@ proc verifyDependencies(): bool =
 proc genGmakeProjectsAndCd(gcc: string) =
   if not shell("genie --with-shared-lib --with-tools --gcc=$1 gmake" % gcc):
       echo "Ensure GENie is installed before proceeding: https://github.com/bkaradzic/GENie"
+      quit(QUIT_SUCCESS)
   if not(gcc == "mingw-gcc"):
     cd(".build/projects/gmake-$1" % gcc.replace("-gcc", ""))
   else:
@@ -77,7 +78,8 @@ proc installChipmunk() =
 
 proc installDependencies(target: Targets) =
   installBgfx(target)
-  installChipmunk()
+  if dirExists("vendor/Chipmunk2D/scripts"):
+    installChipmunk()
 
 proc verifyAndroidEnvVars() =
   if not existsEnv("ANDROID_NDK_ROOT") or not existsEnv("ANDROID_NDK_CLANG") or not existsEnv("ANDROID_NDK_ARM"):
@@ -92,6 +94,11 @@ proc verifyWindowsEnvVars() =
 if not verifyDependencies():
   echo "Ensure submodules are initialized and updated before proceeding - |$ git submodule update --init --recursive"
   quit(QUIT_SUCCESS)
+
+proc generateDocs() =
+  removeDir("docout")
+  createDir("docout")
+  direShell("nim rst2html -o:docout/index.html doc/index.txt")
 
 ###########
 # ANDROID #
@@ -142,3 +149,9 @@ task "win-release32", "Build debug verisons of FRAG dependencies for Windows 32-
 task "win-release64", "Build debug verisons of FRAG dependencies for Windows 64-bit instruction set":
   verifyWindowsEnvVars()
   installDependencies(WinRelease64)
+
+###########
+# WINDOWS #
+###########
+task "docs", "Generate FRAG documentation into docout":
+  generateDocs()
