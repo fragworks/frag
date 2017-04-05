@@ -42,6 +42,11 @@ proc registerEventHandlers(ctx: Frag) =
   
   ctx.events.on(SDLEventType.KeyDown, handleKeyDown)
   ctx.events.on(SDLEventType.KeyUp, handleKeyUp)
+
+  ctx.events.on(SDLEventType.MouseButtonDown, handleMouseButtonDown)
+  ctx.events.on(SDLEventType.MouseButtonUp, handleMouseButtonUp)
+
+  ctx.events.on(SDLEventType.MouseMotion, handleMouseMotionEvent)
   
   ctx.events.on(SDLEventType.WindowResize, handleWindowResizeEvent)
 
@@ -145,12 +150,14 @@ proc startFrag*[T](app: T, config: Config) =
 
     input.update(ctx.input)
 
+    gui.startUpdate(ctx.gui)
     while bool sdl.pollEvent(event):
       case event.kind
       of sdl.QuitEvent:
         runGame = false
         break
       else:
+        #TODO: FIX THIS - Do something with it, anything...
         var sdlEvent = SDLEvent(sdlEventData: event)
         if event.kind == sdl.KeyUp:
           sdlEvent.sdlEventType = SDLEventType.KeyUp
@@ -158,6 +165,18 @@ proc startFrag*[T](app: T, config: Config) =
           sdlEvent.gui = ctx.gui
         elif event.kind == sdl.KeyDown:
           sdlEvent.sdlEventType = SDLEventType.KeyDown
+          sdlEvent.input = ctx.input
+          sdlEvent.gui = ctx.gui
+        elif event.kind == sdl.MouseButtonDown:
+          sdlEvent.sdlEventType = SDLEventType.MouseButtonDown
+          sdlEvent.input = ctx.input
+          sdlEvent.gui = ctx.gui
+        elif event.kind == sdl.MouseButtonUp:
+          sdlEvent.sdlEventType = SDLEventType.MouseButtonUp
+          sdlEvent.input = ctx.input
+          sdlEvent.gui = ctx.gui
+        elif event.kind == sdl.MouseMotion:
+          sdlEvent.sdlEventType = SDLEventType.MouseMotion
           sdlEvent.input = ctx.input
           sdlEvent.gui = ctx.gui
         elif event.kind == sdl.WindowEvent:
@@ -169,6 +188,7 @@ proc startFrag*[T](app: T, config: Config) =
           else:
             discard
         ctx.events.emit(sdlEvent)
+    gui.finishUpdate(ctx.gui)
 
     ctx.graphics.startFrame()
     app.updateApp(ctx, deltaTime)

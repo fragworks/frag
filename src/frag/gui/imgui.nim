@@ -139,6 +139,12 @@ proc setProjectionMatrix*(imgui: IMGUI, projectionMatrix: Mat4, view: uint8) =
   imgui.projection = projectionMatrix
   bgfx_set_view_transform(view, nil, addr imgui.projection[0])
 
+proc startUpdate*(imgui: var IMGUI) =
+  openInput(imgui.ctx)
+
+proc finishUpdate*(imgui: var IMGUI) =
+  closeInput(imgui.ctx)
+
 proc render*(imgui: var IMGUI) =
   init(imgui.dev.vb)
   init(imgui.dev.ib)

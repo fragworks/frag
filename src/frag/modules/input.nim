@@ -20,11 +20,20 @@ proc update*(this: Input) =
   this.releasedKeys.setLen(0)
   this.state = defaultKeyboardState
 
-proc onKeyDown*(this: Input, event: sdl.Event) {.procvar.} =
+proc onKeyDown*(this: Input, event: sdl.Event) =
   this.pressedKeys.add(event.key.keysym.sym)
 
-proc onKeyUp*(this: Input, event: sdl.Event) {.procvar.} =
+proc onKeyUp*(this: Input, event: sdl.Event) =
   this.releasedKeys.add(event.key.keysym.sym)
+
+proc onMouseButtonDown*(this: Input, event: sdl.Event) =
+  discard
+
+proc onMouseButtonUp*(this: Input, event: sdl.Event) =
+  discard
+
+proc onMouseMotion*(this: Input, event: sdl.Event) =
+  discard
 
 proc getScancode(this: Input, name: string, raw: bool): sdl.Scancode =
   if raw: return sdl.getScancodeFromName(name)

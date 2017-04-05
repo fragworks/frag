@@ -36,7 +36,7 @@ proc emit*(this: EventBus, event: var Event) =
     of sdl.WindowEvent:
       let eventMessage  = SDLEventMessage(event: sdlEvent)
       this.emitter.emit($sdlEventData.window.event, eventMessage)
-    of sdl.KeyDown, sdl.KeyUp:
+    of sdl.KeyDown, sdl.KeyUp, sdl.MouseButtonDown, sdl.MouseButtonUp, sdl.MouseMotion:
       let eventMessage  = SDLEventMessage(event: sdlEvent)
       this.emitter.emit($sdlEventData.kind, eventMessage)
     else:

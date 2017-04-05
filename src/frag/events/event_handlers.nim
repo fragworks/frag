@@ -51,7 +51,30 @@ proc handleKeyDown*(e: EventArgs) {.procvar.} =
 proc handleKeyUp*(e: EventArgs) {.procvar.} =
   let event = SDLEventMessage(e).event
   if not event.input.isNil:
-    event.input.onKeyUp(event.sdlEventData)
+    input.onKeyUp(event.input, event.sdlEventData)
+  if not event.gui.isNil:
+    gui.onKeyUp(event.gui, event.sdlEventData)
+
+proc handleMouseButtonDown*(e: EventArgs) {.procvar.} =
+  let event = SDLEventMessage(e).event
+  if not event.input.isNil:
+    input.onMouseButtonDown(event.input, event.sdlEventData)
+  if not event.gui.isNil:
+    gui.onMouseButtonDown(event.gui, event.sdlEventData)
+
+proc handleMouseButtonUp*(e: EventArgs) {.procvar.} =
+  let event = SDLEventMessage(e).event
+  if not event.input.isNil:
+    input.onMouseButtonUp(event.input, event.sdlEventData)
+  if not event.gui.isNil:
+    gui.onMouseButtonUp(event.gui, event.sdlEventData)
+
+proc handleMouseMotionEvent*(e: EventArgs) {.procvar.} =
+  let event = SDLEventMessage(e).event
+  if not event.input.isNil:
+    input.onMouseMotion(event.input, event.sdlEventData)
+  if not event.gui.isNil:
+    gui.onMouseMotion(event.gui, event.sdlEventData)
 
 proc handleWindowResizeEvent*(e: EventArgs) {.procvar.} =
   let event = SDLEventMessage(e).event

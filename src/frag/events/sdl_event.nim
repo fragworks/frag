@@ -11,12 +11,17 @@ type
   SDLEventType* {.pure.} = enum
     KeyDown
     KeyUp
+    MouseButtonDown
+    MouseButtonUp
+    MouseMotion
     WindowResize = "WindowEvent_Resized"
 
   SDLEvent* = object of Event
     sdlEventData*: sdl.Event
     case sdlEventType*: SDLEventType
-    of SDLEventType.KeyDown, SDLEventType.KeyUp:
+    of SDLEventType.KeyDown, SDLEventType.KeyUp, 
+      SDLEventType.MouseButtonDown, SDLEventType.MouseButtonUp,
+      SDLEventType.MouseMotion:
       input*: Input
       gui*: GUI
     of SDLEventType.WindowResize:
