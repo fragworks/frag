@@ -18,5 +18,8 @@ proc loop*(sound: asset.Sound, loop: bool) =
 proc play*(sound: asset.Sound) =
   sound.snd.play()
 
+proc stop*(sound: asset.Sound) =
+  sound.snd.stop()
+
 proc setGain*(sound: asset.Sound, gain: float) =
   sound.snd.`gain=`(gain)
