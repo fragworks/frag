@@ -1,9 +1,14 @@
 import
+  deques,
   events,
   hashes,
   os,
   strutils,
-  tables
+  tables,
+  threadpool
+
+import
+  sdl2.image as sdl_img
 
 import
   ../assets/asset,
@@ -21,12 +26,17 @@ export
   asset,
   asset_types
 
+const maxWorkers = 4
+
 proc init*(this: AssetManager, config: Config): bool =
   let appAssetRoot = if config.assetRoot.isNil: globals.defaultAppAssetRoot
     else: config.assetRoot
+  this.assetLoadsInProgress = initTable[Hash, FlowVarBase]()
+  this.assetLoadRequests = initDeque[AssetLoadRequest]()
   this.assets = initTable[Hash, ref Asset]()
   this.assetSearchPath = getAppDir() & $DirSep & appAssetRoot & $DirSep
   this.internalSearchPath = getAppDir() & $DirSep & globals.engineAssetRoot & $DirSep
+  discard sdl_img.init()
   return true
 
 proc dispose(this: AssetManager, id: Hash) =
@@ -40,6 +50,8 @@ proc dispose(this: AssetManager, id: Hash) =
 proc shutdown*(this: AssetManager) =
   for id, _ in this.assets:
     this.dispose(id)
+
+  sdl_img.quit()
 
 proc get*[T](this: AssetManager, filename: string): T =
   let id = hash(filename)
@@ -77,7 +89,13 @@ proc unload*(this: AssetManager, filename: string, internal: bool = false) =
 
   this.dispose(id)
 
-proc load*(this: AssetManager, filename: string, assetType: AssetType, internal: bool = false) : Hash =
+proc checkLoadingFinished(this: AssetManager): bool =
+  if this.assetLoadsInProgress.len > 0 or this.assetLoadRequests.len > 0:
+    return false
+
+  return true
+
+proc load*(this: AssetManager, filename: string, assetType: AssetType, internal: bool = false): Hash =
   var filepath : string
   if not internal:
     filepath = this.assetSearchPath & filename
@@ -93,44 +111,82 @@ proc load*(this: AssetManager, filename: string, assetType: AssetType, internal:
     logWarn "Asset with filepath : " & filepath & " already loaded."
     return
 
-  case assetType
+  this.assetLoadRequests.addLast(
+    AssetLoadRequest(
+      filename: filename,
+      filepath: filepath,
+      assetId: newAssetId,
+      assetType: assetType
+    )
+  )
+
+  return newAssetId
+
+proc updateLoadsInProgress(this: AssetManager) =
+  var asset: ref Asset
+  for assetId, assetLoadInProgress in this.assetLoadsInProgress:
+    if assetLoadInProgress.isReady:
+      if assetLoadInProgress of FlowVar[AtlasInfo]:
+          let atlasInfo = cast[FlowVar[AtlasInfo]](assetLoadInProgress).`^`()
+        
+          let atlasDir = splitFile(atlasInfo.atlas.atlasShortPath).dir
+          let texturePath = atlasDir & DirSep &  atlasInfo.atlas.textureFilename
+
+          var textureId = hash(texturePath)
+          var atlasTexture = get[Texture](this, textureId)
+          if atlasTexture.isNil:
+            textureId = this.load(texturePath, AssetType.Texture, false)
+        
+          this.assets.add(assetId, atlasInfo.atlas)
+          this.assetLoadsInProgress.del(assetId)
+      else:
+        asset = cast[FlowVar[ref Asset]](assetLoadInProgress).`^`()
+        case asset.assetType
+        of AssetType.Texture:
+          let tex = cast[Texture](asset)
+          tex.init()
+
+          for assetId, asset in this.assets:
+            if asset.assetType == AssetType.TextureAtlas:
+              if asset.textureFilepath == tex.filename:
+                for regionInfo in asset.regionInfos:
+                  asset.regions.add(
+                    texture_region.fromTexture(
+                      tex,
+                      regionInfo.name,
+                      regionInfo.w,
+                      regionInfo.h,
+                      regionInfo.u,
+                      regionInfo.u2,
+                      regionInfo.v,
+                      regionInfo.v2
+                    )
+                  )
+
+        of AssetType.Sound:
+          discard
+        of AssetType.TextureRegion:
+          echo repr cast[TextureRegion](asset)
+        else:
+          discard
+          
+        this.assets.add(assetId, asset)
+        this.assetLoadsInProgress.del(assetId)
+
+proc update*(this: AssetManager): bool =
+  while this.assetLoadRequests.len > 0 and this.assetLoadsInProgress.len < maxWorkers:
+    let nextLoadRequest = this.assetLoadRequests.popFirst()
+
+    case nextLoadRequest.assetType
     of AssetType.Sound:
-      var sound = sound.load(filepath)
-      this.assets.add(newAssetId, sound)
-      return newAssetId
+      this.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn sound.load(nextLoadRequest.filepath))
     of AssetType.Texture:
-      var texture = texture.load(filepath)
-      this.assets.add(newAssetId, texture)
-      return newAssetId
+      this.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn texture.load(nextLoadRequest.filepath))
     of AssetType.TextureRegion:
-      logWarn "Cannot load a texture region... Try loading a texture and creating a texture region."
+      logWarn "Cannot load a texture region... Try loading a texture and creating a texture region from it."
       return
     of AssetType.TextureAtlas:
-      var atlasInfo = texture_atlas.load(filepath)
-      
-      let atlasDir = splitFile(filename).dir
-      let texturePath = atlasDir & DirSep &  atlasInfo.atlas.textureFilename
-      
-      var textureId = hash(texturePath)
-      var atlasTexture = get[Texture](this, textureId)
-      if atlasTexture.isNil:
-        textureId = this.load(texturePath, AssetType.Texture, false)
-        atlasTexture = get[Texture](this, textureId)
-
-
-        for regionInfo in atlasInfo.regions:
-          atlasInfo.atlas.regions.add(texture_region.fromTexture(
-            atlasTexture,
-            regionInfo.name,
-            regionInfo.w,
-            regionInfo.h,
-            regionInfo.u,
-            regionInfo.u2,
-            regionInfo.v,
-            regionInfo.v2
-          ))
-        
-        this.assets.add(newAssetId, atlasInfo.atlas)
-        return newAssetId
-      else:
-        logWarn "Texture with " & texturePath & " does not exist."
+      this.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn texture_atlas.load(nextLoadRequest.filename, nextLoadRequest.filepath))
+  
+  this.updateLoadsInProgress()
+  this.checkLoadingFinished()

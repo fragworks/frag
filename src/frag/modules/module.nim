@@ -1,13 +1,16 @@
 import
+  deques,
   events,
   hashes,
-  tables
+  tables,
+  threadpool
 
 import
   sdl2 as sdl
 
 import
   ../assets/asset,
+  ../assets/asset_types,
   ../config,
   ../graphics/window,
   ../gui/imgui
@@ -16,12 +19,20 @@ type
   ModuleType* {.pure.} = enum
     Assets, EventBus, Graphics, GUI, Input
 
+  AssetLoadRequest* = object
+    filename*: string
+    filepath*: string
+    assetId*: Hash
+    assetType*: AssetType
+
   Module* = object
     case moduleType*: ModuleType
     of ModuleType.Assets:
       assetSearchPath*: string
       internalSearchPath*: string
       assets*: Table[Hash, ref Asset]
+      assetLoadRequests*: Deque[AssetLoadRequest]
+      assetLoadsInProgress*: Table[Hash, FlowVarBase]
     of ModuleType.EventBus:
       emitter*: EventEmitter
       assetManager*: AssetManager

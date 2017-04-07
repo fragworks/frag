@@ -45,7 +45,6 @@ proc initApp(app: App, ctx: Frag) =
   logDebug "Loading assets..."
   app.assetIds.add(filename, ctx.assets.load(filename, AssetType.Texture))
   app.assetIds.add("sounds/test.ogg", ctx.assets.load("sounds/test.ogg", AssetType.Sound))
-  logDebug "Assets loaded."
 
   app.batch = SpriteBatch(
     blendSrcFunc: BlendFunc.SrcAlpha,
@@ -58,6 +57,9 @@ proc initApp(app: App, ctx: Frag) =
   app.camera.init(0)
   app.camera.ortho(1.0, WIDTH, HEIGHT)
 
+  while not assets.update(ctx.assets):
+    discard
+  logDebug "Assets loaded."
 
   var sound = assets.get[Sound](ctx.assets, app.assetIds["sounds/test.ogg"])
   sound.setGain(0.5)

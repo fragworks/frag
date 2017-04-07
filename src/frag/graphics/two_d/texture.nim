@@ -41,6 +41,12 @@ proc verifyImageHeader(filename: string, size: int, data: seq[uint8]) : bool =
 proc verifyPNG*(filename: string) : bool =
   return verifyImageHeader(filename, sizeof(PNG_HEADER_BYTES), PNG_HEADER_BYTES)
 
+proc init*(texture: Texture) =
+  if texture.data.format.BytesPerPixel == 4:
+    texture.handle = bgfx_create_texture_2d(uint16 texture.data.w, uint16 texture.data.h, false, 1, BGFX_TEXTURE_FORMAT_RGBA8, 0, bgfx_copy(texture.data.pixels, uint32 texture.data.w * texture.data.h * 4))
+  else:
+    texture.handle = bgfx.bgfx_create_texture_2d(uint16 texture.data.w, uint16 texture.data.h, false, 1, BGFX_TEXTURE_FORMAT_RGB8, 0, bgfx_copy(texture.data.pixels, uint32 texture.data.w * texture.data.h * 3))
+
 proc loadPNG*(filename: string) : Texture {.procvar.} =
   if not fileExists(filename):
     logError "Unable to load PNG with filename : " & filename & " file does not exist!"
@@ -57,11 +63,6 @@ proc loadPNG*(filename: string) : Texture {.procvar.} =
     logError "Error loading Texture!"
     return
 
-  if texture.data.format.BytesPerPixel == 4:
-    texture.handle = bgfx_create_texture_2d(uint16 texture.data.w, uint16 texture.data.h, false, 1, BGFX_TEXTURE_FORMAT_RGBA8, 0, bgfx_copy(texture.data.pixels, uint32 texture.data.w * texture.data.h * 4))
-  else:
-    texture.handle = bgfx.bgfx_create_texture_2d(uint16 texture.data.w, uint16 texture.data.h, false, 1, BGFX_TEXTURE_FORMAT_RGB8, 0, bgfx_copy(texture.data.pixels, uint32 texture.data.w * texture.data.h * 3))
-
   return texture
 
 proc load*(filename: string): Texture =
@@ -74,5 +75,3 @@ proc load*(filename: string): Texture =
 
 proc unload*(texture: Texture) =
   bgfx_destroy_texture(texture.handle)
-
-  sdl.destroy(texture.data)

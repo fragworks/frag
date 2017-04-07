@@ -42,6 +42,17 @@ type
       regions*: seq[TextureRegion]
       numRegions*: int
       textureFilename*: string
+      textureFilepath*: string
+      atlasShortPath*: string
+      regionInfos*: seq[RegionInfo]
+
+  RegionInfo* = object
+    name*: string
+    w*, h*: int
+    u*, u2*, v*, v2*: float
+
+  BoxedAsset* = object
+    value: ref Asset
 
   Sound* = ref Asset
   Texture* = ref Asset

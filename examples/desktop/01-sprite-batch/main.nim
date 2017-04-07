@@ -28,6 +28,8 @@ const HEIGHT = 540
 const HALF_WIDTH = WIDTH / 2
 const HALF_HEIGHT = HEIGHT / 2
 
+var assetsLoaded = false
+
 proc resize*(e: EventArgs) =
   let event = SDLEventMessage(e).event
   let sdlEventData = event.sdlEventData
@@ -46,7 +48,6 @@ proc initApp(app: App, ctx: Frag) =
   logDebug "Loading assets..."
   app.assetIds.add(filename, ctx.assets.load(filename, AssetType.Texture))
   app.assetIds.add(filename2, ctx.assets.load(filename2, AssetType.Texture))
-  logDebug "Assets loaded."
 
   app.batch = SpriteBatch(
     blendSrcFunc: BlendFunc.SrcAlpha,
@@ -77,19 +78,24 @@ proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   app.camera.update()
   app.batch.setProjectionMatrix(app.camera.combined)
 
+  while not assetsLoaded and not assets.update(ctx.assets):
+    return
+  assetsLoaded = true
+
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
 
-  let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
-  let tex2 = assets.get[Texture](ctx.assets, app.assetIds["textures/test02.png"])
+  if assetsLoaded:
+    let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
+    let tex2 = assets.get[Texture](ctx.assets, app.assetIds["textures/test02.png"])
 
-  let texHalfW = tex.data.w / 2
-  let texHalfH = tex.data.h / 2
+    let texHalfW = tex.data.w / 2
+    let texHalfH = tex.data.h / 2
 
-  app.batch.begin()
-  app.batch.draw(tex, HALF_WIDTH - texHalfW, HALF_HEIGHT - texHalfH, float tex.data.w, float tex.data.h)
-  app.batch.draw(tex2, HALF_WIDTH + texHalfW, HALF_HEIGHT - texHalfH, float tex.data.w, float tex.data.h)
-  app.batch.`end`()
+    app.batch.begin()
+    app.batch.draw(tex, HALF_WIDTH - texHalfW, HALF_HEIGHT - texHalfH, float tex.data.w, float tex.data.h)
+    app.batch.draw(tex2, HALF_WIDTH + texHalfW, HALF_HEIGHT - texHalfH, float tex.data.w, float tex.data.h)
+    app.batch.`end`()
 
 startFrag(App(), Config(
   rootWindowTitle: "Frag Example 01-sprite-batch",

@@ -47,8 +47,6 @@ proc flush(spriteBatch: SpriteBatch) =
   if spriteBatch.lastTexture.isNil:
     return
 
-  discard bgfx_touch(0)
-
   let spriteCount = spriteBatch.vertices.len / 4
 
   var vb : bgfx_transient_vertex_buffer_t

@@ -14,29 +14,24 @@ import
 export TextureAtlas
 
 type
-  AtlasInfo* = object
+  AtlasInfo* = ref object
     atlas*: TextureAtlas
-    regions*: seq[RegionInfo]
-
-  RegionInfo* = object
-    name*: string
-    w*, h*: int
-    u*, u2*, v*, v2*: float
+    
 
 proc getRegion*(atlas: TextureAtlas, regionName: string): TextureRegion =
   for region in atlas.regions:
     if(region.name == regionName):
       return region
 
-proc loadTextureAtlas(filename: string): AtlasInfo =
+proc loadTextureAtlas(shortPath: string, filename: string): AtlasInfo =
   var atlas = TextureAtlas(assetType: AssetType.TextureAtlas)
+  atlas.atlasShortPath = shortPath
   atlas.filename = filename
   atlas.regions = @[]
-
-  var regions : seq[RegionInfo] = @[]
+  atlas.regionInfos = @[]
+  
   var f = newFileStream(filename, fmRead)
   if f != nil:
-    var dict = loadConfig("config.ini")
     var p: CfgParser
     open(p, f, filename)
     while true:
@@ -54,7 +49,7 @@ proc loadTextureAtlas(filename: string): AtlasInfo =
           u2: parseFloat(p.next.value),
           v2: parseFloat(p.next.value)
         )
-        regions.add(region)
+        atlas.regionInfos.add(region)
       of cfgKeyValuePair:
         if e.key == "name":
           if atlas.textureFilename.isNil:
@@ -64,18 +59,18 @@ proc loadTextureAtlas(filename: string): AtlasInfo =
       else:
         discard
     close(p)
+    atlas.textureFilepath = splitFile(filename).dir & DirSep & atlas.textureFilename
   else:
     logWarn "Cannot open texture atlas: " & filename
   
   return AtlasInfo(
     atlas: atlas, 
-    regions: regions
   )
 
-proc load*(filename: string): auto =
+proc load*(shortPath: string, filename: string): auto =
   let ext = splitFile(filename).ext
   if not(ext == ".atlas"):
     logWarn "Extension : " & ext & " not recognized."
     return
-  loadTextureAtlas(filename)
+  loadTextureAtlas(shortPath, filename)
     

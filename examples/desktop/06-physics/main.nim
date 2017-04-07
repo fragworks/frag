@@ -201,6 +201,9 @@ proc initApp(app: App, ctx: Frag) =
 
   logDebug "Loading assets..."
   app.assetIds.add(filename, ctx.assets.load(filename, AssetType.Texture))
+  
+  while not assets.update(ctx.assets):
+    discard
   logDebug "Assets loaded."
 
 
