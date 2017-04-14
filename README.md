@@ -1,4 +1,4 @@
-**FRAG**
+<img src="http://i.imgur.com/vouaf19.png" alt="FRAG" height="100px">**FRAG**
 =======
 
 Framework for Rather Awesome Games
