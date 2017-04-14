@@ -1,4 +1,7 @@
 import
+  math
+
+import
   bgfxdotnim as bgfx
 
 import
@@ -101,7 +104,7 @@ proc draw*(spriteBatch: SpriteBatch, texture: Texture, vertices: openArray[PosUV
 
   spriteBatch.vertices.add(vertices)
 
-proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: float32, tiled: bool = false, color: uint32 = 0xffffffff'u32, scale: Vec3 = [1.0'f32, 1.0'f32, 1.0'f32]) =
+proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: float32, tiled: bool = false, color: uint32 = 0xffffffff'u32, scale: Vec3 = [1.0'f32, 1.0'f32, 1.0'f32], rotation: float = 0) =
   if not spriteBatch.drawing:
     logError "Spritebatch not in drawing mode. Call begin before calling draw."
     return
@@ -109,24 +112,78 @@ proc draw*(spriteBatch: SpriteBatch, texture: Texture, x, y, width, height: floa
   if texture != spriteBatch.lastTexture:
     switchTexture(spriteBatch, texture)
 
-  var x1 = x
-  var x2 = x + width
-  var y1 = y
-  var y2 = y + height
+  var originX, originY = 0.0
+  let worldOriginX = x + originX
+  let worldOriginY = y + originY
+  var fx = -originX
+  var fx2 = width - originX
+  var fy = -originY
+  var fy2 = height - originY
 
   if scale[0] != 1.0'f32 or scale[1] != 1.0'f32:
-    x1 *= scale[0]
-    x2 *= scale[0]
-    y1 *= scale[0]
-    y2 *= scale[0]
+    fx *= scale[0]
+    fx2 *= scale[0]
+    fy *= scale[1]
+    fy2 *= scale[1]
+
+  let p1x = fx
+  let p1y = fy
+  let p2x = fx
+  let p2y = fy2
+  let p3x = fx2
+  let p3y = fy2
+  let p4x = fx2
+  let p4y = fy
+
+  var x1, y1, x2, y2, x3, y3, x4, y4: float
+
+  if rotation != 0:
+    let cos = cos(degToRad(rotation))
+    let sin = sin(degToRad(rotation))
+
+    x1 = cos * p1x - sin * p1y
+    y1 = sin * p1x + cos * p1y
+
+    x2 = cos * p2x - sin * p2y
+    y2 = sin * p2x + cos * p2y
+
+    x3 = cos * p3x - sin * p3y
+    y3 = sin * p3x + cos * p3y
+
+    x4 = x1 + (x3 - x2)
+    y4 = y3 - (y2 - y1)
+  
+  else:
+    x1 = p1x
+    y1 = p1y
+
+    x2 = p2x
+    y2 = p2y
+
+    x3 = p3x
+    y3 = p3y
+
+    x4 = p4x
+    y4 = p4y
+
+  
+  x1 += worldOriginX;
+  y1 += worldOriginY;
+  x2 += worldOriginX;
+  y2 += worldOriginY;
+  x3 += worldOriginX;
+  y3 += worldOriginY;
+  x4 += worldOriginX;
+  y4 += worldOriginY;
+
 
   var maxUV = 1.0
   if tiled: maxUV = 8.0
   spriteBatch.vertices.add([
     PosUVColorVertex(x: x1, y: y1, u:0.0, v:maxUV, z: 0.0'f32, abgr: color ),
-    PosUVColorVertex(x: x2, y: y1, u:maxUV, v:maxUV, z: 0.0'f32, abgr: color ),
-    PosUVColorVertex(x: x2, y: y2, u:maxUV, v:0.0, z: 0.0'f32, abgr: color ),
-    PosUVColorVertex(x: x1, y: y2, u:0.0, v:0.0, z: 0.0'f32, abgr: color )
+    PosUVColorVertex(x: x2, y: y2, u:0.0, v:0.0, z: 0.0'f32, abgr: color ),
+    PosUVColorVertex(x: x3, y: y3, u:maxUV, v:0.0, z: 0.0'f32, abgr: color ),
+    PosUVColorVertex(x: x4, y: y4, u:maxUV, v:maxUV, z: 0.0'f32, abgr: color )
   ])
 
 proc init*(spriteBatch: SpriteBatch, maxSprites: int, view: uint8) =
@@ -149,9 +206,9 @@ proc init*(spriteBatch: SpriteBatch, maxSprites: int, view: uint8) =
     indexdata[i] = j
     indexdata[i + 1] = j + 1
     indexdata[i + 2] = j + 2
-    indexdata[i + 3] = j + 3
-    indexdata[i + 4] = j
-    indexdata[i + 5] = j + 2
+    indexdata[i + 3] = j + 2
+    indexdata[i + 4] = j + 3
+    indexdata[i + 5] = j
     inc(j, 4)
     inc(i, 6)
 

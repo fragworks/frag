@@ -95,6 +95,18 @@ proc checkLoadingFinished(this: AssetManager): bool =
 
   return true
 
+proc getProgress*(this: AssetManager): float =
+  if this.assetLoadRequests.len == 0:
+    return 1.0
+  
+  var fractionalLoaded = this.loaded.float #0
+  if this.peakLoadsInProgress > 0u:
+    fractionalLoaded += ((this.peakLoadsInProgress - this.assetLoadsInProgress.len.uint).float / this.peakLoadsInProgress.float)
+  return min(1.0, fractionalLoaded / this.assetLoadRequests.len.float)
+
+    
+
+
 proc load*(this: AssetManager, filename: string, assetType: AssetType, internal: bool = false): Hash =
   var filepath : string
   if not internal:
@@ -111,6 +123,10 @@ proc load*(this: AssetManager, filename: string, assetType: AssetType, internal:
     logWarn "Asset with filepath : " & filepath & " already loaded."
     return
 
+  if this.assetLoadRequests.len == 0:
+    this.loaded = 0
+    this.peakLoadsInProgress = 0
+
   this.assetLoadRequests.addLast(
     AssetLoadRequest(
       filename: filename,
@@ -126,6 +142,9 @@ proc updateLoadsInProgress(this: AssetManager) =
   var asset: ref Asset
   for assetId, assetLoadInProgress in this.assetLoadsInProgress:
     if assetLoadInProgress.isReady:
+      inc(this.loaded)
+      if this.assetLoadsInProgress.len == 1:
+        this.peakLoadsInProgress = 0
       if assetLoadInProgress of FlowVar[AtlasInfo]:
           let atlasInfo = cast[FlowVar[AtlasInfo]](assetLoadInProgress).`^`()
         
@@ -188,5 +207,7 @@ proc update*(this: AssetManager): bool =
     of AssetType.TextureAtlas:
       this.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn texture_atlas.load(nextLoadRequest.filename, nextLoadRequest.filepath))
   
+    inc(this.peakLoadsInProgress)
+    
   this.updateLoadsInProgress()
   this.checkLoadingFinished()

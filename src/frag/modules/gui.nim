@@ -52,6 +52,9 @@ proc layoutDynamicRow*(gui: GUI, height: float32, cols: int32) =
 proc buttonLabel*(gui: GUI, label: string): bool =
   gui.imgui.ctx.buttonLabel(label)
 
+proc progressBar*(gui: GUI, currentProgress: var uint, maxProgress: uint, modifiable: bool): bool =
+  gui.imgui.ctx.progress(currentProgress, maxProgress, modifiable)
+
 proc handleKeyPress(gui: GUI, modState: sdl.Keymod, sym: cint, down: bool) =
   case sym
   of sdl.K_RSHIFT, sdl.K_LSHIFT:

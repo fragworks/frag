@@ -135,7 +135,7 @@ proc init*(
   if not linkSDL2BGFX(this.rootWindow.handle):
     return false
 
-  if not bgfx_init(BGFX_RENDERER_TYPE_NOOP, 0'u16, 0, nil, nil):
+  if not bgfx_init(BGFX_RENDERER_TYPE_COUNT, 0'u16, 0, nil, nil):
     logError("Error initializng BGFX.")
 
   let size = sdl.getSize(this.rootWindow.handle)
@@ -145,12 +145,7 @@ proc init*(
   bgfx_set_debug(debugMode)
 
   return true
-
-proc getDisplayData*(this: Graphics): DisplayMode =
-  var displayData : sdl.DisplayMode
-  if sdl.getCurrentDisplayMode(0, displayData) != sdl.SdlSuccess:
-    logError "Error retrieving display data from SDL2."
-  return displayData
+  
 
 proc clearView*(this: Graphics, viewId: uint8, flags: uint16, rgba: uint32, depth: float32, stencil: uint8) =
   bgfx_set_view_clear(viewID, flags, rgba, depth, stencil)

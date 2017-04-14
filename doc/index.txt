@@ -1,7 +1,3 @@
-============
-FRAG - Framework for Rather Awesome Games
-============
-
 Introduction
 ============
 
@@ -11,6 +7,7 @@ Please also note that this documentation may be incomplete and or may rapidly ch
 
 Dependencies
 ============
+
 - `Nim <https://github.com/nim-lang/Nim.git>`_
 - `Nimble <https://github.com/nim-lang/nimble>`_
 - `GENie <https://github.com/bkaradzic/GENie>`_
@@ -20,29 +17,33 @@ Dependencies
 Instructions for building and installing the above listed dependencies, are outside of the scope of this document.
 
 Installation Instructions
-============
+=========================
 
 1. Clone the project from its `Github repository <https://github.com/fragworks/frag>`_:
 
 .. code-block:: bash
-   $ git clone https://github.com/fragworks/frag.git && cd frag
+
+  $ git clone https://github.com/fragworks/frag.git && cd frag
 
 2. Clone and update submodules:
 
 .. code-block:: bash
-   $ git submodule update --init vendor/bx vendor/bgfx
+  
+  $ git submodule update --init vendor/bx vendor/bgfx
 
 Note: Android and Chipmunk2D support are both optional and very experimental. If desired, add `platforms/android` and | or `vendor/Chipmunk2D` to the list of submodules respectively.
 
 3. Install Nim dependencies via nimble:
 
 .. code-block:: bash
-   $ nimble install -y
+
+  $ nimble install -y
 
 4. Run the nake command to get a list of operating systems and architectures framework dependencies can be built for:
 
 .. code-block:: bash
-   $ nake
+
+  $ nake
 
    Available tasks:
    android-arm-debug32 - Build debug versions of FRAG dependencies for ARM 32-bit instruction set
@@ -60,10 +61,12 @@ Note: Android and Chipmunk2D support are both optional and very experimental. If
 5. Run the appropriate nake task(s) depending on the operating system and architecture you plan on targeting for your project:
 
 .. code-block:: bash
-   $ nake osx-release64
+
+  $ nake osx-release64
 
 Examples
-============
+========
+
 **FRAG** ships with a number of examples which serve a dual purpose:
 
 1. System tests for the framework.
@@ -74,7 +77,8 @@ These examples don't necessarily exhibit best practices for using the framework.
 To get a list of examples simply run the nake command in the `examples` directory:
 
 .. code-block:: bash
-   $ cd examples && nake
+
+  $ cd examples && nake
 
    Available tasks:
    D00 - Desktop : Run example hello-world
@@ -89,8 +93,10 @@ To get a list of examples simply run the nake command in the `examples` director
 Then run the appropriate nake task for the example you would like to run, ex:
 
 .. code-block:: bash
-   $ nake D00
+
+  $ nake D00
 
 Samples
-============
+=======
+
 Samples are currently in development. As they are finished, instructions for installing and running them will appear here.

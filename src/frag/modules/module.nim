@@ -33,6 +33,8 @@ type
       assets*: Table[Hash, ref Asset]
       assetLoadRequests*: Deque[AssetLoadRequest]
       assetLoadsInProgress*: Table[Hash, FlowVarBase]
+      loaded*: uint
+      peakLoadsInProgress*: uint
     of ModuleType.EventBus:
       emitter*: EventEmitter
       assetManager*: AssetManager

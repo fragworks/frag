@@ -25,6 +25,7 @@ platforms
 .vscode
 *.idea
 *.iml
+.history
 
 #################
 # DOCUMENTATION #
