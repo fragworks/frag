@@ -76,6 +76,7 @@ proc initApp(app: App, ctx: Frag) =
   app.batchCamera.ortho(1.0, WIDTH, HEIGHT)
   app.guiCamera.ortho(1.0, WIDTH, HEIGHT, true)
 
+  gui.setCamera(ctx.gui, app.guiCamera)
   gui.setTheme(ctx.gui, GUITheme.White)
 
   logDebug "App initialized."
@@ -96,7 +97,7 @@ proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   app.batchCamera.update()
   app.guiCamera.update()
   app.batch.setProjectionMatrix(app.batchCamera.combined)
-  gui.setProjectionMatrix(ctx.gui, app.guiCamera.combined)
+  gui.setProjectionMatrix(ctx.gui, app.guiCamera.combined, 1)
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
@@ -121,5 +122,7 @@ startFrag(App(), Config(
   resetFlags: ResetFlag.VSync,
   logFileName: "example-05.log",
   assetRoot: "../assets",
-  debugMode: BGFX_DEBUG_TEXT
+  debugMode: BGFX_DEBUG_TEXT,
+  imgui: true,
+  imguiViewId: 1
 ))

@@ -20,8 +20,9 @@ type
     combined*: Mat4
     invProjView: Mat4
     near, far: float
-    viewportWidth, viewportHeight: float
-    position, direction, lookAt, up: Vec3
+    viewportX*, viewportY*: float
+    viewportWidth*, viewportHeight*: float
+    position*, direction, lookAt, up: Vec3
     initialized*: bool
     viewId*: uint8
 
@@ -87,6 +88,19 @@ proc updateViewport*(camera: Camera, viewportWidth, viewportHeight: float) =
   camera.viewportHeight = viewportHeight
   
   bgfx_set_view_rect(camera.viewId, 0, 0, uint16 viewportWidth, uint16 viewportHeight)
+
+proc unproject*(camera: Camera, screenCoords: var Vec3, viewportX, viewportY, viewportWidth, viewportHeight, screenWidth, screenHeight: float) =
+  var x = screenCoords[0]
+  var y = screenCoords[1]
+
+  x = x - viewportX
+  #y = screenHeight - y - 1
+  y = y - viewportY
+
+  screenCoords[0] = (2 * x) / viewportWidth - 1
+  screenCoords[1] = (2 * y) / viewportHeight - 1
+  screenCoords[2] = 2 * screenCoords[2] - 1
+  screenCoords.vec3Prj(screenCoords, camera.invProjView)
 
 proc init*(camera: Camera, viewId: uint8) =
   camera.viewId = viewId

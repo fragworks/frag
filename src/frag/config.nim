@@ -10,3 +10,8 @@ type
     logFileName*: string
     assetRoot*: string
     debugMode*: uint32
+    case imgui*: bool
+    of true:
+      imguiViewId*: uint8
+    else:
+      discard

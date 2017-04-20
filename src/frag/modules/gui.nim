@@ -9,18 +9,26 @@ import
 export panel_flags
 
 import
+  ../graphics/camera,
+  ../graphics/window,
   ../gui/imgui,
   ../gui/themes/gui_themes,
   ../math/fpu_math as fpumath,
-  module
+  module,
+  ../utils/viewport
 
-proc init*(gui: GUI): bool =
-  gui.view = 1
+proc init*(gui: GUI, viewId: uint8): bool =
   gui.imgui = IMGUI()
-  return gui.imgui.init()
+  return gui.imgui.init(viewId)
 
-proc setView*(gui: GUI, view: uint8) =
-  gui.view = view
+proc setCamera*(gui: GUI, camera: Camera) =
+  gui.camera = camera
+
+proc setViewport*(gui: GUI, viewport: Viewport) =
+  gui.viewport = viewport
+
+proc setWindow*(gui: GUI, window: Window) =
+  gui.window = window
 
 proc openWindow*(gui: GUI, title: string, x, y, w, h: float, flags: uint32): bool =
   gui.imgui.ctx.open(title, newRect(x, y, w, h), flags)
@@ -40,8 +48,8 @@ proc render*(gui: GUI) =
 proc setTheme*(gui: GUI, theme: GUITheme) =
   gui_themes.setTheme(gui.imgui, theme)
 
-proc setProjectionMatrix*(gui: GUI, projection: Mat4) =
-  gui.imgui.setProjectionMatrix(projection, gui.view)
+proc setProjectionMatrix*(gui: GUI, projection: Mat4, viewId: uint8) =
+  gui.imgui.setProjectionMatrix(projection, viewId)
 
 proc shutdown*(gui: GUI) =
   gui.imgui.dispose()
@@ -125,12 +133,40 @@ proc handleMouseButton(gui: GUI, button: uint8, x, y: cint, down: bool) =
   else:
     discard
 
+proc project*(gui: GUI, event: sdl.Event): tuple =
+  var posX, posY: float
+  let size = sdl.getSize(gui.window.handle)
+  case event.kind
+  of MouseButtonDown, MouseButtonUp:
+    var screenCoords: Vec3 = [event.button.x.float32, event.button.y.float32, 0.0]
+
+    camera.unproject(gui.camera, screenCoords, gui.viewport.screenX.float,gui.viewport.screenY.float, gui.viewport.screenWidth.float, gui.viewport.screenHeight.float, size[0].float, size[1].float)
+
+    posX = (((screenCoords[0] + 1.0) * (gui.viewport.worldWidth.float - 0.0)) / (1.0 + 1.0)) + 0.0
+
+    posY = (((screenCoords[1] + 1.0) * (gui.viewport.worldHeight.float - 0.0)) / (1.0 + 1.0)) + 0.0
+  of MouseMotion:
+    var screenCoords: Vec3 = [event.motion.x.float32, event.motion.y.float32, 0.0]
+
+    camera.unproject(gui.camera, screenCoords, gui.viewport.screenX.float,gui.viewport.screenY.float, gui.viewport.screenWidth.float, gui.viewport.screenHeight.float, size[0].float, size[1].float)
+
+    posX = (((screenCoords[0] + 1.0) * (gui.viewport.worldWidth.float - 0.0)) / (1.0 + 1.0)) + 0.0
+
+    posY = (((screenCoords[1] + 1.0) * (gui.viewport.worldHeight.float - 0.0)) / (1.0 + 1.0)) + 0.0
+  else:
+    discard
+  
+  (x: posX.cint, y: posY.cint)
+
 proc onMouseButtonDown*(gui: GUI, event: sdl.Event) =
-  handleMouseButton(gui, event.button.button, event.button.x, event.button.y, true)
+  var pos = project(gui, event)
+  handleMouseButton(gui, event.button.button, pos.x, pos.y, true)
 
 proc onMouseButtonUp*(gui: GUI, event: sdl.Event) =
-  handleMouseButton(gui, event.button.button, event.button.x, event.button.y, false)
+  var pos = project(gui, event)
+  handleMouseButton(gui, event.button.button, pos.x, pos.y, false)
 
 proc onMouseMotion*(gui: GUI, event: sdl.Event) =
-  inputMotion(gui.imgui.ctx, event.motion.x, event.motion.y)
-  
+  if not gui.window.isNil:
+    var pos = project(gui, event)
+    inputMotion(gui.imgui.ctx, pos.x, pos.y)

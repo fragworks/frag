@@ -18,12 +18,12 @@ type
 
   SDLEvent* = object of Event
     sdlEventData*: sdl.Event
+    gui*: GUI
     case sdlEventType*: SDLEventType
     of SDLEventType.KeyDown, SDLEventType.KeyUp, 
       SDLEventType.MouseButtonDown, SDLEventType.MouseButtonUp,
       SDLEventType.MouseMotion:
       input*: Input
-      gui*: GUI
     of SDLEventType.WindowResize:
       graphics*: Graphics
       userData*: pointer

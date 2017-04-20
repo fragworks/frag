@@ -932,6 +932,12 @@ proc vec3MulMtxH*(outResult: var Vec3; vec: Vec3; mat: Mat4) {.inline.} =
     outResult[1] = yy * invW
     outResult[2] = zz * invW
 
+proc vec3Prj*(outResult: var Vec3, a: Vec3, b: Mat4) =
+    let l_w = 1.0 / (a[0] * b[3] + a[1] * b[7] + a[2] * b[11] + b[15])
+    outResult[0] = (a[0] * b[0] + a[1] * b[4] + a[2] * b[8] + b[12]) * l_w
+    outResult[1] = (a[0] * b[1] + a[1] * b[5] + a[2] * b[9] + b[13]) * l_w
+    outResult[2] = (a[0] * b[2] + a[1] * b[6] + a[2] * b[10] + b[14]) * l_w
+
 type Vec4* = array[4, float32]
 
 proc vec4MulMtx*(outResult: var Vec4; vec: Vec4; mat: Mat4) {.inline.} =

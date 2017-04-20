@@ -51,6 +51,7 @@ type
     text*: string
     scroll: float
     projection: Mat4
+    viewId:uint8
 
 proc get_avail_transient_buffers(vertexCount: uint32, vdecl: ptr bgfx_vertex_decl_t, indexCount: uint32) : bool =
   if bgfx_get_avail_transient_vertex_buffer(vertexCount, vdecl) >= vertexCount and bgfx_get_avail_transient_index_buffer(indexCount) >= indexCount:
@@ -60,7 +61,8 @@ proc get_avail_transient_buffers(vertexCount: uint32, vdecl: ptr bgfx_vertex_dec
 proc getContextRef*(ctx: context): ref context =
   new(result); result[] = ctx
 
-proc init*(imgui: var IMGUI): bool =
+proc init*(imgui: var IMGUI, viewId: uint8): bool =
+  imgui.viewId = viewId
   imgui.text = newString(TEXT_MAX)
   # discard glfw.SetCharCallback(graphics.rootWindow, glfw_char_callback)
   imgui.dev = IMGUIDevice()
@@ -177,7 +179,7 @@ proc render*(imgui: var IMGUI) =
         let scissorY : uint16 = uint16 max(cmd.clip_rect.y, 0.0)
         let scissorW : uint16 = uint16 min(cmd.clip_rect.w, 65535.0)
         let scissorH : uint16 = uint16 min(cmd.clip_rect.h, 65535.0)
-        discard bgfx_set_scissor(scissorX, scissorY, scissorW, scissorH)
+        #discard bgfx_set_scissor(scissorX, scissorY, scissorW, scissorH)
 
 
         bgfx_set_state( BGFX_STATE_RGB_WRITE or BGFX_STATE_ALPHA_WRITE or
@@ -191,7 +193,7 @@ proc render*(imgui: var IMGUI) =
         bgfx_set_transient_vertex_buffer( addr tvb, 0, vertexCount )
         bgfx_set_transient_index_buffer( addr tib, offset, cmd.elem_count)
 
-        discard bgfx_submit(1, imgui.dev.sph, 0, false)
+        discard bgfx_submit(imgui.viewId, imgui.dev.sph, 0, false)
 
         offset += cmd.elem_count
 

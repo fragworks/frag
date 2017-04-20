@@ -13,7 +13,9 @@ import
   ../assets/asset_types,
   ../config,
   ../graphics/window,
-  ../gui/imgui
+  ../graphics/camera,
+  ../gui/imgui,
+  ../utils/viewport
 
 type 
   ModuleType* {.pure.} = enum
@@ -47,6 +49,10 @@ type
     of ModuleType.GUI:
       imgui*: IMGUI
       view*: uint8
+      camera*: Camera
+      window*: Window
+      viewport*: Viewport
+      offsetX*, offsetY*: int
     else:
       discard
 

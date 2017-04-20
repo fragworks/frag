@@ -50,12 +50,13 @@ proc registerEventHandlers(ctx: Frag) =
   
   ctx.events.on(SDLEventType.WindowResize, handleWindowResizeEvent)
 
-proc shutdown(ctx: Frag, exitCode: int) =
+proc shutdown(ctx: Frag, exitCode: int, shutdownIMGUI: bool) =
   logInfo "Shutting down Frag..."
 
-  logDebug "Shutting down GUI subsystem..."
-  gui.shutdown(ctx.gui)
-  logDebug "GUI subsystem shut down."
+  if shutdownIMGUI:
+    logDebug "Shutting down IMGUI subsystem..."
+    gui.shutdown(ctx.gui)
+    logDebug "IMGUI subsystem shut down."
 
   logDebug "Shutting down asset management subsystem..."
   assets.shutdown(ctx.assets)
@@ -83,14 +84,14 @@ proc init[App](ctx: Frag, config: Config, app: App) =
   ctx.events = EventBus(moduleType: ModuleType.EventBus)
   if not events.init(ctx.events):
     logError "Error initializing events subsystem."
-    ctx.shutdown(QUIT_FAILURE)
+    ctx.shutdown(QUIT_FAILURE, config.imgui)
   log "Events subsystem initialized."
 
   log "Initializing input subsystem..."
   ctx.input = Input(moduleType: ModuleType.Input)
   if not input.init(ctx.input):
     logError "Error initializing input subsystem."
-    ctx.shutdown(QUIT_FAILURE)
+    ctx.shutdown(QUIT_FAILURE, config.imgui)
   log "Input subsystem initialized."
 
   log "Initializing graphics subsystem..."
@@ -103,7 +104,7 @@ proc init[App](ctx: Frag, config: Config, app: App) =
     config.debugMode
   ):
     logError "Error initializing graphics subsystem."
-    ctx.shutdown(QUIT_FAILURE)
+    ctx.shutdown(QUIT_FAILURE, config.imgui)
   log "Graphics subsystem initialized."
 
   when not defined(android): # This breaks android and prevents app from starting
@@ -111,17 +112,18 @@ proc init[App](ctx: Frag, config: Config, app: App) =
     ctx.assets = AssetManager(moduleType: ModuleType.Assets)
     if not assets.init(ctx.assets, config):
       logError "Error initializing assets subsystem."
-      ctx.shutdown(QUIT_FAILURE)
+      ctx.shutdown(QUIT_FAILURE, config.imgui)
     log "Asset management subsystem initialized."
 
   ctx.events.registerAssetManager(ctx.assets)
 
-  log "Initializing GUI subsystem..."
-  ctx.gui = GUI(moduleType: ModuleType.GUI)
-  if not gui.init(ctx.gui):
-    logError "Error initializing GUI subsystem."
-    ctx.shutdown(QUIT_FAILURE)
-  log "GUI susbsystem initialized."
+  if config.imgui:
+    log "Initializing IMGUI subsystem..."
+    ctx.gui = GUI(moduleType: ModuleType.GUI)
+    if not gui.init(ctx.gui, config.imguiViewId):
+      logError "Error initializing IMGUI subsystem."
+      ctx.shutdown(QUIT_FAILURE, config.imgui)
+    log "IMGUI susbsystem initialized."
 
   ctx.registerEventHandlers()
 
@@ -150,7 +152,8 @@ proc startFrag*[T](app: T, config: Config) =
 
     input.update(ctx.input)
 
-    gui.startUpdate(ctx.gui)
+    if config.imgui:
+      gui.startUpdate(ctx.gui)
     while bool sdl.pollEvent(event):
       case event.kind
       of sdl.QuitEvent:
@@ -184,20 +187,25 @@ proc startFrag*[T](app: T, config: Config) =
           of WINDOWEVENT_RESIZED:
             sdlEvent.sdlEventType = SDLEventType.WindowResize
             sdlEvent.graphics = ctx.graphics
+            sdlEvent.gui = ctx.gui
             sdlEvent.userData = cast[pointer](app)
           else:
             discard
         ctx.events.emit(sdlEvent)
-    gui.finishUpdate(ctx.gui)
+    
+    if config.imgui:
+      gui.finishUpdate(ctx.gui)
 
     ctx.graphics.startFrame()
     app.updateApp(ctx, deltaTime)
     app.renderApp(ctx, deltaTime)
     graphics.render(ctx.graphics)
-    gui.render(ctx.gui)
+
+    if config.imgui:
+      gui.render(ctx.gui)
 
     limitFramerate()
 
   app.shutdownApp(ctx)
 
-  ctx.shutdown(QUIT_SUCCESS)
+  ctx.shutdown(QUIT_SUCCESS, config.imgui)
