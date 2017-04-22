@@ -7,10 +7,17 @@ import
 
 import
   font/roboto_mono_regular,
-  imgui_fs,
-  imgui_vs,
   ../math/fpu_math as fpumath,
   ../util
+
+when defined windows:
+  import
+    dx11/imgui_fs_dx11,
+    dx11/imgui_vs_dx11
+else:
+  import
+    imgui_fs,
+    imgui_vs
 
 template offsetof(typ, field): untyped = (var dummy: typ; cast[uint](addr(dummy.field)) - cast[uint](addr(dummy)))
 
@@ -67,8 +74,8 @@ proc init*(imgui: var IMGUI, viewId: uint8): bool =
   # discard glfw.SetCharCallback(graphics.rootWindow, glfw_char_callback)
   imgui.dev = IMGUIDevice()
   imgui.dev.cmds.init()
-  imgui.dev.vsh = bgfx_create_shader(bgfx_make_ref(addr imgui_vs.vs[0], uint32 sizeof(imgui_vs.vs)))
-  imgui.dev.fsh = bgfx_create_shader(bgfx_make_ref(addr imgui_fs.fs[0], uint32 sizeof(imgui_fs.fs)))
+  imgui.dev.vsh = bgfx_create_shader(bgfx_make_ref(addr vs[0], uint32 sizeof(vs)))
+  imgui.dev.fsh = bgfx_create_shader(bgfx_make_ref(addr fs[0], uint32 sizeof(fs)))
   imgui.dev.sph = bgfx_create_program(imgui.dev.vsh, imgui.dev.fsh, true)
   imgui.dev.vdecl = workaround_createShared[bgfx_vertex_decl_t]()
   bgfx_vertex_decl_begin(imgui.dev.vdecl, BGFX_RENDERER_TYPE_NOOP)
