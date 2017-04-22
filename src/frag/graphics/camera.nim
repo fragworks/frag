@@ -19,7 +19,7 @@ type
     view: Mat4
     combined*: Mat4
     invProjView: Mat4
-    near, far: float
+    nearPlane, farPlane: float
     viewportX*, viewportY*: float
     viewportWidth*, viewportHeight*: float
     position*, direction, lookAt, up: Vec3
@@ -34,8 +34,8 @@ proc update*(camera: Camera) =
       camera.zoom * -camera.viewportWidth / 2, 
       camera.zoom * -(camera.viewportHeight / 2), 
       camera.zoom * camera.viewportHeight / 2, 
-      camera.near, 
-      camera.far
+      camera.nearPlane, 
+      camera.farPlane
     )
 
     var tmp : Vec3
@@ -55,7 +55,7 @@ proc update*(camera: Camera) =
 proc zoom*(camera: Camera, zoom: float) =
   camera.zoom = zoom
 
-proc ortho*(camera: Camera, far, viewportWidth, viewportHeight: float, yDown: bool = false) =
+proc ortho*(camera: Camera, farPlane, viewportWidth, viewportHeight: float, yDown: bool = false) =
   if not camera.initialized:
     logWarn "Camera must be initialized before calling ortho."
     return
@@ -68,8 +68,8 @@ proc ortho*(camera: Camera, far, viewportWidth, viewportHeight: float, yDown: bo
     camera.cameraType = CameraType.Orthographic
     camera.zoom = 1.0
   
-  camera.near = 0.0
-  camera.far = far
+  camera.nearPlane = 0.0
+  camera.farPlane = farPlane
     
 
   camera.viewportWidth = viewportWidth
@@ -109,8 +109,8 @@ proc init*(camera: Camera, viewId: uint8) =
   mtxIdentity(camera.view)
   mtxIdentity(camera.combined)
   mtxIdentity(camera.invProjView)
-  camera.near = 1.0
-  camera.far = 100.0
+  camera.nearPlane = 1.0
+  camera.farPlane = 100.0
   camera.viewportWidth = 0
   camera.viewportheight = 0
   camera.position = [0.0'f32, 0.0'f32, 0.0'f32]
