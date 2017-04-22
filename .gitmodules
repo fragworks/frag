@@ -1,12 +1,12 @@
 [submodule "vendor/bgfx"]
 	path = vendor/bgfx
-	url = git@github.com:fragworks/bgfx.git
+	url = https://github.com/fragworks/bgfx.git
 [submodule "vendor/bx"]
 	path = vendor/bx
-	url = git@github.com:bkaradzic/bx.git
+	url = https://github.com/fragworks/bx.git
 [submodule "platforms/android"]
 	path = platforms/android
-	url = git@github.com:fragworks/frag-android.git
+	url = https://github.com/fragworks/frag-android.git
 [submodule "vendor/Chipmunk2D"]
 	path = vendor/Chipmunk2D
 	url = https://github.com/slembcke/Chipmunk2D.git
