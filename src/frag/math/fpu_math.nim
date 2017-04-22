@@ -504,10 +504,10 @@ proc mtxLookAt*(outResult: var Mat4; eye: Vec3; at: Vec3;
     mtxLookAtLh(outResult, eye, at, up)
 
 proc mtxLHProjXYWH*(outResult: var Mat4; x: float32; y: float32; width: float32;
-                    height: float32; near: float32; far: float32; oglNdc: bool = false) {.inline.} =
-    var diff: float32 = far - near
-    var aa: float32 = if oglNdc: (far + near) / diff else: far / diff
-    var bb: float32 = if oglNdc: (2.0'f32 * far * near) / diff else: near * aa
+                    height: float32; near: float32; ffar: float32; oglNdc: bool = false) {.inline.} =
+    var diff: float32 = ffar - near
+    var aa: float32 = if oglNdc: (ffar + near) / diff else: ffar / diff
+    var bb: float32 = if oglNdc: (2.0'f32 * ffar * near) / diff else: near * aa
     fill(outResult, 0)
     outResult[0] = width
     outResult[5] = height
@@ -518,11 +518,11 @@ proc mtxLHProjXYWH*(outResult: var Mat4; x: float32; y: float32; width: float32;
     outResult[14] = - bb
 
 proc mtxRHProjXYWH*(outResult: var Mat4; x: float32; y: float32; width: float32;
-                    height: float32; near: float32; far: float32; oglNdc: bool = false) {.
+                    height: float32; near: float32; ffar: float32; oglNdc: bool = false) {.
         inline.} =
-    var diff: float32 = far - near
-    var aa: float32 = if oglNdc: (far + near) / diff else: far / diff
-    var bb: float32 = if oglNdc: (2.0'f32 * far * near) / diff else: near * aa
+    var diff: float32 = ffar - near
+    var aa: float32 = if oglNdc: (ffar + near) / diff else: ffar / diff
+    var bb: float32 = if oglNdc: (2.0'f32 * ffar * near) / diff else: near * aa
     fill(outResult, 0)
     outResult[0] = width
     outResult[5] = height
@@ -533,80 +533,80 @@ proc mtxRHProjXYWH*(outResult: var Mat4; x: float32; y: float32; width: float32;
     outResult[14] = - bb
 
 proc mtxLHProj_impl*(outResult: var Mat4; ut: float32; dt: float32; lt: float32;
-                     rt: float32; near: float32; far: float32; oglNdc: bool = false) {.inline.} =
+                     rt: float32; near: float32; ffar: float32; oglNdc: bool = false) {.inline.} =
     var invDiffRl: float32 = 1.0'f32 / (rt - lt)
     var invDiffUd: float32 = 1.0'f32 / (ut - dt)
     var width: float32 = 2.0'f32 * near * invDiffRl
     var height: float32 = 2.0'f32 * near * invDiffUd
     var xx: float32 = (rt + lt) * invDiffRl
     var yy: float32 = (ut + dt) * invDiffUd
-    mtxLHProjXYWH(outResult, xx, yy, width, height, near, far, oglNdc)
+    mtxLHProjXYWH(outResult, xx, yy, width, height, near, ffar, oglNdc)
 
 proc mtxRHProj_impl*(outResult: var Mat4; ut: float32; dt: float32; lt: float32;
-                     rt: float32; near: float32; far: float32; oglNdc: bool = false) {.inline.} =
+                     rt: float32; near: float32; ffar: float32; oglNdc: bool = false) {.inline.} =
     var invDiffRl: float32 = 1.0'f32 / (rt - lt)
     var invDiffUd: float32 = 1.0'f32 / (ut - dt)
     var width: float32 = 2.0'f32 * near * invDiffRl
     var height: float32 = 2.0'f32 * near * invDiffUd
     var xx: float32 = (rt + lt) * invDiffRl
     var yy: float32 = (ut + dt) * invDiffUd
-    mtxRHProjXYWH(outResult, xx, yy, width, height, near, far, oglNdc)
+    mtxRHProjXYWH(outResult, xx, yy, width, height, near, ffar, oglNdc)
 
 proc mtxLHProj_impl*(outResult: var Mat4; fov: array[4, float32]; near: float32;
-                     far: float32; oglNdc: bool = false) {.inline.} =
-    mtxLHProj_impl(outResult, fov[0], fov[1], fov[2], fov[3], near, far, oglNdc)
+                     ffar: float32; oglNdc: bool = false) {.inline.} =
+    mtxLHProj_impl(outResult, fov[0], fov[1], fov[2], fov[3], near, ffar, oglNdc)
 
 proc mtxRHProj_impl*(outResult: var Mat4; fov: array[4, float32]; near: float32;
-                     far: float32; oglNdc: bool = false) {.inline.} =
-    mtxRHProj_impl(outResult, fov[0], fov[1], fov[2], fov[3], near, far, oglNdc)
+                     ffar: float32; oglNdc: bool = false) {.inline.} =
+    mtxRHProj_impl(outResult, fov[0], fov[1], fov[2], fov[3], near, ffar, oglNdc)
 
 proc mtxLHProj_impl*(outResult: var Mat4; fovy: float32; aspect: float32; near: float32;
-                     far: float32; oglNdc: bool = false) {.inline.} =
+                     ffar: float32; oglNdc: bool = false) {.inline.} =
     var height: float32 = 1.0'f32 / tan(toRad(fovy) * 0.5'f32)
     var width: float32 = height * 1.0'f32 / aspect
-    mtxLHProjXYWH(outResult, 0.0'f32, 0.0'f32, width, height, near, far, oglNdc)
+    mtxLHProjXYWH(outResult, 0.0'f32, 0.0'f32, width, height, near, ffar, oglNdc)
 
 proc mtxRHProj_impl*(outResult: var Mat4; fovy: float32; aspect: float32; near: float32;
-                     far: float32; oglNdc: bool = false) {.inline.} =
+                     ffar: float32; oglNdc: bool = false) {.inline.} =
     var height: float32 = 1.0'f32 / tan(toRad(fovy) * 0.5'f32)
     var width: float32 = height * 1.0'f32 / aspect
-    mtxRHProjXYWH(outResult, 0.0'f32, 0.0'f32, width, height, near, far, oglNdc)
+    mtxRHProjXYWH(outResult, 0.0'f32, 0.0'f32, width, height, near, ffar, oglNdc)
 
 proc mtxProj*(outResult: var Mat4; ut: float32; dt: float32; lt: float32; rt: float32;
-              near: float32; far: float32; oglNdc: bool = false) {.inline.} =
-    mtxLHProj_impl(outResult, ut, dt, lt, rt, near, far, oglNdc)
+              near: float32; ffar: float32; oglNdc: bool = false) {.inline.} =
+    mtxLHProj_impl(outResult, ut, dt, lt, rt, near, ffar, oglNdc)
 
-proc mtxProj*(outResult: var Mat4; fov: array[4, float32]; near: float32; far: float32;
+proc mtxProj*(outResult: var Mat4; fov: array[4, float32]; near: float32; ffar: float32;
               oglNdc: bool = false) {.inline.} =
-    mtxLHProj_impl(outResult, fov, near, far, oglNdc)
+    mtxLHProj_impl(outResult, fov, near, ffar, oglNdc)
 
 proc mtxProj*(outResult: var Mat4; fovy: float32; aspect: float32; near: float32;
-              far: float32; oglNdc: bool = false) {.inline.} =
-    mtxLHProj_impl(outResult, fovy, aspect, near, far, oglNdc)
+              ffar: float32; oglNdc: bool = false) {.inline.} =
+    mtxLHProj_impl(outResult, fovy, aspect, near, ffar, oglNdc)
 
 proc mtxProjLh*(outResult: var Mat4; ut: float32; dt: float32; lt: float32; rt: float32;
-                near: float32; far: float32; oglNdc: bool = false) {.inline.} =
-    mtxLHProj_impl(outResult, ut, dt, lt, rt, near, far, oglNdc)
+                near: float32; ffar: float32; oglNdc: bool = false) {.inline.} =
+    mtxLHProj_impl(outResult, ut, dt, lt, rt, near, ffar, oglNdc)
 
-proc mtxProjLh*(outResult: var Mat4; fov: array[4, float32]; near: float32; far: float32;
+proc mtxProjLh*(outResult: var Mat4; fov: array[4, float32]; near: float32; ffar: float32;
                 oglNdc: bool = false) {.inline.} =
-    mtxLHProj_impl(outResult, fov, near, far, oglNdc)
+    mtxLHProj_impl(outResult, fov, near, ffar, oglNdc)
 
 proc mtxProjLh*(outResult: var Mat4; fovy: float32; aspect: float32; near: float32;
-                far: float32; oglNdc: bool = false) {.inline.} =
-    mtxLHProj_impl(outResult, fovy, aspect, near, far, oglNdc)
+                ffar: float32; oglNdc: bool = false) {.inline.} =
+    mtxLHProj_impl(outResult, fovy, aspect, near, ffar, oglNdc)
 
 proc mtxProjRh*(outResult: var Mat4; ut: float32; dt: float32; lt: float32; rt: float32;
-                near: float32; far: float32; oglNdc: bool = false) {.inline.} =
-    mtxRHProj_impl(outResult, ut, dt, lt, rt, near, far, oglNdc)
+                near: float32; ffar: float32; oglNdc: bool = false) {.inline.} =
+    mtxRHProj_impl(outResult, ut, dt, lt, rt, near, ffar, oglNdc)
 
-proc mtxProjRh*(outResult: var Mat4; fov: array[4, float32]; near: float32; far: float32;
+proc mtxProjRh*(outResult: var Mat4; fov: array[4, float32]; near: float32; ffar: float32;
                 oglNdc: bool = false) {.inline.} =
-    mtxRHProj_impl(outResult, fov, near, far, oglNdc)
+    mtxRHProj_impl(outResult, fov, near, ffar, oglNdc)
 
 proc mtxProjRh*(outResult: var Mat4; fovy: float32; aspect: float32; near: float32;
-                far: float32; oglNdc: bool = false) {.inline.} =
-    mtxRHProj_impl(outResult, fovy, aspect, near, far, oglNdc)
+                ffar: float32; oglNdc: bool = false) {.inline.} =
+    mtxRHProj_impl(outResult, fovy, aspect, near, ffar, oglNdc)
 
 proc mtxProjLhInfXYWH*(outResult: var Mat4; x: float32; y: float32; width: float32;
                        height: float32; near: float32; oglNdc: bool = false;
@@ -754,14 +754,14 @@ proc mtxProjRevInfRh*(outResult: var Mat4; fovy: float32; aspect: float32; near:
     mtxProjRHInf_impl(outResult, fovy, aspect, near, oglNdc, nft)
 
 proc mtxOrthoLH_impl*(outResult: var Mat4; left: float32; right: float32;
-                      bottom: float32; top: float32; near: float32; far: float32;
+                      bottom: float32; top: float32; near: float32; ffar: float32;
                       offset: float32 = 0.0'f32; oglNdc: bool = false) {.inline.} =
     var aa: float32 = 2.0'f32 / (right - left)
     var bb: float32 = 2.0'f32 / (top - bottom)
-    var cc: float32 = (if oglNdc: 2.0'f32 else: 1.0'f32) / (far - near)
+    var cc: float32 = (if oglNdc: 2.0'f32 else: 1.0'f32) / (ffar - near)
     var dd: float32 = (left + right) / (left - right)
     var ee: float32 = (top + bottom) / (bottom - top)
-    var ff: float32 = if oglNdc: (near + far) / (near - far) else: near / (near - far)
+    var ff: float32 = if oglNdc: (near + ffar) / (near - ffar) else: near / (near - ffar)
     fill(outResult, 0.0'f32)
     outResult[0] = aa
     outResult[5] = bb
@@ -772,14 +772,14 @@ proc mtxOrthoLH_impl*(outResult: var Mat4; left: float32; right: float32;
     outResult[15] = 1.0'f32
 
 proc mtxOrthoRH_impl*(outResult: var Mat4; left: float32; right: float32;
-                      bottom: float32; top: float32; near: float32; far: float32;
+                      bottom: float32; top: float32; near: float32; ffar: float32;
                       offset: float32 = 0.0'f32; oglNdc: bool = false) {.inline.} =
     var aa: float32 = 2.0'f32 / (right - left)
     var bb: float32 = 2.0'f32 / (top - bottom)
-    var cc: float32 = (if oglNdc: 2.0'f32 else: 1.0'f32) / (far - near)
+    var cc: float32 = (if oglNdc: 2.0'f32 else: 1.0'f32) / (ffar - near)
     var dd: float32 = (left + right) / (left - right)
     var ee: float32 = (top + bottom) / (bottom - top)
-    var ff: float32 = if oglNdc: (near + far) / (near - far) else: near / (near - far)
+    var ff: float32 = if oglNdc: (near + ffar) / (near - ffar) else: near / (near - ffar)
     fill(outResult, 0.0'f32)
     outResult[0] = aa
     outResult[5] = bb
@@ -790,19 +790,19 @@ proc mtxOrthoRH_impl*(outResult: var Mat4; left: float32; right: float32;
     outResult[15] = 1.0'f32
 
 proc mtxOrtho*(outResult: var Mat4; left: float32; right: float32; bottom: float32;
-               top: float32; near: float32; far: float32; offset: float32 = 0.0'f32;
+               top: float32; near: float32; ffar: float32; offset: float32 = 0.0'f32;
                oglNdc: bool = false) {.inline.} =
-    mtxOrthoLH_impl(outResult, left, right, bottom, top, near, far, offset, oglNdc)
+    mtxOrthoLH_impl(outResult, left, right, bottom, top, near, ffar, offset, oglNdc)
 
 proc mtxOrthoLh*(outResult: var Mat4; left: float32; right: float32; bottom: float32;
-                 top: float32; near: float32; far: float32; offset: float32 = 0.0'f32;
+                 top: float32; near: float32; ffar: float32; offset: float32 = 0.0'f32;
                  oglNdc: bool = false) {.inline.} =
-    mtxOrthoLH_impl(outResult, left, right, bottom, top, near, far, offset, oglNdc)
+    mtxOrthoLH_impl(outResult, left, right, bottom, top, near, ffar, offset, oglNdc)
 
 proc mtxOrthoRh*(outResult: var Mat4; left: float32; right: float32; bottom: float32;
-                 top: float32; near: float32; far: float32; offset: float32 = 0.0'f32;
+                 top: float32; near: float32; ffar: float32; offset: float32 = 0.0'f32;
                  oglNdc: bool = false) {.inline.} =
-    mtxOrthoRH_impl(outResult, left, right, bottom, top, near, far, offset, oglNdc)
+    mtxOrthoRH_impl(outResult, left, right, bottom, top, near, ffar, offset, oglNdc)
 
 proc mtxRotateX*(outResult: var Mat4; ax: float32) {.inline.} =
     var sx: float32 = fsin(ax)
