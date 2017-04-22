@@ -63,8 +63,8 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
     var pd: ptr bgfx_platform_data_t = workaround_createShared[bgfx_platform_data_t]()
     var info: sdl.WMinfo
     version(info.version)
-    assert sdl.getWMInfo(window, info)
-
+    discard sdl.getWMInfo(window, info)
+    
     case(info.subsystem):
         of SysWM_Windows:
           when defined(windows) and not defined(android):
