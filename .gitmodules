@@ -13,3 +13,6 @@
 [submodule "vendor/bimg"]
 	path = vendor/bimg
 	url = https://github.com/bkaradzic/bimg.git
+[submodule "vendor/GENie"]
+	path = vendor/GENie
+	url = https://github.com/bkaradzic/GENie.git
