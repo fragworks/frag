@@ -1,6 +1,6 @@
 import os, osproc
 
-if not dirExists("vendor/bx"):
+if not(dirExists("vendor/bx")) or not(dirExists("vendor/bgfx")) or not(dirExists("vendor/bimg")):
   echo "Initialize submodules in vendor folder prior to installation."
 
 when defined(windows):
@@ -13,6 +13,11 @@ elif defined(macosx):
   setCurrentDir(".build/projects/gmake-osx")
   discard execCmd("make")
 elif defined(linux):
-  echo "Linux"
+  setCurrentDir("vendor/bgfx")
+  discard execCmd("""
+    ../bx/tools/bin/darwin/genie --with-shared-lib --with-tools --gcc=linux gmake
+  """)
+  setCurrentDir(".build/projects/gmake-linux")
+  discard execCmd("make")
 else:
   echo "Unsupported!"
