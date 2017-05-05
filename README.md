@@ -6,6 +6,8 @@ Framework for Rather Awesome Games
 [![Join the chat at https://gitter.im/fragworks/frag](https://badges.gitter.im/fragworks/frag.svg)](https://gitter.im/fragworks/frag?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ----------------------------------
 
+[Home page and installation instructions](http://fragworks.io/)
+
 FRAG is a game creation framework being developed using the [Nim](https://nim-lang.org/) programming language, and is currently in pre-alpha status.
 The immediate development focus for FRAG is supporting the creation of 2D mobile and desktop games. Console support is planned for post-alpha releases of FRAG.
 
