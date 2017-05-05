@@ -16,7 +16,7 @@ elif defined(macosx):
 elif defined(linux):
   setCurrentDir("vendor/bgfx")
   discard execCmd("""
-    ../bx/tools/bin/linux/genie --with-shared-lib --with-tools --gcc=linux gmake
+    ../bx/tools/bin/linux/genie --with-shared-lib --with-tools --gcc=linux-gcc gmake
   """)
   setCurrentDir(".build/projects/gmake-linux")
   discard execCmd("make")
