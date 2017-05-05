@@ -7,6 +7,12 @@ import
 
 export asset.Sound
 
+when defined(android):
+  import jnim, sdl2
+
+  let act = cast[jobject](androidGetActivity())
+  initSoundEngineWithActivity(act)
+
 proc load*(filepath: string): asset.Sound =
   var s = asset.Sound(assetType: AssetType.Sound)
   s.snd = newSoundWithFile(filepath)

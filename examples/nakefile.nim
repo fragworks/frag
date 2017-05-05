@@ -20,7 +20,7 @@ proc run(bin: string) =
     direShell(nimExe, "c", "-r", bin)
     return
 
-proc compile(src: string) = direShell(nimExe, "c --reportConceptFailures:on", src)
+proc compile(src: string) = direShell(nimExe, "c", src)
 
 proc runDesktopExample(name: string) = run(join(@[ desktopExDir, name, exBin ], "/"))
 

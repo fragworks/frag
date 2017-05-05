@@ -10,8 +10,8 @@ export TextureRegion
 
 proc setRegionInternal(textureRegion: TextureRegion; u, v, u2, v2: float) =
   var
-    texWidth: int = textureRegion.texture.data.w
-    texHeight: int = textureRegion.texture.data.h
+    texWidth: int = textureRegion.texture.width
+    texHeight: int = textureRegion.texture.height
 
   textureRegion.regionWidth = int round(abs(u2 - u) * float texWidth)
   textureRegion.regionHeight = int round(abs(v2 - v) * float texHeight)
@@ -30,8 +30,8 @@ proc setRegionInternal(textureRegion: TextureRegion; u, v, u2, v2: float) =
   textureRegion.v2 = tv
 
 proc setRegion*(textureRegion: TextureRegion, x, y, width, height: float) =
-  let invTexWidth = 1.0 / float textureRegion.texture.data.w
-  let invTexHeight = 1.0 / float textureRegion.texture.data.h
+  let invTexWidth = 1.0 / float textureRegion.texture.width
+  let invTexHeight = 1.0 / float textureRegion.texture.height
   var u = x * invTexWidth
   var v = y * invTexHeight
   var u2 = (x + width) * invTexWidth

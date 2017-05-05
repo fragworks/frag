@@ -104,11 +104,11 @@ proc renderApp(app: App, ctx: Frag, deltaTime: float) =
 
   let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
 
-  let texHalfW = tex.data.w / 2
-  let texHalfH = tex.data.h / 2
+  let texHalfW = tex.width / 2
+  let texHalfH = tex.height / 2
 
   app.batch.begin()
-  app.batch.draw(tex, HALF_WIDTH - texHalfW, HALF_HEIGHT - texHalfH, float tex.data.w, float tex.data.h)
+  app.batch.draw(tex, HALF_WIDTH - texHalfW, HALF_HEIGHT - texHalfH, float tex.width, float tex.height)
   app.batch.`end`()
 
   if ctx.gui.openWindow("Hello Nuklear IMGUI!", 225, 100, 250, 300, WINDOW_TITLE.ord or WINDOW_NO_SCROLLBAR.ord or WINDOW_CLOSABLE.ord):

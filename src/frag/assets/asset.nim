@@ -32,7 +32,8 @@ type
       snd*: snd.Sound
     of AssetType.Texture:
       handle*: bgfx_texture_handle_t
-      data*: sdl.SurfacePtr
+      data*: seq[uint8]
+      width*, height*, channels*: int
     of AssetType.TextureRegion:
       texture*: ref Asset
       u*, v*, u2*, v2*: float

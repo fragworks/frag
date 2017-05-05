@@ -8,9 +8,6 @@ import
   threadpool
 
 import
-  sdl2.image as sdl_img
-
-import
   ../assets/asset,
   ../assets/asset_types,
   ../config,
@@ -36,7 +33,6 @@ proc init*(this: AssetManager, config: Config): bool =
   this.assets = initTable[Hash, ref Asset]()
   this.assetSearchPath = getAppDir() & $DirSep & appAssetRoot & $DirSep
   this.internalSearchPath = getAppDir() & $DirSep & globals.engineAssetRoot & $DirSep
-  discard sdl_img.init()
   return true
 
 proc dispose(this: AssetManager, id: Hash) =
@@ -50,8 +46,6 @@ proc dispose(this: AssetManager, id: Hash) =
 proc shutdown*(this: AssetManager) =
   for id, _ in this.assets:
     this.dispose(id)
-
-  sdl_img.quit()
 
 proc get*[T](this: AssetManager, filename: string): T =
   let id = hash(filename)

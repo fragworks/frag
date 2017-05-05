@@ -2,6 +2,9 @@ import
   system
 
 import
+  bgfxdotnim
+
+import
   sdl2 as sdl except EventType
 
 import
@@ -26,6 +29,7 @@ type
 
 export
   assets,
+  bgfxdotnim,
   config,
   events,
   globals,
@@ -33,7 +37,10 @@ export
   gui,
   input,
   logger,
-  module
+  module,
+  sdl
+
+  
 
 proc registerEventHandlers(ctx: Frag) =
   ctx.events.on(EventType.LoadAsset, handleLoadAssetEvent)

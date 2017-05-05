@@ -1,10 +1,6 @@
 import
   events
 
-import 
-  bgfxdotnim,
-  sdl2 as sdl
-
 import
   ../../../src/frag,
   ../../../src/frag/config,
