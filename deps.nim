@@ -12,13 +12,13 @@ elif defined(macosx):
     ../bx/tools/bin/darwin/genie --with-shared-lib --with-tools --gcc=osx gmake
   """)
   setCurrentDir(".build/projects/gmake-osx")
-  discard execCmd("make")
+  discard execCmd("make config=release64")
 elif defined(linux):
   setCurrentDir("vendor/bgfx")
   discard execCmd("""
     ../bx/tools/bin/linux/genie --with-shared-lib --with-tools --gcc=linux-gcc gmake
   """)
   setCurrentDir(".build/projects/gmake-linux")
-  discard execCmd("make")
+  discard execCmd("make config=release64")
 else:
-  echo "Unsupported!"
+  echo "Your operating system is not supported!"
