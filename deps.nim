@@ -1,6 +1,6 @@
 import os, osproc
 
-if not(dirExists("vendor/bx/tools")) or not(dirExists("vendor/bgfx/.build")) or not(dirExists("vendor/bimg/src")):
+if not(dirExists("vendor/bx/tools")) or not(dirExists("vendor/bgfx/src")) or not(dirExists("vendor/bimg/src")):
   echo "Initialize submodules in vendor folder prior to installation."
   quit(QUIT_SUCCESS)
 
