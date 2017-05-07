@@ -13,7 +13,6 @@ skipDirs      = @[ "examples", "samples" ]
 # Dependencies
 
 requires "nim >= 0.16.0"
-requires "nake >= 1.9"
 requires "sdl2 >= 1.1"
 requires "stb_image >= 1.2"
 requires "https://github.com/yglukhov/android.git"
@@ -25,6 +24,3 @@ requires "https://github.com/zacharycarter/nuklear-nim.git"
 requires "https://github.com/zacharycarter/nanovg.nim.git"
 requires "strfmt >= 0.8.4"
 requires "https://github.com/zacharycarter/nimassimp.git"
-
-task deps, "Install FRAG dependencies for your operating system":
-  exec "nim c -r deps"
