@@ -32,7 +32,10 @@ type
       snd*: snd.Sound
     of AssetType.Texture:
       handle*: bgfx_texture_handle_t
-      data*: seq[uint8]
+      when defined(android):
+        data*: sdl.SurfacePtr
+      else:
+        data*: seq[uint8]
       width*, height*, channels*: int
     of AssetType.TextureRegion:
       texture*: ref Asset

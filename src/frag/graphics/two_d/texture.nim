@@ -7,6 +7,10 @@ import
   sdl2 as sdl,
   stb_image/read as stbi
 
+when defined(android):
+  import
+    sdl2/image as sdl_image
+
 import
   ../../assets/asset_types,
   ../../assets/asset,
@@ -57,7 +61,10 @@ proc loadPNG*(filename: string) : Texture {.procvar.} =
 
   var texture = Texture(assetType: AssetType.Texture)
   texture.filename = filename
-  texture.data = stbi.load(filename, texture.width, texture.height, texture.channels, stbi.Default)
+  when defined(android):
+    texture.data = sdl_image.load(filename)
+  else:
+    texture.data = stbi.load(filename, texture.width, texture.height, texture.channels, stbi.Default)
 
   if texture.data.isNil:
     logError "Error loading Texture!"

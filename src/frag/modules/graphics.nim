@@ -63,33 +63,37 @@ proc linkSDL2BGFX(window: sdl.WindowPtr): bool =
     var pd: ptr bgfx_platform_data_t = workaround_createShared[bgfx_platform_data_t]()
     var info: sdl.WMinfo
     version(info.version)
-    discard sdl.getWMInfo(window, info)
-    
-    case(info.subsystem):
-        of SysWM_Windows:
-          when defined(windows) and not defined(android):
-            let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
-            pd.nwh = info.win.hwnd
-          pd.ndt = nil
-        of SysWM_X11:
-          when defined(linux) and not defined(android):
-            let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
-            pd.nwh = info.x11.window
-            pd.ndt = info.x11.display
-        of SysWM_Cocoa:
-          when defined(macosx) and not defined(android):
-            let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
-            pd.nwh = info.cocoa.window
-          pd.ndt = nil
-        of SysWM_Android:
-          when defined(android):
-            let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
-            pd.nwh = info.android.window
-            #pd.nwh = getNativeAndroidWindow()
-          pd.ndt = nil
-        else:
-          logError "Error linking SDL2 and BGFX."
-          return false
+
+    when defined(android):
+      pd.nwh = getNativeAndroidWindow()
+    else:
+      discard sdl.getWMInfo(window, info)
+      
+      case(info.subsystem):
+          of SysWM_Windows:
+            when defined(windows) and not defined(android):
+              let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
+              pd.nwh = info.win.hwnd
+            pd.ndt = nil
+          of SysWM_X11:
+            when defined(linux) and not defined(android):
+              let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
+              pd.nwh = info.x11.window
+              pd.ndt = info.x11.display
+          of SysWM_Cocoa:
+            when defined(macosx) and not defined(android):
+              let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
+              pd.nwh = info.cocoa.window
+            pd.ndt = nil
+          #of SysWM_Android:
+            #when defined(android):
+              #let info = cast[ptr SysWMinfoKindObj](addr info.padding[0])
+              #pd.nwh = info.android.window
+              #pd.nwh = getNativeAndroidWindow()
+            #pd.ndt = nil
+          else:
+            logError "Error linking SDL2 and BGFX."
+            return false
 
     pd.backBuffer = nil
     pd.backBufferDS = nil
