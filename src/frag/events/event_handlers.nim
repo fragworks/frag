@@ -80,3 +80,8 @@ proc handleWindowResizeEvent*(e: EventArgs) {.procvar.} =
   let event = SDLEventMessage(e).event
   if not event.graphics.isNil:
     event.graphics.onWindowResize(event.sdlEventData)
+
+proc handleAppDidEnterForegroundEvent*(e: EventArgs) {.procvar.} =
+  let event = SDLEventMessage(e).event
+  if not event.graphics.isNil:
+    event.graphics.onUnpause(event.sdlEventData)

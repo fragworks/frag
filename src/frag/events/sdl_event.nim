@@ -9,6 +9,7 @@ import
 
 type
   SDLEventType* {.pure.} = enum
+    AppDidEnterForeground
     KeyDown
     KeyUp
     MouseButtonDown
@@ -24,7 +25,7 @@ type
       SDLEventType.MouseButtonDown, SDLEventType.MouseButtonUp,
       SDLEventType.MouseMotion:
       input*: Input
-    of SDLEventType.WindowResize:
+    of SDLEventType.WindowResize, SDLEventType.AppDidEnterForeground:
       graphics*: Graphics
       userData*: pointer
     else:

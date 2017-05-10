@@ -189,6 +189,12 @@ proc onWindowResize*(this: Graphics, event: sdl.Event) {.procvar.} =
     
   bgfx_reset(width, height, BGFX_RESET_VSYNC)
 
+proc onUnpause*(this: Graphics, event: sdl.Event) {.procvar.} =
+  when defined(android):
+    discard linkSDL2BGFX(this.rootWindow.handle)
+    let size = getSize(this.rootWindow.handle)
+    bgfx_reset(size.x.uint32, size.y.uint32, BGFX_RESET_VSYNC)
+
 proc getSize*(this: Graphics): tuple =
   sdl.getSize(this.rootWindow.handle)
 

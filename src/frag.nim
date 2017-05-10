@@ -57,6 +57,8 @@ proc registerEventHandlers(ctx: Frag) =
   
   ctx.events.on(SDLEventType.WindowResize, handleWindowResizeEvent)
 
+  ctx.events.on(SDLEventType.AppDidEnterForeground, handleAppDidEnterForegroundEvent)
+
 proc shutdown(ctx: Frag, exitCode: int, shutdownIMGUI: bool) =
   logInfo "Shutting down Frag..."
 
@@ -197,6 +199,11 @@ proc startFrag*[T](app: T, config: Config) =
             sdlEvent.userData = cast[pointer](app)
           else:
             discard
+        elif event.kind == sdl.AppDidEnterForeground:
+          sdlEvent.sdlEventType = SDLEventType.AppDidEnterForeground
+          sdlEvent.graphics = ctx.graphics
+          sdlEvent.gui = ctx.gui
+          sdlEvent.userData = cast[pointer](app)
         ctx.events.emit(sdlEvent)
     
     if config.imgui:
