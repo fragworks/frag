@@ -14,6 +14,15 @@ proc run(bin: string) =
     exec("nim c -r $1" % bin)
     return
 
+task tasks, "List Tasks":
+  echo "D00 : Desktop - Hello World"
+  echo "D01 : Desktop - Sprite Batch"
+  echo "D02 : Desktop - Audio"
+  echo "D03 : Desktop - Input"
+  echo "D04 : Desktop - Sprite Animation"
+  echo "D05 : Desktop - GUI"
+  echo "D06 : Desktop - Physics"
+
 task D00, "Desktop - Hello World":
   run("desktop/00-hello-world/main.nim")
 
