@@ -103,14 +103,18 @@ proc getProgress*(this: AssetManager): float =
 
 proc load*(this: AssetManager, filename: string, assetType: AssetType, internal: bool = false): Hash =
   var filepath : string
-  if not internal:
-    filepath = this.assetSearchPath & filename
-  else:
-    filepath = this.internalSearchPath & filename
 
-  if not fileExists(filepath):
-    logWarn "File with filepath : " & filepath & " does not exist."
-    return
+  when defined(android):
+    filepath = filename
+  else:
+    if not internal:
+      filepath = this.assetSearchPath & filename
+    else:
+      filepath = this.internalSearchPath & filename
+
+    if not fileExists(filepath):
+      logWarn "File with filepath : " & filepath & " does not exist."
+      return
 
   let newAssetId = hash(filepath)
   if this.assets.contains(newAssetId):

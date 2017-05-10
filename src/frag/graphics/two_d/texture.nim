@@ -46,28 +46,36 @@ proc verifyPNG*(filename: string) : bool =
   return verifyImageHeader(filename, sizeof(PNG_HEADER_BYTES), PNG_HEADER_BYTES)
 
 proc init*(texture: Texture) =
-  if texture.channels == 4:
-    texture.handle = bgfx_create_texture_2d(uint16 texture.width, uint16 texture.height, false, 1, BGFX_TEXTURE_FORMAT_RGBA8, 0, bgfx_copy(addr texture.data[0], uint32 texture.width * texture.height * 4))
+  when defined(android):
+    if texture.data.format.BytesPerPixel == 4:
+      texture.handle = bgfx_create_texture_2d(uint16 texture.data.w, uint16 texture.data.h, false, 1, BGFX_TEXTURE_FORMAT_RGBA8, 0, bgfx_copy(texture.data.pixels, uint32 texture.data.w * texture.data.h * 4))
+    else:
+      texture.handle = bgfx.bgfx_create_texture_2d(uint16 texture.data.w, uint16 texture.data.h, false, 1, BGFX_TEXTURE_FORMAT_RGB8, 0, bgfx_copy(texture.data.pixels, uint32 texture.data.w * texture.data.h * 3))
   else:
-    texture.handle = bgfx.bgfx_create_texture_2d(uint16 texture.width, uint16 texture.height, false, 1, BGFX_TEXTURE_FORMAT_RGB8, 0, bgfx_copy(addr texture.data[0], uint32 texture.width * texture.height * 3))
+    if texture.channels == 4:
+      texture.handle = bgfx_create_texture_2d(uint16 texture.width, uint16 texture.height, false, 1, BGFX_TEXTURE_FORMAT_RGBA8, 0, bgfx_copy(addr texture.data[0], uint32 texture.width * texture.height * 4))
+    else:
+      texture.handle = bgfx.bgfx_create_texture_2d(uint16 texture.width, uint16 texture.height, false, 1, BGFX_TEXTURE_FORMAT_RGB8, 0, bgfx_copy(addr texture.data[0], uint32 texture.width * texture.height * 3))
 
 proc loadPNG*(filename: string) : Texture {.procvar.} =
-  if not fileExists(filename):
-    logError "Unable to load PNG with filename : " & filename & " file does not exist!"
-    return
-
-  if not verifyPNG(filename):
-    logError "Unable to load PNG with filename : " & filename & " not a PNG file!"
-
   var texture = Texture(assetType: AssetType.Texture)
   texture.filename = filename
+
   when defined(android):
     texture.data = sdl_image.load(filename)
+
   else:
+    if not fileExists(filename):
+      logError "Unable to load PNG with filename : " & filename & " file does not exist!"
+      return
+
+    if not verifyPNG(filename):
+      logError "Unable to load PNG with filename : " & filename & " not a PNG file!"
+
     texture.data = stbi.load(filename, texture.width, texture.height, texture.channels, stbi.Default)
 
   if texture.data.isNil:
-    logError "Error loading Texture!"
+    logError "Error loading Texture! " & filename
     return
 
   return texture

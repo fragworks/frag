@@ -114,13 +114,12 @@ proc init[App](ctx: Frag, config: Config, app: App) =
     ctx.shutdown(QUIT_FAILURE, config.imgui)
   log "Graphics subsystem initialized."
 
-  when not defined(android): # This breaks android and prevents app from starting
-    log "Initializing asset management subsystem..."
-    ctx.assets = AssetManager(moduleType: ModuleType.Assets)
-    if not assets.init(ctx.assets, config):
-      logError "Error initializing assets subsystem."
-      ctx.shutdown(QUIT_FAILURE, config.imgui)
-    log "Asset management subsystem initialized."
+  log "Initializing asset management subsystem..."
+  ctx.assets = AssetManager(moduleType: ModuleType.Assets)
+  if not assets.init(ctx.assets, config):
+    logError "Error initializing assets subsystem."
+    ctx.shutdown(QUIT_FAILURE, config.imgui)
+  log "Asset management subsystem initialized."
 
   ctx.events.registerAssetManager(ctx.assets)
 
