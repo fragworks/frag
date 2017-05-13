@@ -22,6 +22,7 @@ task tasks, "List Tasks":
   echo "D04 : Desktop - Sprite Animation"
   echo "D05 : Desktop - GUI"
   echo "D06 : Desktop - Physics"
+  echo "D07 : Desktop - NanoVG"
 
 task D00, "Desktop - Hello World":
   run("desktop/00-hello-world/main.nim")
@@ -43,3 +44,6 @@ task D05, "Desktop - GUI":
 
 task D06, "Desktop - Physics":
   run("desktop/06-physics/main.nim")
+
+task D07, "Desktop - NanoVG":
+  run("desktop/07-nanovg/main.nim")

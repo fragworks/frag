@@ -29,6 +29,7 @@ type
   ClearMode* {.pure.} = enum
     Color = BGFX_CLEAR_COLOR
     Depth = BGFX_CLEAR_DEPTH
+    Stencil = BGFX_CLEAR_STENCIL
 
   BlendFunc* {.pure.} = enum
     SrcAlpha = BGFX_STATE_BLEND_SRC_ALPHA
