@@ -25,7 +25,4 @@ RUN cd Nim && ./koch nimble
 
 ENV PATH=${PATH}:/Nim/bin
 
-RUN git clone https://github.com/fragworks/frag.git && cd frag && git submodule update --init vendor/bx vendor/bgfx/ vendor/bimg vendor/GENie
-
-RUN cd /frag/vendor/GENie && make
-ENV PATH=${PATH}:/frag/vendor/GENie/bin/linux
+RUN git clone https://github.com/fragworks/frag.git && cd frag && git submodule update --init vendor/bx vendor/bgfx/ vendor/bimg
