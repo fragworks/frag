@@ -60,7 +60,8 @@ proc start*[T](ctx: Frag, app: T, config: Config) =
   if config.stats:
     gameLoop.stats = newStats()
     gameLoop.stats.showPanel(1)
-    document.body.appendChild(gameLoop.stats.dom)
+    var stats = document.getElementById("stats")
+    stats.appendChild(gameLoop.stats.dom)
 
   gameLoop.started = true
 
@@ -73,10 +74,10 @@ proc start*[T](ctx: Frag, app: T, config: Config) =
 proc initFRAG*[App](ctx: Frag, app: App, config: Config) =
   logInfo "Initializing Frag - " & globals.version & "..."
 
-  #renderer = PIXI.autoDetectRenderer(256, 256)
+  ctx.graphics = Graphics()
 
-  #document.body.appendChild(renderer.view)
-
-  #stage = newContainer()
+  graphics.init(ctx.graphics,
+    config.rootWindowWidth, config.rootWindowHeight
+  )
   
   logInfo "Frag initialized."
