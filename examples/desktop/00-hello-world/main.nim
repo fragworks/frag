@@ -4,11 +4,9 @@ import
 import
   ../../../src/frag,
   ../../../src/frag/config,
-  ../../../src/frag/core/sdl_gameloop,
   ../../../src/frag/graphics/window,
   ../../../src/frag/logger,
-  ../../../src/frag/modules/graphics,
-  ../../../src/frag/types
+  ../../../src/frag/modules/graphics
 
 import
   logo

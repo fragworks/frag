@@ -9,15 +9,13 @@ import
 
 import
   ../../../src/frag,
-  ../../../src/frag/core/sdl_gameloop,
   ../../../src/frag/modules/gui,
   ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
   ../../../src/frag/graphics/window,
   ../../../src/frag/gui/themes/gui_themes,
-  ../../../src/frag/modules/assets,
-  ../../../src/frag/types
+  ../../../src/frag/modules/assets
 
 type
   App = ref object

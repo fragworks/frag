@@ -8,7 +8,7 @@ import
   ../../logger,
   ../../math/fpu_math as fpumath,
   ../../modules/graphics,
-  ../graphics_types,
+  ../types,
   texture,
   texture_atlas,
   texture_region,

@@ -16,6 +16,3 @@
 [submodule "vendor/GENie"]
 	path = vendor/GENie
 	url = https://github.com/bkaradzic/GENie.git
-[submodule "platforms/js/vendor/pixi.js"]
-	path = platforms/js/vendor/pixi.js
-	url = https://github.com/pixijs/pixi.js.git

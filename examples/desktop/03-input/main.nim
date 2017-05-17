@@ -9,14 +9,12 @@ import
 
 import
   ../../../src/frag,
-  ../../../src/frag/core/sdl_gameloop,
   ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
   ../../../src/frag/graphics/window,
   ../../../src/frag/math/fpu_math as math,
-  ../../../src/frag/modules/assets,
-  ../../../src/frag/types
+  ../../../src/frag/modules/assets
 
 type
   App = ref object

@@ -13,15 +13,13 @@ import
 import
   ../../../src/frag,
   ../../../src/frag/config,
-  ../../../src/frag/core/sdl_gameloop,
   ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
   ../../../src/frag/graphics/window,
   ../../../src/frag/logger,
   ../../../src/frag/modules/graphics,
-  ../../../src/frag/modules/assets,
-  ../../../src/frag/types
+  ../../../src/frag/modules/assets
 
 const
   GRABBABLE_MASK_BIT* = cuint(1 shl 31)
