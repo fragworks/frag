@@ -19,6 +19,3 @@
 [submodule "platforms/js/vendor/pixi.js"]
 	path = platforms/js/vendor/pixi.js
 	url = https://github.com/pixijs/pixi.js.git
-[submodule "platforms/html5"]
-	path = platforms/html5
-	url = https://github.com/fragworks/frag-html5.git
