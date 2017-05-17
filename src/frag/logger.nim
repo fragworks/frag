@@ -1,10 +1,3 @@
-import
-  logging,
-  strutils
-
-import
-  globals
-
 when defined(android):
   {.emit: """
     #include <android/log.h>
@@ -34,7 +27,30 @@ when defined(android):
   proc init*(logFileName: string) =
     discard
 
+elif defined(js):
+  import
+    jsconsole
+
+  proc logDebug*(arg: string) =
+    console.debug(arg)
+
+  proc logInfo*(arg: string) =
+    console.info(arg)
+
+  proc logError*(arg: string) =
+    console.error(arg)
+
+  proc log*(arg: string) =
+    logDebug(arg)
+
 else:
+  import
+    logging,
+    strutils
+
+  import
+    globals
+
   var consoleLogger : ConsoleLogger
   var fileLogger : FileLogger
 

@@ -9,6 +9,7 @@ import
 
 import
   ../../../src/frag,
+  ../../../src/frag/core/sdl_gameloop,
   ../../../src/frag/graphics/camera,
   ../../../src/frag/graphics/two_d/animation,
   ../../../src/frag/graphics/two_d/spritebatch,
@@ -16,7 +17,8 @@ import
   ../../../src/frag/graphics/two_d/texture_atlas,
   ../../../src/frag/graphics/two_d/texture_region,
   ../../../src/frag/graphics/window,
-  ../../../src/frag/modules/assets
+  ../../../src/frag/modules/assets,
+  ../../../src/frag/types
 
 type
   App = ref object

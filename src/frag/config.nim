@@ -1,5 +1,10 @@
 import
-  graphics/types
+  graphics/graphics_types
+
+when defined(js):
+  const 
+    step* = 1/60
+
 
 type
   Config* = ref object
@@ -15,3 +20,5 @@ type
       imguiViewId*: uint8
     else:
       discard
+    when defined(js):
+      stats*: bool

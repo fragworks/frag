@@ -11,7 +11,7 @@ import
   ../events/sdl_event,
   ../graphics/color,
   ../graphics/sdl2/version,
-  ../graphics/types,
+  ../graphics/graphics_types,
   ../graphics/window,
   ../logger,
   module,
@@ -19,7 +19,7 @@ import
 
 export
   color,
-  types,
+  graphics_types,
   window
 
 when defined(windows) and not defined(android):
