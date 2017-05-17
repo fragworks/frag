@@ -3,9 +3,6 @@ import
   future
 
 import
-  pixi
-
-import
   ../types,
   ../config,
   ../globals,
@@ -24,9 +21,6 @@ type
 
   Stats {.importc.} = ref object of RootObj
     dom: Node
-
-var renderer: Renderer
-var stage: Container
 
 proc getCurrentHighPTime(): float {.importcpp: "window.performance.now()".}
 proc newStats(): Stats {.importcpp: "new Stats()".}
@@ -79,10 +73,10 @@ proc start*[T](ctx: Frag, app: T, config: Config) =
 proc initFRAG*[App](ctx: Frag, app: App, config: Config) =
   logInfo "Initializing Frag - " & globals.version & "..."
 
-  renderer = PIXI.autoDetectRenderer(256, 256)
+  #renderer = PIXI.autoDetectRenderer(256, 256)
 
-  document.body.appendChild(renderer.view)
+  #document.body.appendChild(renderer.view)
 
-  stage = newContainer()
+  #stage = newContainer()
   
   logInfo "Frag initialized."
