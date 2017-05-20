@@ -1,25 +1,53 @@
 {.experimental.}
 
+import
+  ../graphics/camera,
+  ../graphics/window,
+  ../gui/imgui,
+  ../math/fpu_math as fpumath,
+  module,
+  ../utils/viewport
+
 when defined(js):
-  discard
+  import
+    jsffi,
+    jsconsole
+
+  type
+    ControlKit = ref object of JsObject
+
+    CreateControlKitFunc = proc(options: JsObject)
+
+  proc require(moduleName: cstring): CreateControlKitFunc {.importcpp: "require(@)".}
+  proc newControlKit(createControlKitFunc: CreateControlKitFunc): JsObject {.importcpp: "new @()".}
+
+  var controlKit: JsObject
+
+  proc init*(gui: GUI, viewId: uint8): bool =
+    let createControlKitFunc = require("controlkit")
+    controlKit = newControlKit(createControlKitFunc)
+    let params = newJsObject()
+    params.fixed = false
+    params.align = "left".cstring
+    params.position = [0, 0]
+    params.opacity = 0.5
+    let panel = controlKit.addPanel(
+      params
+    )
+    return true
+
+
 else:
   import
     events
 
   import
     nuklear,
-    sdl2 as sdl
+    sdl2 as sdl,
+
+    ../gui/themes/gui_themes
 
   export panel_flags
-
-  import
-    ../graphics/camera,
-    ../graphics/window,
-    ../gui/imgui,
-    ../gui/themes/gui_themes,
-    ../math/fpu_math as fpumath,
-    module,
-    ../utils/viewport
 
   proc init*(gui: GUI, viewId: uint8): bool =
     gui.imgui = IMGUI()

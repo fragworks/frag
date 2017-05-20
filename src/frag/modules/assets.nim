@@ -226,7 +226,9 @@ proc updateLoadsInProgress(self: AssetManager) =
 
 proc update*(self: AssetManager): bool =
   when defined(js):
-    if self.loader.progress == 100 and self.loader.loading == false:
+    console.log(self.loader)
+    console.log(self.loader.queueLength())
+    if self.loader.resourceCount() > 0 and not self.loader.loading and self.loader.progress == 100 or self.loader.queueLength() == 0:
       for key, value in self.loader.resources.pairs:
         var asset: ref Asset
         let res = cast[Resource](value)
@@ -241,9 +243,13 @@ proc update*(self: AssetManager): bool =
           )
           asset.init()
         self.assets.add(cast[Hash](key), asset)
+      self.loader.reset()
       return true
-    self.loader.load()
-    return false
+    elif not self.loader.loading and self.loader.queueLength() > 0:
+      self.loader.load()
+      return false
+    else:
+      return false
   else:
     while self.assetLoadRequests.len > 0 and self.assetLoadsInProgress.len < maxWorkers:
       let nextLoadRequest = self.assetLoadRequests.popFirst()

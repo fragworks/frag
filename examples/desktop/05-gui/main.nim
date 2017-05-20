@@ -4,9 +4,12 @@ import
   hashes,
   tables
 
-import 
-  bgfxdotnim,
-  sdl2 as sdl
+when not defined(js):
+  import 
+    bgfxdotnim,
+    sdl2 as sdl,
+
+    ../../../src/frag/gui/themes/gui_themes
 
 import
   ../../../src/frag,
@@ -15,7 +18,6 @@ import
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
   ../../../src/frag/graphics/window,
-  ../../../src/frag/gui/themes/gui_themes,
   ../../../src/frag/modules/assets
 
 type
@@ -30,25 +32,27 @@ const HEIGHT = 540
 var HALF_WIDTH = WIDTH / 2
 var HALF_HEIGHT = HEIGHT / 2
 
-proc resize*(e: EventArgs) =
-  let event = SDLEventMessage(e).event
-  let sdlEventData = event.sdlEventData
-  
-  let app = cast[App](event.userData)
-  
-  let w = sdlEventData.window.data1.float
-  let h = sdlEventData.window.data2.float
+when not defined(js):
+  proc resize*(e: EventArgs) =
+    let event = SDLEventMessage(e).event
+    let sdlEventData = event.sdlEventData
+    
+    let app = cast[App](event.userData)
+    
+    let w = sdlEventData.window.data1.float
+    let h = sdlEventData.window.data2.float
 
-  app.guiCamera.ortho(1.0, w, h, true)
-  app.batchCamera.ortho(1.0, w, h)
+    app.guiCamera.ortho(1.0, w, h, true)
+    app.batchCamera.ortho(1.0, w, h)
 
-  HALF_WIDTH = w / 2
-  HALF_HEIGHT = h / 2
+    HALF_WIDTH = w / 2
+    HALF_HEIGHT = h / 2
 
 proc initApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
 
-  ctx.events.on(SDLEventType.WindowResize, resize)
+  when not defined(js):
+    ctx.events.on(SDLEventType.WindowResize, resize)
 
   app.assetIds = initTable[string, Hash]()
 
@@ -77,8 +81,9 @@ proc initApp(app: App, ctx: Frag) =
   app.batchCamera.ortho(1.0, WIDTH, HEIGHT)
   app.guiCamera.ortho(1.0, WIDTH, HEIGHT, true)
 
-  gui.setCamera(ctx.gui, app.guiCamera)
-  gui.setTheme(ctx.gui, GUITheme.White)
+  when not defined(js):
+    gui.setCamera(ctx.gui, app.guiCamera)
+    gui.setTheme(ctx.gui, GUITheme.White)
 
   logDebug "App initialized."
 
@@ -90,15 +95,17 @@ proc shutdownApp(app: App, ctx: Frag) =
     ctx.assets.unload(assetId)
   logDebug "Assets unloaded."
 
-  app.batch.dispose()
+  when not defined(js):
+    app.batch.dispose()
 
   logDebug "App shut down..."
 
 proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   app.batchCamera.update()
   app.guiCamera.update()
-  app.batch.setProjectionMatrix(app.batchCamera.combined)
-  gui.setProjectionMatrix(ctx.gui, app.guiCamera.combined, 1)
+  when not defined(js):
+    app.batch.setProjectionMatrix(app.batchCamera.combined)
+    gui.setProjectionMatrix(ctx.gui, app.guiCamera.combined, 1)
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, colors.Color(0x303030ff), 1.0, 0)
@@ -112,18 +119,28 @@ proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   app.batch.draw(tex, HALF_WIDTH - texHalfW, HALF_HEIGHT - texHalfH, float tex.width, float tex.height)
   app.batch.`end`()
 
-  if ctx.gui.openWindow("Hello Nuklear IMGUI!", 225, 100, 250, 300, WINDOW_TITLE.ord or WINDOW_NO_SCROLLBAR.ord or WINDOW_CLOSABLE.ord):
+  when not defined(js):
+    if ctx.gui.openWindow("Hello Nuklear IMGUI!", 225, 100, 250, 300, WINDOW_TITLE.ord or WINDOW_NO_SCROLLBAR.ord or WINDOW_CLOSABLE.ord):
     
-    ctx.gui.closeWindow()
+      ctx.gui.closeWindow()
 
-startFrag(App(), Config(
-  rootWindowTitle: "Frag Example 05-gui",
-  rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
-  rootWindowWidth: 960, rootWindowHeight: 540,
-  resetFlags: ResetFlag.VSync,
-  logFileName: "example-05.log",
-  assetRoot: "../assets",
-  debugMode: BGFX_DEBUG_TEXT,
-  imgui: true,
-  imguiViewId: 1
-))
+
+when defined(js):
+  startFrag(App(), Config(
+    rootWindowTitle: "Frag Example 05-gui",
+    assetRoot: "desktop/assets",
+    imgui: true
+  ))
+
+else:
+  startFrag(App(), Config(
+    rootWindowTitle: "Frag Example 05-gui",
+    rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
+    rootWindowWidth: 960, rootWindowHeight: 540,
+    resetFlags: ResetFlag.VSync,
+    logFileName: "example-05.log",
+    assetRoot: "../assets",
+    debugMode: BGFX_DEBUG_TEXT,
+    imgui: true,
+    imguiViewId: 1
+  ))

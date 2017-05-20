@@ -146,14 +146,15 @@ proc init[App](ctx: Frag, config: Config, app: App) =
     ctx.events.registerAssetManager(ctx.assets)
 
   
-    if config.imgui:
-      log "Initializing IMGUI subsystem..."
-      ctx.gui = GUI(moduleType: ModuleType.GUI)
-      if not gui.init(ctx.gui, config.imguiViewId):
-        logError "Error initializing IMGUI subsystem."
-        ctx.shutdown(QUIT_FAILURE, config.imgui)
-      log "IMGUI susbsystem initialized."
+  if config.imgui:
+    log "Initializing IMGUI subsystem..."
+    ctx.gui = GUI(moduleType: ModuleType.GUI)
+    if not gui.init(ctx.gui, config.imguiViewId):
+      logError "Error initializing IMGUI subsystem."
+      ctx.shutdown(QUIT_FAILURE, config.imgui)
+    log "IMGUI susbsystem initialized."
 
+  when not defined(js):
     ctx.registerEventHandlers()
 
   logInfo "Frag initialized."

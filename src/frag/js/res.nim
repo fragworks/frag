@@ -18,3 +18,5 @@ proc newLoader*(): Loader {.importcpp: "new Loader()".}
 proc add*(loader: Loader, name: cstring, url: cstring): Loader {.importcpp: "#.add(@)".}
 proc load*(loader: Loader) {.importcpp: "#.load(@)".}
 proc resources*(loader: Loader): JsObject {.importcpp: "#.resources".}
+proc queueLength*(loader: Loader): int {.importcpp: "#._queue.length()".}
+proc resourceCount*(loader: Loader): int {.importcpp: "Object.keys(#.resources).length".}

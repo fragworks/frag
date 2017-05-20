@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "controlkit": "^0.1.9",
     "gl-basic-shader": "^1.3.0",
     "gl-mat4": "^1.1.4",
     "gl-shader-core": "^2.2.0",
