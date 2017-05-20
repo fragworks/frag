@@ -1,8 +1,14 @@
 import
-  os,
-  parsecfg,
-  streams,
   strutils
+
+when defined(js):
+  discard
+
+else:
+  import
+    os,
+    parsecfg,
+    streams
 
 import
   ../../assets/asset_types,
@@ -30,47 +36,54 @@ proc loadTextureAtlas(shortPath: string, filename: string): AtlasInfo =
   atlas.regions = @[]
   atlas.regionInfos = @[]
   
-  var f = newFileStream(filename, fmRead)
-  if f != nil:
-    var p: CfgParser
-    open(p, f, filename)
-    while true:
-      var e = next(p)
-      case e.kind
-      of cfgEof:
-        break
-      of cfgSectionStart:   ## a ``[section]`` has been parsed
-        let region = RegionInfo(
-          name: e.section,
-          w: parseInt(p.next.value),
-          h: parseInt(p.next.value),
-          u: parseFloat(p.next.value),
-          v: parseFloat(p.next.value),
-          u2: parseFloat(p.next.value),
-          v2: parseFloat(p.next.value)
-        )
-        atlas.regionInfos.add(region)
-      of cfgKeyValuePair:
-        if e.key == "name":
-          if atlas.textureFilename.isNil:
-            atlas.textureFilename = e.value
-      of cfgError:
-        logError("Cfg parsing error : " & e.msg)
-      else:
-        discard
-    close(p)
-    atlas.textureFilepath = splitFile(filename).dir & DirSep & atlas.textureFilename
-  else:
-    logWarn "Cannot open texture atlas: " & filename
+  when defined(js):
+    discard
   
-  return AtlasInfo(
-    atlas: atlas, 
-  )
+  else:
+    var f = newFileStream(filename, fmRead)
+    if f != nil:
+      var p: CfgParser
+      open(p, f, filename)
+      while true:
+        var e = next(p)
+        case e.kind
+        of cfgEof:
+          break
+        of cfgSectionStart:   ## a ``[section]`` has been parsed
+          let region = RegionInfo(
+            name: e.section,
+            w: parseInt(p.next.value),
+            h: parseInt(p.next.value),
+            u: parseFloat(p.next.value),
+            v: parseFloat(p.next.value),
+            u2: parseFloat(p.next.value),
+            v2: parseFloat(p.next.value)
+          )
+          atlas.regionInfos.add(region)
+        of cfgKeyValuePair:
+          if e.key == "name":
+            if atlas.textureFilename.isNil:
+              atlas.textureFilename = e.value
+        of cfgError:
+          logError("Cfg parsing error : " & e.msg)
+        else:
+          discard
+      close(p)
+      atlas.textureFilepath = splitFile(filename).dir & DirSep & atlas.textureFilename
+    else:
+      logWarn "Cannot open texture atlas: " & filename
+    
+    return AtlasInfo(
+      atlas: atlas, 
+    )
 
 proc load*(shortPath: string, filename: string): auto =
-  let ext = splitFile(filename).ext
-  if not(ext == ".atlas"):
-    logWarn "Extension : " & ext & " not recognized."
-    return
-  loadTextureAtlas(shortPath, filename)
+  when defined(js):
+    discard
+  else:
+    let ext = splitFile(filename).ext
+    if not(ext == ".atlas"):
+      logWarn "Extension : " & ext & " not recognized."
+      return
+    loadTextureAtlas(shortPath, filename)
     

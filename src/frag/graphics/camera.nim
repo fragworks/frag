@@ -1,5 +1,6 @@
-import
-  bgfxdotnim
+when not defined(js):
+  import
+    bgfxdotnim
 
 import
   ../logger,
@@ -81,13 +82,16 @@ proc ortho*(camera: Camera, farPlane, viewportWidth, viewportHeight: float, yDow
     0.0
   ]
 
-  bgfx_set_view_rect(camera.viewId, 0, 0, uint16 viewportWidth, uint16 viewportHeight)
+
+  when not defined(js):
+    bgfx_set_view_rect(camera.viewId, 0, 0, uint16 viewportWidth, uint16 viewportHeight)
 
 proc updateViewport*(camera: Camera, viewportWidth, viewportHeight: float) =
   camera.viewportWidth = viewportWidth
   camera.viewportHeight = viewportHeight
   
-  bgfx_set_view_rect(camera.viewId, 0, 0, uint16 viewportWidth, uint16 viewportHeight)
+  when not defined(js):
+    bgfx_set_view_rect(camera.viewId, 0, 0, uint16 viewportWidth, uint16 viewportHeight)
 
 proc unproject*(camera: Camera, screenCoords: var Vec3, viewportX, viewportY, viewportWidth, viewportHeight, screenWidth, screenHeight: float) =
   var x = screenCoords[0]

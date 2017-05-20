@@ -1,4 +1,5 @@
 import
+  colors,
   events,
   hashes,
   tables
@@ -85,7 +86,7 @@ proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   app.batch.setProjectionMatrix(app.camera.combined)
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
-  ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
+  ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, colors.Color(0x303030ff), 1.0, 0)
 
   let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
 

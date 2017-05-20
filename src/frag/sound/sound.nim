@@ -15,7 +15,8 @@ when defined(android):
 
 proc load*(filepath: string): asset.Sound =
   var s = asset.Sound(assetType: AssetType.Sound)
-  s.snd = newSoundWithFile(filepath)
+  when not defined(js):
+    s.snd = newSoundWithFile(filepath)
   return s
 
 proc loop*(sound: asset.Sound, loop: bool) =

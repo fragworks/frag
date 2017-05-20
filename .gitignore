@@ -26,6 +26,8 @@ platforms
 *.idea
 *.iml
 .history
+shrinkwrap.yaml
+**/node_modules/**
 
 #################
 # DOCUMENTATION #

@@ -13,12 +13,19 @@
 ## an enumeration of asset types supported by FRAG.
 
 import
-  tables
-
-import
-  bgfxdotnim as bgfx,
-  sdl2 as sdl,
+  tables,
   sound.sound as snd
+
+when defined(js):
+  import 
+    dom,
+    jsffi,
+    webgl
+
+when not defined(js):
+  import
+    bgfxdotnim as bgfx,
+    sdl2 as sdl
 
 import
   asset_types
@@ -26,14 +33,21 @@ import
 type
   Asset* = object
     ## Variant type for all FRAG assets
-    filename*: string
+    when defined(js):
+      filename*: cstring
+    else:
+      filename*: string
     case assetType*: AssetType
     of AssetType.Sound:
       snd*: snd.Sound
     of AssetType.Texture:
-      handle*: bgfx_texture_handle_t
+      when not defined(js):
+        handle*: bgfx_texture_handle_t
       when defined(android):
         data*: sdl.SurfacePtr
+      elif defined(js):
+        data*: ImageElement
+        handle*: JsObject
       else:
         data*: seq[uint8]
       width*, height*, channels*: int

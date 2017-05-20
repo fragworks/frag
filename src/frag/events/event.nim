@@ -11,13 +11,13 @@
 ## The variant type ``Event`` and its discriminator ``EventType`` define
 ## all of the framework-specific (non-SDL2) events raised by FRAG.
 
-import
-  events,
+when not defined(js):
+  import
+    events
+
+import  
   hashes
-
-import
-  sdl2 as sdl
-
+  
 import
   ../assets/asset,
   ../assets/asset_types,
@@ -46,10 +46,12 @@ type
       loadAssetCallback*: proc(producer: ref EventProducer, eventBus: EventBus, assetId: Hash)
       getAssetCallback*: proc(producer: ref EventProducer, asset: ref Asset)
 
-  EventMessage* = object of EventArgs
-    event*: Event
+when not defined(js):
+  type
+    EventMessage* = object of EventArgs
+      event*: Event
 
-  EventHandler* = proc(e: EventArgs)
+    EventHandler* = proc(e: EventArgs)
 
 proc registerAssetManager*(eventBus: EventBus, assetManager: AssetManager) =
   eventBus.assetManager = assetManager

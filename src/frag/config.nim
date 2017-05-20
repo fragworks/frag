@@ -1,11 +1,14 @@
 import
   graphics/types
 
+export
+  types
+
 type
   Config* = ref object
     rootWindowTitle*: string
-    rootWindowPosX*, rootWindowPosY*: int32
-    rootWindowWidth*, rootWindowHeight*: int32
+    rootWindowPosX*, rootWindowPosY*: int
+    rootWindowWidth*, rootWindowHeight*: int
     resetFlags*: ResetFlag
     logFileName*: string
     assetRoot*: string

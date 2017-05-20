@@ -2,11 +2,21 @@ import
   deques,
   events,
   hashes,
-  tables,
-  threadpool
+  tables
 
-import
-  sdl2 as sdl
+when defined(js):
+  import
+    webgl
+  
+  import
+    ../js/res
+    
+when not defined(js):
+  import
+    threadpool
+  
+  import
+    sdl2 as sdl
 
 import
   ../assets/asset,
@@ -32,9 +42,12 @@ type
     of ModuleType.Assets:
       assetSearchPath*: string
       internalSearchPath*: string
-      assets*: Table[Hash, ref Asset]
       assetLoadRequests*: Deque[AssetLoadRequest]
-      assetLoadsInProgress*: Table[Hash, FlowVarBase]
+      assets*: Table[Hash, ref Asset]
+      when defined(js):
+        loader*: Loader
+      when not defined(js):
+        assetLoadsInProgress*: Table[Hash, FlowVarBase]
       loaded*: uint
       peakLoadsInProgress*: uint
     of ModuleType.EventBus:
@@ -42,17 +55,22 @@ type
       assetManager*: AssetManager
     of ModuleType.Input:
       pressedKeys*, releasedKeys*: seq[cint]
-      state*: ptr array[0 .. SDL_NUM_SCANCODES.int, uint8]
+      when not defined(js):
+        state*: ptr array[0 .. SDL_NUM_SCANCODES.int, uint8]
     of ModuleType.Graphics:
-      rootWindow*: window.Window
-      rootGLContext8: sdl.GLContextPtr
+      when defined(js):
+        gl*: WebGLRenderingContext
+      when not defined(js):
+        rootWindow*: window.Window
+        rootGLContext8: sdl.GLContextPtr
     of ModuleType.GUI:
-      imgui*: IMGUI
-      view*: uint8
-      camera*: Camera
-      window*: Window
-      viewport*: Viewport
-      offsetX*, offsetY*: int
+      when not defined(js):
+        imgui*: IMGUI
+        view*: uint8
+        camera*: Camera
+        window*: Window
+        viewport*: Viewport
+        offsetX*, offsetY*: int
     else:
       discard
 

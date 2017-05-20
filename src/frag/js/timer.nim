@@ -1,0 +1,1 @@
+proc getCurrentHighPTime*(): float {.importcpp: "window.performance.now()".}

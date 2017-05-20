@@ -1,13 +1,21 @@
 import
-  events
+  colors
+
+when defined(js):
+  import 
+    jsconsole
+
+when not defined(js):
+  import
+    events
+
+  import 
+    bgfxdotnim,
+    sdl2 as sdl
 
 import
   hashes,
   tables
-
-import 
-  bgfxdotnim,
-  sdl2 as sdl
 
 import
   ../../../src/frag,
@@ -30,15 +38,15 @@ const HALF_HEIGHT = HEIGHT / 2
 
 var assetsLoaded = false
 
-proc resize*(e: EventArgs) =
-  let event = SDLEventMessage(e).event
-  let sdlEventData = event.sdlEventData
-  let app = cast[App](event.userData)
-  app.camera.updateViewport(sdlEventData.window.data1.float, sdlEventData.window.data2.float)
+when not defined(js):
+  proc resize*(e: EventArgs) =
+    let event = SDLEventMessage(e).event
+    let sdlEventData = event.sdlEventData
+    let app = cast[App](event.userData)
+    app.camera.updateViewport(sdlEventData.window.data1.float, sdlEventData.window.data2.float)
 
 proc initApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
-  ctx.events.on(SDLEventType.WindowResize, resize)
 
   app.assetIds = initTable[string, Hash]()
 
@@ -49,6 +57,7 @@ proc initApp(app: App, ctx: Frag) =
   app.assetIds.add(filename, ctx.assets.load(filename, AssetType.Texture))
   app.assetIds.add(filename2, ctx.assets.load(filename2, AssetType.Texture))
 
+
   app.batch = SpriteBatch(
     blendSrcFunc: BlendFunc.SrcAlpha,
     blendDstFunc: BlendFunc.InvSrcAlpha,
@@ -56,34 +65,41 @@ proc initApp(app: App, ctx: Frag) =
   )
   app.batch.init(1000, 0)
 
-  app.camera = Camera()
-  app.camera.init(0)
-  app.camera.ortho(1.0, WIDTH, HEIGHT)
+  when not defined(js):
+    ctx.events.on(SDLEventType.WindowResize, resize)
 
-  logDebug "App initialized."
+    app.camera = Camera()
+    app.camera.init(0)
+    app.camera.ortho(1.0, WIDTH, HEIGHT)
+
+    logDebug "App initialized."
 
 proc shutdownApp(app: App, ctx: Frag) =
   logDebug "Shutting down app..."
 
-  logDebug "Unloading assets..."
-  for _, assetId in app.assetIds:
-    ctx.assets.unload(assetId)
-  logDebug "Assets unloaded."
+  when not defined(js):
 
-  app.batch.dispose()
+    logDebug "Unloading assets..."
+    for _, assetId in app.assetIds:
+      ctx.assets.unload(assetId)
+    logDebug "Assets unloaded."
+
+    app.batch.dispose()
 
   logDebug "App shut down..."
 
 proc updateApp(app:App, ctx: Frag, deltaTime: float) =
-  app.camera.update()
-  app.batch.setProjectionMatrix(app.camera.combined)
+  when not defined(js):
+    app.camera.update()
+
+    app.batch.setProjectionMatrix(app.camera.combined)
 
   while not assetsLoaded and not assets.update(ctx.assets):
     return
   assetsLoaded = true
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
-  ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
+  ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, colors.Color(0x303030ff), 1.0, 0)
 
   if assetsLoaded:
     let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
@@ -97,12 +113,23 @@ proc renderApp(app: App, ctx: Frag, deltaTime: float) =
     app.batch.draw(tex2, HALF_WIDTH + texHalfW, HALF_HEIGHT - texHalfH, float tex.width, float tex.height)
     app.batch.`end`()
 
-startFrag(App(), Config(
-  rootWindowTitle: "Frag Example 01-sprite-batch",
-  rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
-  rootWindowWidth: 960, rootWindowHeight: 540,
-  resetFlags: ResetFlag.VSync,
-  logFileName: "example-01.log",
-  assetRoot: "../assets",
-  debugMode: BGFX_DEBUG_TEXT
-))
+var conf: Config
+
+when defined js:
+  conf = Config(
+    rootWindowTitle: "Frag Example 01-sprite-batch",
+    assetRoot: "desktop/assets"
+  )
+
+else:
+  conf = Config(
+    rootWindowTitle: "Frag Example 01-sprite-batch",
+    rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
+    rootWindowWidth: 960, rootWindowHeight: 540,
+    resetFlags: ResetFlag.VSync,
+    logFileName: "example-01.log",
+    assetRoot: "../assets",
+    debugMode: BGFX_DEBUG_TEXT
+  )
+
+startFrag(App(), conf)

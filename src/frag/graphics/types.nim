@@ -31,6 +31,14 @@ type
     Depth = BGFX_CLEAR_DEPTH
     Stencil = BGFX_CLEAR_STENCIL
 
-  BlendFunc* {.pure.} = enum
-    SrcAlpha = BGFX_STATE_BLEND_SRC_ALPHA
-    InvSrcAlpha = BGFX_STATE_BLEND_INV_SRC_ALPHA
+when defined(js):
+  type
+    BlendFunc* {.pure.} = enum
+      SrcAlpha = 0
+      InvSrcAlpha = 1
+  
+else:
+  type
+    BlendFunc* {.pure.} = enum
+      SrcAlpha = BGFX_STATE_BLEND_SRC_ALPHA
+      InvSrcAlpha = BGFX_STATE_BLEND_INV_SRC_ALPHA

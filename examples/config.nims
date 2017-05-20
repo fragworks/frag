@@ -1,5 +1,8 @@
 import strutils
 
+proc runJS(bin: string) = 
+  exec("nim js --threads:off --verbosity:3 $1 > out.txt" % bin)
+
 proc run(bin: string) = 
   when defined(linux):
     exec("nim c -r -d:linux $1" % bin)
@@ -47,3 +50,6 @@ task D06, "Desktop - Physics":
 
 task D07, "Desktop - NanoVG":
   run("desktop/07-nanovg/main.nim")
+
+task D08, "HTML5":
+  runJS("desktop/08-html5/main.nim")
