@@ -4,9 +4,10 @@ import
   hashes,
   tables
 
-import 
-  bgfxdotnim,
-  sdl2 as sdl
+when not defined(js):
+  import 
+    bgfxdotnim,
+    sdl2 as sdl
 
 import
   ../../../src/frag,
@@ -28,16 +29,18 @@ const HEIGHT = 540
 const HALF_WIDTH = WIDTH / 2
 const HALF_HEIGHT = HEIGHT / 2
 
-proc resize*(e: EventArgs) =
-  let event = SDLEventMessage(e).event
-  let sdlEventData = event.sdlEventData
-  let app = cast[App](event.userData)
-  app.camera.updateViewport(sdlEventData.window.data1.float, sdlEventData.window.data2.float)
+when not defined(js):
+  proc resize*(e: EventArgs) =
+    let event = SDLEventMessage(e).event
+    let sdlEventData = event.sdlEventData
+    let app = cast[App](event.userData)
+    app.camera.updateViewport(sdlEventData.window.data1.float, sdlEventData.window.data2.float)
 
 proc initApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
 
-  ctx.events.on(SDLEventType.WindowResize, resize)
+  when not defined(js):
+    ctx.events.on(SDLEventType.WindowResize, resize)
 
   app.assetIds = initTable[string, Hash]()
 
@@ -63,7 +66,7 @@ proc initApp(app: App, ctx: Frag) =
   logDebug "Assets loaded."
 
   var sound = assets.get[Sound](ctx.assets, app.assetIds["sounds/test.ogg"])
-  sound.setGain(0.5)
+  sound.setGain(0.1)
 
   sound.play()
 
@@ -77,13 +80,15 @@ proc shutdownApp(app: App, ctx: Frag) =
     ctx.assets.unload(assetId)
   logDebug "Assets unloaded."
 
-  app.batch.dispose()
+  when not defined(js):
+    app.batch.dispose()
 
   logDebug "App shut down..."
 
 proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   app.camera.update()
-  app.batch.setProjectionMatrix(app.camera.combined)
+  when not defined(js):
+    app.batch.setProjectionMatrix(app.camera.combined)
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, colors.Color(0x303030ff), 1.0, 0)
@@ -97,12 +102,19 @@ proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   app.batch.draw(tex, HALF_WIDTH - texHalfW, HALF_HEIGHT - texHalfH, float tex.width, float tex.height)
   app.batch.`end`()
 
-startFrag(App(), Config(
-  rootWindowTitle: "Frag Example 02-audio",
-  rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
-  rootWindowWidth: 960, rootWindowHeight: 540,
-  resetFlags: ResetFlag.VSync,
-  logFileName: "example-02.log",
-  assetRoot: "../assets",
-  debugMode: BGFX_DEBUG_TEXT
-))
+when defined js:
+  startFrag(App(), Config(
+    rootWindowTitle: "Frag Example 01-sprite-batch",
+    assetRoot: "desktop/assets"
+  ))
+  
+else:
+  startFrag(App(), Config(
+    rootWindowTitle: "Frag Example 02-audio",
+    rootWindowPosX: window.posUndefined, rootWindowPosY: window.posUndefined,
+    rootWindowWidth: 960, rootWindowHeight: 540,
+    resetFlags: ResetFlag.VSync,
+    logFileName: "example-02.log",
+    assetRoot: "../assets",
+    debugMode: BGFX_DEBUG_TEXT
+  ))

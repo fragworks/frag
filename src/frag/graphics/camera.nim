@@ -15,7 +15,7 @@ type
     of CameraType.Perspective:
       discard
     of CameraType.Orthographic:
-      zoom: float
+      zoom*: float
     projection*: Mat4
     view: Mat4
     combined*: Mat4
@@ -23,7 +23,7 @@ type
     nearPlane, farPlane: float
     viewportX*, viewportY*: float
     viewportWidth*, viewportHeight*: float
-    position*, direction, lookAt, up: Vec3
+    position*, direction, lookAt, up*: Vec3
     initialized*: bool
     viewId*: uint8
 
@@ -53,8 +53,11 @@ proc update*(camera: Camera) =
   else:
     discard
 
-proc zoom*(camera: Camera, zoom: float) =
-  camera.zoom = zoom
+proc zoomIn*(camera: Camera) =
+  camera.zoom += 0.2
+
+proc zoomOut*(camera: Camera) =
+  camera.zoom -= 0.2
 
 proc ortho*(camera: Camera, farPlane, viewportWidth, viewportHeight: float, yDown: bool = false) =
   if not camera.initialized:

@@ -18,3 +18,4 @@ type
     Texture
     TextureRegion 
     TextureAtlas
+    TiledMap

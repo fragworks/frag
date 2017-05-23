@@ -7,7 +7,8 @@ when defined(js):
 
 when not defined(js):
   import
-    events
+    events,
+    os
 
   import 
     bgfxdotnim,
@@ -23,6 +24,7 @@ import
   ../../../src/frag/graphics/two_d/spritebatch,
   ../../../src/frag/graphics/two_d/texture,
   ../../../src/frag/graphics/window,
+  ../../../src/frag/maps/tiled_map,
   ../../../src/frag/modules/assets
 
 type
@@ -30,6 +32,8 @@ type
     batch: SpriteBatch
     camera: Camera
     assetIds: Table[string, Hash]
+    map: TiledMap
+    loading: bool
 
 const WIDTH = 960
 const HEIGHT = 540
@@ -50,12 +54,10 @@ proc initApp(app: App, ctx: Frag) =
 
   app.assetIds = initTable[string, Hash]()
 
-  let filename = "textures/test01.png"
-  let filename2 = "textures/test02.png"
+  let filename = "maps/map.json"
 
   logDebug "Loading assets..."
-  app.assetIds.add(filename, ctx.assets.load(filename, AssetType.Texture))
-  app.assetIds.add(filename2, ctx.assets.load(filename2, AssetType.Texture))
+  app.assetIds.add(filename, ctx.assets.load(filename, AssetType.TiledMap))
 
 
   app.batch = SpriteBatch(
@@ -71,6 +73,7 @@ proc initApp(app: App, ctx: Frag) =
     app.camera = Camera()
     app.camera.init(0)
     app.camera.ortho(1.0, WIDTH, HEIGHT)
+    app.camera.zoom = 2.0
 
     logDebug "App initialized."
 
@@ -92,26 +95,30 @@ proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   when not defined(js):
     app.camera.update()
 
-    app.batch.setProjectionMatrix(app.camera.combined)
+  if ctx.input.down("w", true): app.camera.position[1] += 1
+  if ctx.input.down("s", true): app.camera.position[1] -= 1
+  if ctx.input.down("d", true): app.camera.position[0] += 1
+  if ctx.input.down("a", true): app.camera.position[0] -= 1
+  if ctx.input.down("q", true): app.camera.zoomIn()
+  if ctx.input.down("e", true): app.camera.zoomOut()
+  if ctx.input.pressed("f"):
+    app.loading = true
+    assetsLoaded = false
 
-  while not assetsLoaded and not assets.update(ctx.assets):
-    discard
-  assetsLoaded = true
+  if app.loading:
+    while not assetsLoaded and not assets.update(ctx.assets):
+      return
+    assetsLoaded = true
+    app.loading = false
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, colors.Color(0x303030ff), 1.0, 0)
 
-  if assetsLoaded:
-    let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])
-    let tex2 = assets.get[Texture](ctx.assets, app.assetIds["textures/test02.png"])
-
-    let texHalfW = tex.width / 2
-    let texHalfH = tex.height / 2
-
-    app.batch.begin()
-    app.batch.draw(tex, HALF_WIDTH - texHalfW, HALF_HEIGHT - texHalfH, float tex.width, float tex.height)
-    app.batch.draw(tex2, HALF_WIDTH + texHalfW, HALF_HEIGHT - texHalfH, float tex.width, float tex.height)
-    app.batch.`end`()
+  if assetsLoaded and app.map.isNil:
+    app.map = assets.get[TiledMap](ctx.assets, app.assetIds["maps/map.json"])
+  elif assetsLoaded:
+    app.map.render(app.batch, app.camera)
+    
 
 var conf: Config
 
