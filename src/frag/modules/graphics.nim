@@ -1,4 +1,5 @@
 import
+  colors,
   events,
   strfmt
 
@@ -151,8 +152,8 @@ proc init*(
   return true
   
 
-proc clearView*(this: Graphics, viewId: uint8, flags: uint16, rgba: uint32, depth: float32, stencil: uint8) =
-  bgfx_set_view_clear(viewID, flags, rgba, depth, stencil)
+proc clearView*(self: Graphics, viewId: uint8, flags: uint16, rgba: colors.Color, depth: float32, stencil: uint8) =
+  bgfx_set_view_clear(viewID, flags, rgba.uint32, depth, stencil)
 
 proc drawDebugImage*(this: Graphics, image: var openarray[uint8], x, y, width, height, pitch: uint16) =
   bgfx_dbg_text_image(
