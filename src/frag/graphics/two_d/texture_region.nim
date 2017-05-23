@@ -8,7 +8,7 @@ import
 
 export TextureRegion
 
-proc setRegionInternal(textureRegion: TextureRegion; u, v, u2, v2: float) =
+proc setRegionInternal(textureRegion: TextureRegion; u, v, u2, v2: var float) =
   var
     texWidth: int = textureRegion.texture.width
     texHeight: int = textureRegion.texture.height
@@ -16,18 +16,17 @@ proc setRegionInternal(textureRegion: TextureRegion; u, v, u2, v2: float) =
   textureRegion.regionWidth = int round(abs(u2 - u) * float texWidth)
   textureRegion.regionHeight = int round(abs(v2 - v) * float texHeight)
   ##  For a 1x1 region, adjust UVs toward pixel center to avoid filtering artifacts on AMD GPUs when drawing very stretched.
-  var tu, tu2, tv, tv2 : float
   if textureRegion.regionWidth == 1 and textureRegion.regionHeight == 1:
-    var adjustX: float = 0.25 / float texWidth
-    tu = u + adjustX
-    tu2 = u2 - adjustX
-    var adjustY: float = 0.25 / float texHeight
-    tv = v + adjustY
-    tv2 = v2 - adjustY
-  textureRegion.u = tu
-  textureRegion.v = tv2
-  textureRegion.u2 = tu2
-  textureRegion.v2 = tv
+    let adjustX: float = 0.25 / float texWidth
+    u += adjustX
+    u2 -= adjustX
+    let adjustY: float = 0.25 / float texHeight
+    v += adjustY
+    v2 -= adjustY
+  textureRegion.u = u
+  textureRegion.v = v
+  textureRegion.u2 = u2
+  textureRegion.v2 = v2
 
 proc setRegion*(textureRegion: TextureRegion, x, y, width, height: float) =
   let invTexWidth = 1.0 / float textureRegion.texture.width
@@ -38,6 +37,13 @@ proc setRegion*(textureRegion: TextureRegion, x, y, width, height: float) =
   var v2 = (y + height) * invTexHeight
 
   setRegionInternal(textureRegion, u, v, u2, v2)
+
+proc fromTexture*(texture: Texture, x, y, w, h: int): TextureRegion =
+  result = TextureRegion(
+    assetType: AssetType.TextureRegion,
+    texture: texture
+  )
+  setRegion(result, x.float, y.float, w.float, h.float)
 
 proc fromTexture*(texture: Texture, regionName: string, w, h: int, u, u2, v, v2: float): TextureRegion = 
   result = TextureRegion(assetType: AssetType.TextureRegion)

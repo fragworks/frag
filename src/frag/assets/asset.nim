@@ -30,6 +30,8 @@ type
     case assetType*: AssetType
     of AssetType.Sound:
       snd*: snd.Sound
+      when defined(js):
+        media*: JsObject
     of AssetType.Texture:
       handle*: bgfx_texture_handle_t
       when defined(android):
@@ -49,16 +51,41 @@ type
       textureFilepath*: string
       atlasShortPath*: string
       regionInfos*: seq[RegionInfo]
+    of AssetType.TiledMap:
+      layers*: seq[TiledMapLayer]
+      tilesets*: seq[Tileset]
+      initialized*: bool
+  
+  Tileset* = object
+    tiles*: Table[int, Tile]
+    textureFilepath*: string
+    texture*: Texture
+    name*: string
+    firstGid*: int
+    margin*: int
+    spacing*: int
+    tileWidth*: int
+    tileHeight*: int
+
+  Tile* = object
+    textureRegion*: TextureRegion
+
+  TiledMapLayer* = object
+    width*, height*: int
+    tileWidth*, tileHeight*: int
+    cells*: seq[TiledMapCell]
+
+  TiledMapCell* = ref object
+    tileId*: int
+    tile*: Tile
 
   RegionInfo* = object
     name*: string
     w*, h*: int
     u*, u2*, v*, v2*: float
 
-  BoxedAsset* = object
-    value: ref Asset
-
   Sound* = ref Asset
   Texture* = ref Asset
   TextureRegion* = ref Asset
   TextureAtlas* = ref Asset
+  TiledMap* = ref Asset

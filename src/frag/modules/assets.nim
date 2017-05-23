@@ -16,6 +16,7 @@ import
   ../graphics/two_d/texture_atlas,
   ../graphics/two_d/texture_region,
   ../logger,
+  ../maps/tiled_map,
   module,
   ../sound/sound
 
@@ -25,107 +26,107 @@ export
 
 const maxWorkers = 4
 
-proc init*(this: AssetManager, config: Config): bool =
+proc init*(self: AssetManager, config: Config): bool =
   let appAssetRoot = if config.assetRoot.isNil: globals.defaultAppAssetRoot
     else: config.assetRoot
-  this.assetLoadsInProgress = initTable[Hash, FlowVarBase]()
-  this.assetLoadRequests = initDeque[AssetLoadRequest]()
-  this.assets = initTable[Hash, ref Asset]()
-  this.assetSearchPath = getAppDir() & $DirSep & appAssetRoot & $DirSep
-  this.internalSearchPath = getAppDir() & $DirSep & globals.engineAssetRoot & $DirSep
+  self.assetLoadsInProgress = initTable[Hash, FlowVarBase]()
+  self.assetLoadRequests = initDeque[AssetLoadRequest]()
+  self.assets = initTable[Hash, ref Asset]()
+  self.assetSearchPath = getAppDir() & $DirSep & appAssetRoot & $DirSep
+  self.internalSearchPath = getAppDir() & $DirSep & globals.engineAssetRoot & $DirSep
   return true
 
-proc dispose(this: AssetManager, id: Hash) =
-  case this.assets[id].assetType
+proc dispose(self: AssetManager, id: Hash) =
+  case self.assets[id].assetType
     of AssetType.Texture:
-      texture.unload(this.assets[id])
-      this.assets.del(id)
+      texture.unload(self.assets[id])
+      self.assets.del(id)
     else:
       logWarn "Unable to unload asset with unknown type."
 
-proc shutdown*(this: AssetManager) =
-  for id, _ in this.assets:
-    this.dispose(id)
+proc shutdown*(self: AssetManager) =
+  for id, _ in self.assets:
+    self.dispose(id)
 
-proc get*[T](this: AssetManager, filename: string): T =
+proc get*[T](self: AssetManager, filename: string): T =
   let id = hash(filename)
-  if not this.assets.contains(id):
+  if not self.assets.contains(id):
     logWarn "Asset with filename : " & filename & " not loaded."
     return
 
-  return cast[T](this.assets[id])
+  return cast[T](self.assets[id])
 
-proc get*[T](this: AssetManager, id: Hash): T =
-  if not this.assets.contains(id):
+proc get*[T](self: AssetManager, id: Hash): T =
+  if not self.assets.contains(id):
     logWarn "Asset with id : " & $id & " not loaded."
     return
 
-  return cast[T](this.assets[id])
+  return cast[T](self.assets[id])
 
-proc unload*(this: AssetManager, id: Hash) =
-  if not this.assets.contains(id):
+proc unload*(self: AssetManager, id: Hash) =
+  if not self.assets.contains(id):
     logWarn "Asset with filename : " & $id & " not loaded."
     return
 
-  this.dispose(id)
+  self.dispose(id)
 
-proc unload*(this: AssetManager, filename: string, internal: bool = false) =
+proc unload*(self: AssetManager, filename: string, internal: bool = false) =
   var filepath : string
   if not internal:
-    filepath = this.assetSearchPath & filepath
+    filepath = self.assetSearchPath & filepath
   else:
-    filepath = this.internalSearchPath & filename
+    filepath = self.internalSearchPath & filename
 
   let id = hash(filepath)
-  if not this.assets.contains(id):
+  if not self.assets.contains(id):
     logWarn "Asset with filepath : " & filepath & " not loaded."
     return
 
-  this.dispose(id)
+  self.dispose(id)
 
-proc checkLoadingFinished(this: AssetManager): bool =
-  if this.assetLoadsInProgress.len > 0 or this.assetLoadRequests.len > 0:
+proc checkLoadingFinished(self: AssetManager): bool =
+  if self.assetLoadsInProgress.len > 0 or self.assetLoadRequests.len > 0:
     return false
 
   return true
 
-proc getProgress*(this: AssetManager): float =
-  if this.assetLoadRequests.len == 0:
+proc getProgress*(self: AssetManager): float =
+  if self.assetLoadRequests.len == 0:
     return 1.0
   
-  var fractionalLoaded = this.loaded.float #0
-  if this.peakLoadsInProgress > 0u:
-    fractionalLoaded += ((this.peakLoadsInProgress - this.assetLoadsInProgress.len.uint).float / this.peakLoadsInProgress.float)
-  return min(1.0, fractionalLoaded / this.assetLoadRequests.len.float)
-
+  var fractionalLoaded = self.loaded.float #0
+  if self.peakLoadsInProgress > 0u:
+    fractionalLoaded += ((self.peakLoadsInProgress - self.assetLoadsInProgress.len.uint).float / self.peakLoadsInProgress.float)
+  return min(1.0, fractionalLoaded / self.assetLoadRequests.len.float)
     
-
-
-proc load*(this: AssetManager, filename: string, assetType: AssetType, internal: bool = false): Hash =
-  var filepath : string
+proc load*(self: AssetManager, filename: string, assetType: AssetType, internal: bool = false, ignoreSearchPath: bool = false): Hash =
+  var filepath: string
 
   when defined(android):
     filepath = filename
   else:
-    if not internal:
-      filepath = this.assetSearchPath & filename
+    if ignoreSearchPath:
+      filepath = filename
     else:
-      filepath = this.internalSearchPath & filename
+      if not internal:
+        filepath = self.assetSearchPath & filename
+      else:
+        filepath = self.internalSearchPath & filename
 
     if not fileExists(filepath):
       logWarn "File with filepath : " & filepath & " does not exist."
       return
 
   let newAssetId = hash(filepath)
-  if this.assets.contains(newAssetId):
+  if self.assets.contains(newAssetId):
     logWarn "Asset with filepath : " & filepath & " already loaded."
     return
 
-  if this.assetLoadRequests.len == 0:
-    this.loaded = 0
-    this.peakLoadsInProgress = 0
+  if self.assetLoadRequests.len == 0:
+    self.loaded = 0
+    self.peakLoadsInProgress = 0
 
-  this.assetLoadRequests.addLast(
+  self.assetLoadRequests.addLast(
     AssetLoadRequest(
       filename: filename,
       filepath: filepath,
@@ -136,76 +137,111 @@ proc load*(this: AssetManager, filename: string, assetType: AssetType, internal:
 
   return newAssetId
 
-proc updateLoadsInProgress(this: AssetManager) =
-  var asset: ref Asset
-  for assetId, assetLoadInProgress in this.assetLoadsInProgress:
-    if assetLoadInProgress.isReady:
-      inc(this.loaded)
-      if this.assetLoadsInProgress.len == 1:
-        this.peakLoadsInProgress = 0
-      if assetLoadInProgress of FlowVar[AtlasInfo]:
-          let atlasInfo = cast[FlowVar[AtlasInfo]](assetLoadInProgress).`^`()
-        
-          let atlasDir = splitFile(atlasInfo.atlas.atlasShortPath).dir
-          let texturePath = atlasDir & DirSep &  atlasInfo.atlas.textureFilename
+proc atlasInfoReady(self: AssetManager, assetId: Hash, assetLoadInProgress: FlowVarBase) =
+  let atlasInfo = cast[FlowVar[AtlasInfo]](assetLoadInProgress).`^`()
+          
+  let atlasDir = splitFile(atlasInfo.atlas.atlasShortPath).dir
+  let texturePath = atlasDir & DirSep &  atlasInfo.atlas.textureFilename
 
-          var textureId = hash(texturePath)
-          var atlasTexture = get[Texture](this, textureId)
-          if atlasTexture.isNil:
-            textureId = this.load(texturePath, AssetType.Texture, false)
+  let atlasTexture = get[Texture](self, hash(texturePath))
+  if atlasTexture.isNil:
+    discard self.load(texturePath, AssetType.Texture)
+
+  self.assets.add(assetId, atlasInfo.atlas)
+  self.assetLoadsInProgress.del(assetId)
+
+proc tiledMapInfoReady(self: AssetManager, assetId: Hash, assetLoadInProgress: FlowVarBase) =
+  let tiledMapInfo = cast[FlowVar[TiledMapInfo]](assetLoadInProgress).`^`()
+  let tiledMapDir = splitFile(tiledMapInfo.map.filename).dir
+
+  for tileset in tiledMapInfo.mapInfo.tilesets:
+    let tilesetTexturePath = tiledMapDir & DirSep & tileset.image
+    let tilesetTexture = get[Texture](self, hash(tilesetTexturePath))
+
+    if tilesetTexture.isNil:
+      discard self.load(tilesetTexturePath, AssetType.Texture, false, true)
+
+  self.assets.add(assetId, tiledMapInfo.map)
+  self.assetLoadsInProgress.del(assetId)
+
+proc textureReady(self: AssetManager, tex: Texture) =
+  texture.init(tex)
+
+  for assetId, asset in self.assets:
+    if asset.assetType == AssetType.TextureAtlas:
+      if asset.textureFilepath == tex.filename:
+        for regionInfo in asset.regionInfos:
+          asset.regions.add(
+            texture_region.fromTexture(
+              tex,
+              regionInfo.name,
+              regionInfo.w,
+              regionInfo.h,
+              regionInfo.u + 0.001f,
+              regionInfo.u2 - 0.001f,
+              regionInfo.v - 0.001f,
+              regionInfo.v2 + 0.001f
+            )
+          )
+    elif asset.assetType == AssetType.TiledMap:
+      for i in 0..<asset.tilesets.len:
+        if tex.filename.contains(asset.tilesets[i].textureFilepath):
+          asset.tilesets[i].texture = tex
+
+      if not asset.initialized:
+        var allTilesetsLoaded = true
+        for tileset in asset.tilesets:
+          if tileset.texture.isNil:
+            allTilesetsLoaded = false
         
-          this.assets.add(assetId, atlasInfo.atlas)
-          this.assetLoadsInProgress.del(assetId)
+        if allTilesetsLoaded:
+          tiled_map.init(asset)
+          asset.initialized = true
+
+proc updateLoadsInProgress(self: AssetManager) =
+  var asset: ref Asset
+  for assetId, assetLoadInProgress in self.assetLoadsInProgress:
+    if assetLoadInProgress.isReady:
+      inc(self.loaded)
+      if self.assetLoadsInProgress.len == 1:
+        self.peakLoadsInProgress = 0
+      if assetLoadInProgress of FlowVar[AtlasInfo]:
+        self.atlasInfoReady(assetId, assetLoadInProgress)
+      elif assetLoadInProgress of FlowVar[TiledMapInfo]:
+        self.tiledMapInfoReady(assetId, assetLoadInProgress)
       else:
         asset = cast[FlowVar[ref Asset]](assetLoadInProgress).`^`()
+        
+        self.assets.add(assetId, asset)
+        self.assetLoadsInProgress.del(assetId)
+
         case asset.assetType
         of AssetType.Texture:
           let tex = cast[Texture](asset)
-          tex.init()
-
-          for assetId, asset in this.assets:
-            if asset.assetType == AssetType.TextureAtlas:
-              if asset.textureFilepath == tex.filename:
-                for regionInfo in asset.regionInfos:
-                  asset.regions.add(
-                    texture_region.fromTexture(
-                      tex,
-                      regionInfo.name,
-                      regionInfo.w,
-                      regionInfo.h,
-                      regionInfo.u,
-                      regionInfo.u2,
-                      regionInfo.v,
-                      regionInfo.v2
-                    )
-                  )
-
+          self.textureReady(tex)
         of AssetType.Sound:
           discard
         of AssetType.TextureRegion:
-          echo repr cast[TextureRegion](asset)
+          discard
         else:
           discard
-          
-        this.assets.add(assetId, asset)
-        this.assetLoadsInProgress.del(assetId)
 
-proc update*(this: AssetManager): bool =
-  while this.assetLoadRequests.len > 0 and this.assetLoadsInProgress.len < maxWorkers:
-    let nextLoadRequest = this.assetLoadRequests.popFirst()
+proc update*(self: AssetManager): bool =
+  while self.assetLoadRequests.len > 0 and self.assetLoadsInProgress.len < maxWorkers:
+    let nextLoadRequest = self.assetLoadRequests.popFirst()
 
     case nextLoadRequest.assetType
     of AssetType.Sound:
-      this.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn sound.load(nextLoadRequest.filepath))
+      self.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn sound.load(nextLoadRequest.filepath))
     of AssetType.Texture:
-      this.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn texture.load(nextLoadRequest.filepath))
+      self.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn texture.load(nextLoadRequest.filepath))
     of AssetType.TextureRegion:
       logWarn "Cannot load a texture region... Try loading a texture and creating a texture region from it."
       return
     of AssetType.TextureAtlas:
-      this.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn texture_atlas.load(nextLoadRequest.filename, nextLoadRequest.filepath))
-  
-    inc(this.peakLoadsInProgress)
+      self.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn texture_atlas.load(nextLoadRequest.filename, nextLoadRequest.filepath))
+    of AssetType.TiledMap:
+      self.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn tiled_map.load(nextLoadRequest.filepath))
     
-  this.updateLoadsInProgress()
-  this.checkLoadingFinished()
+  self.updateLoadsInProgress()
+  self.checkLoadingFinished()

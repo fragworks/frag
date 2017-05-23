@@ -1,0 +1,264 @@
+import
+  tables
+
+when not defined(js):
+  import
+    os, streams, json
+  
+  import
+    ../logger,
+    ../assets/asset,
+    ../assets/asset_types,
+    ../graphics/camera,
+    ../graphics/two_d/spritebatch,
+    ../graphics/two_d/texture_region,
+    ../graphics/two_d/vertex,
+    ../math/rectangle
+
+type
+  TiledMapInfo* = ref object
+    filename*: string
+    mapInfo*: MapInfo
+    map*: TiledMap
+
+  MapInfo* = object
+    version*: float
+    orientation*: string
+    renderorder*: string
+    tilewidth*: int
+    tileheight*: int
+    nextobjectid*: int
+    tilesets*: seq[TilesetInfo]
+    layers*: seq[LayerInfo]
+
+  TilesetInfo* = object
+    columns*: int
+    firstgid*: int
+    image*: string
+    imageheight*: int
+    imagewidth*: int
+    margin*: int
+    name*: string
+    spacing*: int
+    tilecount*: int
+    tilewidth*: int
+    tileheight*: int
+
+  LayerInfo* = object
+    data*: seq[int]
+    width*, height*: int
+    name*: string
+    opacity*: float
+    `type`*: string
+    visible*: bool
+    x*, y*: int
+
+proc getViewBounds*(tiledMap: TiledMap, spriteBatch: SpriteBatch, camera: Camera): Rectangle =
+  spriteBatch.setProjectionMatrix(camera.combined)
+  let width = camera.viewportWidth * camera.zoom
+  let height = camera.viewportHeight * camera.zoom
+  let w = width * abs(camera.up[1]) + height * abs(camera.up[0])
+  let h = height * abs(camera.up[1]) + width * abs(camera.up[0])
+  result = Rectangle(
+    x: camera.position[0] - w / 2,
+    y: camera.position[1] - h / 2,
+    width: w,
+    height: h
+  )
+
+proc getCell*(tiledMapLayer: TiledMapLayer, x, y: int): TiledMapCell =
+  if x < 0 or x >= tiledMapLayer.width:
+    return nil
+  elif y < 0 or y >= tiledMapLayer.height:
+    return nil
+  
+  return tiledMapLayer.cells[tiledMapLayer.width * y + x]
+
+proc render*(tiledMapLayer: TiledMapLayer, tiledMap: TiledMap, spriteBatch: SpriteBatch, viewBounds: Rectangle, color: uint32, unitScale: float = 1.0) =
+  let layerWidth = tiledMapLayer.width
+  let layerHeight = tiledMapLayer.height
+
+  let layerTileWidth = tiledMapLayer.tileWidth.float * unitScale
+  let layerTileHeight = tiledMapLayer.tileHeight.float * unitScale
+
+  let col1 = max(0, int viewBounds.x / layerTileWidth.float)
+  let col2 = min(layerWidth, int((viewBounds.x + viewBounds.width + layerTileWidth.float) / layerTileWidth.float))
+
+  let row1 = max(0, int viewBounds.y / layerTileHeight.float)
+  let row2 = min(layerHeight, int((viewBounds.y + viewBounds.height + layerTileHeight.float) / layerTileHeight.float))
+  
+  var y = row2.float * layerTileHeight
+  let xStart = col1.float * layerTileWidth
+
+  var vertices: seq[PosUVColorVertex] = @[]
+  for row in row1..<row2:
+    var x = xStart
+    for col in col1..<col2:
+      let cell = tiledMapLayer.getCell(col, row)
+      if cell.isNil:
+        x += layerTileWidth
+        continue
+      
+      let tile = cell.tile
+      if not tile.textureRegion.isNil:
+        let region = tile.textureRegion
+
+        let x1 = x.float * unitScale
+        let y1 = y.float * unitScale
+        let x2 = x1 + region.regionWidth.float * unitScale
+        let y2 = y1 + region.regionHeight.float * unitScale
+
+        let u1 = region.u
+        let v1 = region.v2
+        let u2 = region.u2
+        let v2 = region.v
+
+        vertices.add(
+          PosUVColorVertex(
+            x: x1,
+            y: y1,
+            z: 0,
+            u: u1,
+            v: v1,
+            abgr: color
+          )
+        )
+
+        vertices.add(
+          PosUVColorVertex(
+            x: x1,
+            y: y2,
+            z: 0,
+            u: u1,
+            v: v2,
+            abgr: color
+          )
+        )
+
+        vertices.add(
+          PosUVColorVertex(
+            x: x2,
+            y: y2,
+            z: 0,
+            u: u2,
+            v: v2,
+            abgr: color
+          )
+        )
+
+        vertices.add(
+          PosUVColorVertex(
+            x: x2,
+            y: y1,
+            z: 0,
+            u: u2,
+            v: v1,
+            abgr: color
+          )
+        )
+
+
+        spriteBatch.draw(region.texture, vertices)
+        vertices.setLen(0)
+      x += layerTileWidth
+    y -= layerTileHeight
+
+proc render*(tiledMap: TiledMap, spriteBatch: SpriteBatch, camera: Camera, color: uint32 = 0xffffffff'u32) =
+  let viewBounds = getViewBounds(tiledMap, spriteBatch, camera)
+  
+  spriteBatch.begin()
+  for layer in tiledMap.layers:
+    layer.render(tiledMap, spriteBatch, viewBounds, color)
+  spriteBatch.`end`()
+
+proc findTile*(tiledMap: TiledMap, tileId: int): Tile =
+  for tileset in tiledMap.tilesets:
+    if tileset.tiles.contains(tileId):
+      return tileset.tiles[tileId]
+
+proc assignTiles*(tiledMap: TiledMap) =
+  for i in 0..<tiledMap.layers.len:
+    var layer = tiledMap.layers[i]
+    for c in 0..<layer.cells.len:
+      var cell = layer.cells[c]
+      cell.tile = tiledMap.findTile(cell.tileId)
+
+proc initTilesets*(tiledMap: TiledMap) =
+  for i in 0..<tiledMap.tilesets.len:
+    var tileset = tiledMap.tilesets[i]
+    let stopWidth = tileset.texture.width - tileset.tileWidth
+    let stopHeight = tileset.texture.height - tileset.tileHeight
+
+    var id = tileset.firstGid
+    var x, y = tileset.margin
+
+    while y <= stopHeight:
+      while x <= stopWidth:
+        let tileRegion = texture_region.fromTexture(tileset.texture, x, y, tileset.tileWidth, tileset.tileHeight)
+
+        tileset.tiles.add(
+          id,
+          Tile(
+            textureRegion: tileRegion
+          )
+        )
+        inc(id)
+
+        inc(x, tileset.tileWidth + tileset.spacing)
+      x = tileset.margin
+      inc(y, tileset.tileHeight + tileset.spacing)
+    tiledMap.tilesets[i] = tileset
+
+proc init*(tiledMap: TiledMap) =
+  initTilesets(tiledMap)
+  assignTiles(tiledMap)
+  tiledMap.initialized = true
+
+proc load*(filename: string): TiledMapInfo =
+  let s = newFileStream(filename, fmRead)
+
+  if s.isNil:
+    logError "Unable to open file with filename: " & filename
+  
+  let parsed = parseJson(s, filename)
+  let mapInfo = to(parsed, MapInfo)
+  var tiledMap = TiledMap(
+      filename: filename,
+      tilesets: @[],
+      layers: @[],
+      assetType: AssetType.TiledMap
+  )
+
+  for tileset in mapInfo.tilesets:
+    tiledMap.tilesets.add(Tileset(
+      tiles: initTable[int, Tile](),
+      textureFilepath: tileset.image,
+      name: tileset.name,
+      firstGid: tileset.firstgid,
+      margin: tileset.margin,
+      spacing: tileset.spacing,
+      tileWidth: tileset.tilewidth,
+      tileHeight: tileset.tileheight
+    ))
+  
+  var mapCells: seq[TiledMapCell] = @[]
+  for layer in mapInfo.layers:
+    mapCells.setLen(0)
+    for tileId in layer.data:
+      mapCells.add(TiledMapCell(
+        tileId: tileId
+      ))
+    
+    tiledMap.layers.add(TiledMapLayer(
+      width: layer.width,
+      height: layer.height,
+      tileWidth: mapInfo.tilewidth,
+      tileHeight: mapInfo.tileheight,
+      cells: mapCells
+    ))
+
+  result = TiledMapInfo(
+    filename: filename,
+    mapInfo: mapInfo,
+    map: tiledMap
+  )

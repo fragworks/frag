@@ -13,16 +13,27 @@ when defined(android):
   let act = cast[jobject](androidGetActivity())
   initSoundEngineWithActivity(act)
 
-proc load*(filepath: string): asset.Sound =
-  var s = asset.Sound(assetType: AssetType.Sound)
-  s.snd = newSoundWithFile(filepath)
-  return s
+when defined(js):
+  import jsffi, jsconsole
+
+  proc newSoundFromMediaElement*(me: JsObject): asset.Sound =
+    result = asset.Sound(assetType: AssetType.Sound)
+    result.media = me
+    result.snd = newSoundWithMediaElement(cast[MediaElement](me))
+    console.log(result.snd)
+
+proc load*(filepath: string): asset.Sound =  
+  result = asset.Sound(assetType: AssetType.Sound)
+  result.snd = newSoundWithFile(filepath)
 
 proc loop*(sound: asset.Sound, loop: bool) =
   sound.snd.setLooping(loop)
 
 proc play*(sound: asset.Sound) =
-  sound.snd.play()
+  when defined(js):
+    sound.media.play()
+  else:
+    sound.snd.play()
 
 proc stop*(sound: asset.Sound) =
   sound.snd.stop()

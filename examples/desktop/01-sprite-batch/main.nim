@@ -79,7 +79,7 @@ proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   app.batch.setProjectionMatrix(app.camera.combined)
 
   while not assetsLoaded and not assets.update(ctx.assets):
-    return
+    discard
   assetsLoaded = true
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
