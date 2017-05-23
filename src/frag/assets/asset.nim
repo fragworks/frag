@@ -52,6 +52,7 @@ type
       atlasShortPath*: string
       regionInfos*: seq[RegionInfo]
     of AssetType.TiledMap:
+      mapInfo*: MapInfo
       layers*: seq[TiledMapLayer]
       tilesets*: seq[Tileset]
       initialized*: bool
@@ -78,6 +79,38 @@ type
   TiledMapCell* = ref object
     tileId*: int
     tile*: Tile
+
+  MapInfo* = object
+    version*: float
+    orientation*: string
+    renderorder*: string
+    tilewidth*: int
+    tileheight*: int
+    nextobjectid*: int
+    tilesets*: seq[TilesetInfo]
+    layers*: seq[LayerInfo]
+
+  TilesetInfo* = object
+    columns*: int
+    firstgid*: int
+    image*: string
+    imageheight*: int
+    imagewidth*: int
+    margin*: int
+    name*: string
+    spacing*: int
+    tilecount*: int
+    tilewidth*: int
+    tileheight*: int
+
+  LayerInfo* = object
+    data*: seq[int]
+    width*, height*: int
+    name*: string
+    opacity*: float
+    `type`*: string
+    visible*: bool
+    x*, y*: int
 
   RegionInfo* = object
     name*: string

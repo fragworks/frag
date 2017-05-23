@@ -15,44 +15,6 @@ when not defined(js):
     ../graphics/two_d/vertex,
     ../math/rectangle
 
-type
-  TiledMapInfo* = ref object
-    filename*: string
-    mapInfo*: MapInfo
-    map*: TiledMap
-
-  MapInfo* = object
-    version*: float
-    orientation*: string
-    renderorder*: string
-    tilewidth*: int
-    tileheight*: int
-    nextobjectid*: int
-    tilesets*: seq[TilesetInfo]
-    layers*: seq[LayerInfo]
-
-  TilesetInfo* = object
-    columns*: int
-    firstgid*: int
-    image*: string
-    imageheight*: int
-    imagewidth*: int
-    margin*: int
-    name*: string
-    spacing*: int
-    tilecount*: int
-    tilewidth*: int
-    tileheight*: int
-
-  LayerInfo* = object
-    data*: seq[int]
-    width*, height*: int
-    name*: string
-    opacity*: float
-    `type`*: string
-    visible*: bool
-    x*, y*: int
-
 proc getViewBounds*(tiledMap: TiledMap, spriteBatch: SpriteBatch, camera: Camera): Rectangle =
   spriteBatch.setProjectionMatrix(camera.combined)
   let width = camera.viewportWidth * camera.zoom
@@ -214,51 +176,18 @@ proc init*(tiledMap: TiledMap) =
   assignTiles(tiledMap)
   tiledMap.initialized = true
 
-proc load*(filename: string): TiledMapInfo =
+proc load*(filename: string): TiledMap =
   let s = newFileStream(filename, fmRead)
 
   if s.isNil:
     logError "Unable to open file with filename: " & filename
   
   let parsed = parseJson(s, filename)
-  let mapInfo = to(parsed, MapInfo)
-  var tiledMap = TiledMap(
-      filename: filename,
-      tilesets: @[],
-      layers: @[],
-      assetType: AssetType.TiledMap
-  )
 
-  for tileset in mapInfo.tilesets:
-    tiledMap.tilesets.add(Tileset(
-      tiles: initTable[int, Tile](),
-      textureFilepath: tileset.image,
-      name: tileset.name,
-      firstGid: tileset.firstgid,
-      margin: tileset.margin,
-      spacing: tileset.spacing,
-      tileWidth: tileset.tilewidth,
-      tileHeight: tileset.tileheight
-    ))
-  
-  var mapCells: seq[TiledMapCell] = @[]
-  for layer in mapInfo.layers:
-    mapCells.setLen(0)
-    for tileId in layer.data:
-      mapCells.add(TiledMapCell(
-        tileId: tileId
-      ))
-    
-    tiledMap.layers.add(TiledMapLayer(
-      width: layer.width,
-      height: layer.height,
-      tileWidth: mapInfo.tilewidth,
-      tileHeight: mapInfo.tileheight,
-      cells: mapCells
-    ))
-
-  result = TiledMapInfo(
+  result = TiledMap(
+    mapInfo: to(parsed, MapInfo),
     filename: filename,
-    mapInfo: mapInfo,
-    map: tiledMap
+    tilesets: @[],
+    layers: @[],
+    assetType: AssetType.TiledMap
   )
