@@ -186,21 +186,42 @@ proc atlasInfoReady(self: AssetManager, assetId: Hash, assetLoadInProgress: Flow
   self.assets.add(assetId, atlasInfo.atlas)
   self.assetLoadsInProgress.del(assetId)
 
-proc tiledMapInfoReady(self: AssetManager, assetId: Hash, assetLoadInProgress: FlowVarBase) =
-  benchmark "shouldn't block":
-    assert assetLoadInProgress.isReady
-    let tiledMapInfo = cast[FlowVar[TiledMapInfo]](assetLoadInProgress).`^`()
-  let tiledMapDir = splitFile(tiledMapInfo.map.filename).dir
+proc tiledMapReady(self: AssetManager, tiledMap: TiledMap) =
+  let tiledMapDir = splitFile(tiledMap.filename).dir
 
-  for tileset in tiledMapInfo.mapInfo.tilesets:
+  for tileset in tiledMap.mapInfo.tilesets:
     let tilesetTexturePath = tiledMapDir & DirSep & tileset.image
     let tilesetTexture = get[Texture](self, hash(tilesetTexturePath))
 
     if tilesetTexture.isNil:
       discard self.load(tilesetTexturePath, AssetType.Texture, false, true)
+      
+    tiledMap.tilesets.add(Tileset(
+      tiles: initTable[int, Tile](),
+      textureFilepath: tileset.image,
+      name: tileset.name,
+      firstGid: tileset.firstgid,
+      margin: tileset.margin,
+      spacing: tileset.spacing,
+      tileWidth: tileset.tilewidth,
+      tileHeight: tileset.tileheight
+    ))
 
-  self.assets.add(assetId, tiledMapInfo.map)
-  self.assetLoadsInProgress.del(assetId)
+  var mapCells: seq[TiledMapCell] = @[]
+  for layer in tiledMap.mapInfo.layers:
+    mapCells.setLen(0)
+    for tileId in layer.data:
+      mapCells.add(TiledMapCell(
+        tileId: tileId
+      ))
+    
+    tiledMap.layers.add(TiledMapLayer(
+      width: layer.width,
+      height: layer.height,
+      tileWidth: tiledMap.mapInfo.tilewidth,
+      tileHeight: tiledMap.mapInfo.tileheight,
+      cells: mapCells
+    ))
 
 proc textureReady(self: AssetManager, tex: Texture) =
   texture.init(tex)
@@ -248,8 +269,6 @@ proc updateLoadsInProgress(self: AssetManager) =
           self.peakLoadsInProgress = 0
         if assetLoadInProgress of FlowVar[AtlasInfo]:
           self.atlasInfoReady(assetId, assetLoadInProgress)
-        elif assetLoadInProgress of FlowVar[TiledMapInfo]:
-          self.tiledMapInfoReady(assetId, assetLoadInProgress)
         else:
           asset = cast[FlowVar[ref Asset]](assetLoadInProgress).`^`()
           
@@ -264,6 +283,9 @@ proc updateLoadsInProgress(self: AssetManager) =
             discard
           of AssetType.TextureRegion:
             discard
+          of AssetType.TiledMap:
+            let map = cast[TiledMap](asset)
+            self.tiledMapReady(map)
           else:
             discard
 
