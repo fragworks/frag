@@ -95,7 +95,7 @@ proc updateApp(app: App, ctx: Frag, deltaTime: float) =
   if ctx.input.down("a", true): app.player.position[0] -= PLAYER_SPEED * deltaTime
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
-  ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
+  ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, colors.Color(0x303030ff), 1.0, 0)
 
   app.batch.begin()
   app.batch.draw(app.player.texture, app.player.position[0], app.player.position[1], float32 app.player.texture.width, float32 app.player.texture.height)

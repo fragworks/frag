@@ -1,4 +1,5 @@
 import
+  colors,
   events
 
 import
@@ -83,7 +84,7 @@ proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   assetsLoaded = true
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
-  ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
+  ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, colors.Color(0x303030ff), 1.0, 0)
 
   if assetsLoaded:
     let tex = assets.get[Texture](ctx.assets, app.assetIds["textures/test01.png"])

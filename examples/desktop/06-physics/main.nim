@@ -232,7 +232,7 @@ proc draw_dot(body: Body; data: pointer) {.cdecl.} =
   batch.draw(tex, body.position.x, body.position.y , 1.5, 1.5)
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
-  ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, 0x303030ff, 1.0, 0)
+  ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, colors.Color(0x303030ff), 1.0, 0)
   app.batch.begin()
   space.eachBody(draw_dot, cast[pointer](app.batch))
   app.batch.`end`()
