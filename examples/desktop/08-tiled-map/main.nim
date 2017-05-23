@@ -54,7 +54,7 @@ proc initApp(app: App, ctx: Frag) =
 
   app.assetIds = initTable[string, Hash]()
 
-  let filename = "maps/map.json"
+  let filename = "maps/desert.json"
 
   logDebug "Loading assets..."
   app.assetIds.add(filename, ctx.assets.load(filename, AssetType.TiledMap))
@@ -101,21 +101,16 @@ proc updateApp(app:App, ctx: Frag, deltaTime: float) =
   if ctx.input.down("a", true): app.camera.position[0] -= 1
   if ctx.input.down("q", true): app.camera.zoomIn()
   if ctx.input.down("e", true): app.camera.zoomOut()
-  if ctx.input.pressed("f"):
-    app.loading = true
-    assetsLoaded = false
 
-  if app.loading:
-    while not assetsLoaded and not assets.update(ctx.assets):
-      return
-    assetsLoaded = true
-    app.loading = false
+  while not assetsLoaded and not assets.update(ctx.assets):
+    return
+  assetsLoaded = true
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, colors.Color(0x303030ff), 1.0, 0)
 
   if assetsLoaded and app.map.isNil:
-    app.map = assets.get[TiledMap](ctx.assets, app.assetIds["maps/map.json"])
+    app.map = assets.get[TiledMap](ctx.assets, app.assetIds["maps/desert.json"])
   elif assetsLoaded:
     app.map.render(app.batch, app.camera)
     
