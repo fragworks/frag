@@ -16,7 +16,7 @@ when not defined(js):
     ../math/rectangle
 
 proc getViewBounds*(tiledMap: TiledMap, spriteBatch: SpriteBatch, camera: Camera): Rectangle =
-  spriteBatch.setProjectionMatrix(camera.combined)
+  #spriteBatch.setProjectionMatrix(camera.combined)
   let width = camera.viewportWidth * camera.zoom
   let height = camera.viewportHeight * camera.zoom
   let w = width * abs(camera.up[1]) + height * abs(camera.up[0])
@@ -53,7 +53,7 @@ proc render*(tiledMapLayer: TiledMapLayer, tiledMap: TiledMap, spriteBatch: Spri
   let xStart = col1.float * layerTileWidth
 
   var vertices: seq[PosUVColorVertex] = @[]
-  for row in row1..<row2:
+  #[for row in row1..<row2:
     var x = xStart
     for col in col1..<col2:
       let cell = tiledMapLayer.getCell(col, row)
@@ -120,18 +120,16 @@ proc render*(tiledMapLayer: TiledMapLayer, tiledMap: TiledMap, spriteBatch: Spri
         )
 
 
-        spriteBatch.draw(region.texture, vertices)
+        #spriteBatch.draw(region.texture, vertices)
         vertices.setLen(0)
       x += layerTileWidth
-    y -= layerTileHeight
+    y -= layerTileHeight]#
 
 proc render*(tiledMap: TiledMap, spriteBatch: SpriteBatch, camera: Camera, color: uint32 = 0xffffffff'u32) =
   let viewBounds = getViewBounds(tiledMap, spriteBatch, camera)
   
-  spriteBatch.begin()
   for layer in tiledMap.layers:
     layer.render(tiledMap, spriteBatch, viewBounds, color)
-  spriteBatch.`end`()
 
 proc findTile*(tiledMap: TiledMap, tileId: int): Tile =
   for tileset in tiledMap.tilesets:
