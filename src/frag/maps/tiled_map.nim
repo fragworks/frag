@@ -181,6 +181,8 @@ proc load*(filename: string): TiledMap =
     logError "Unable to open file with filename: " & filename
   
   let parsed = parseJson(s, filename)
+  if parsed.isNil:
+    logError "Unable to parse file with filename: " & filename
 
   result = TiledMap(
     mapInfo: to(parsed, MapInfo),
