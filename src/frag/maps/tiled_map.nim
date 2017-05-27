@@ -44,19 +44,12 @@ proc render*(tiledMapLayer: TiledMapLayer, tiledMap: TiledMap, spriteBatch: Spri
 
   let layerTileWidth = tiledMapLayer.tileWidth.float * unitScale
   let layerTileHeight = tiledMapLayer.tileHeight.float * unitScale
-
-  let col1 = max(0, int viewBounds.x / layerTileWidth.float)
-  let col2 = min(layerWidth, int((viewBounds.x + viewBounds.width + layerTileWidth.float) / layerTileWidth.float))
-
-  let row1 = max(0, int viewBounds.y / layerTileHeight.float)
-  let row2 = min(layerHeight, int((viewBounds.y + viewBounds.height + layerTileHeight.float) / layerTileHeight.float))
   
-  var y = row2.float * layerTileHeight
-  let xStart = col1.float * layerTileWidth
-  
-  for row in countdown(row2, row1):
-    var x = xStart
-    for col in col1..<col2:
+  var y = 0.0
+
+  for row in 0..<layerHeight:
+    var x = 0.0
+    for col in 0..<layerWidth:
       let cell = tiledMapLayer.getCell(col, row)
       if cell.isNil:
         x += layerTileWidth
@@ -72,9 +65,9 @@ proc render*(tiledMapLayer: TiledMapLayer, tiledMap: TiledMap, spriteBatch: Spri
         let y2 = y1 + region.regionHeight.float * unitScale
 
         let u1 = region.u
-        let v1 = region.v
+        let v1 = region.v2
         let u2 = region.u2
-        let v2 = region.v2
+        let v2 = region.v
 
         vertices.add(
           PosUVColorVertex(
