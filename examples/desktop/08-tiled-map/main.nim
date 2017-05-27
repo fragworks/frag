@@ -112,8 +112,9 @@ proc renderApp(app: App, ctx: Frag, deltaTime: float) =
   if assetsLoaded and app.map.isNil:
     app.map = assets.get[TiledMap](ctx.assets, app.assetIds["maps/desert.json"])
   elif assetsLoaded:
+    app.batch.begin()
     app.map.render(app.batch, app.camera)
-    
+    app.batch.`end`()
 
 var conf: Config
 

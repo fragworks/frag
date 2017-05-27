@@ -15,8 +15,10 @@ when not defined(js):
     ../graphics/two_d/vertex,
     ../math/rectangle
 
+var vertices: seq[PosUVColorVertex] = @[]
+
 proc getViewBounds*(tiledMap: TiledMap, spriteBatch: SpriteBatch, camera: Camera): Rectangle =
-  #spriteBatch.setProjectionMatrix(camera.combined)
+  spriteBatch.setProjectionMatrix(camera.combined)
   let width = camera.viewportWidth * camera.zoom
   let height = camera.viewportHeight * camera.zoom
   let w = width * abs(camera.up[1]) + height * abs(camera.up[0])
@@ -51,9 +53,8 @@ proc render*(tiledMapLayer: TiledMapLayer, tiledMap: TiledMap, spriteBatch: Spri
   
   var y = row2.float * layerTileHeight
   let xStart = col1.float * layerTileWidth
-
-  var vertices: seq[PosUVColorVertex] = @[]
-  #[for row in row1..<row2:
+  
+  for row in countdown(row2, row1):
     var x = xStart
     for col in col1..<col2:
       let cell = tiledMapLayer.getCell(col, row)
@@ -71,9 +72,9 @@ proc render*(tiledMapLayer: TiledMapLayer, tiledMap: TiledMap, spriteBatch: Spri
         let y2 = y1 + region.regionHeight.float * unitScale
 
         let u1 = region.u
-        let v1 = region.v2
+        let v1 = region.v
         let u2 = region.u2
-        let v2 = region.v
+        let v2 = region.v2
 
         vertices.add(
           PosUVColorVertex(
@@ -120,10 +121,10 @@ proc render*(tiledMapLayer: TiledMapLayer, tiledMap: TiledMap, spriteBatch: Spri
         )
 
 
-        #spriteBatch.draw(region.texture, vertices)
+        spriteBatch.draw(region.texture, vertices)
         vertices.setLen(0)
       x += layerTileWidth
-    y -= layerTileHeight]#
+    y -= layerTileHeight
 
 proc render*(tiledMap: TiledMap, spriteBatch: SpriteBatch, camera: Camera, color: uint32 = 0xffffffff'u32) =
   let viewBounds = getViewBounds(tiledMap, spriteBatch, camera)
@@ -185,6 +186,7 @@ proc load*(filename: string): TiledMap =
   if parsed.isNil:
     logError "Unable to parse file with filename: " & filename
     return
+
 
   result = TiledMap(
     mapInfo: to(parsed, MapInfo),
