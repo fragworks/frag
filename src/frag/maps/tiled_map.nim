@@ -45,7 +45,7 @@ proc render*(tiledMapLayer: TiledMapLayer, tiledMap: TiledMap, spriteBatch: Spri
   let layerTileWidth = tiledMapLayer.tileWidth.float * unitScale
   let layerTileHeight = tiledMapLayer.tileHeight.float * unitScale
   
-  var y = 0.0
+  var y = layerHeight.float * layerTileHeight
 
   for row in 0..<layerHeight:
     var x = 0.0
