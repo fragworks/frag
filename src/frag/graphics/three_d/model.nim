@@ -1,4 +1,4 @@
-import
+#[import
   os
 
 import
@@ -12,7 +12,7 @@ import
   pos_tex_vertex
 
 #export Model
-#[
+
 proc offset*[A](some: ptr A; b: int): ptr A =
   result = cast[ptr A](cast[int](some) + (b * sizeof(A)))
 
