@@ -12,7 +12,7 @@ type
   Camera* = ref object
     case cameraType: CameraType
     of CameraType.Perspective:
-      discard
+      fieldOfView*: float
     of CameraType.Orthographic:
       zoom*: float
     projection*: Mat4
@@ -51,7 +51,7 @@ proc update*(camera: Camera) =
     
   else:
     let aspect = camera.viewportWidth / camera.viewportHeight
-    #mtxProj(camera.fi)
+    mtxProj(camera.fieldOfView)
 
 proc zoomIn*(camera: Camera) =
   camera.zoom += 0.2
@@ -120,4 +120,5 @@ proc init*(camera: Camera, viewId: uint8) =
   camera.position = [0.0'f32, 0.0'f32, 0.0'f32]
   camera.direction = [0.0'f32, 0.0'f32, -1.0'f32]
   camera.up = [0.0'f32, 1.0'f32, 0.0'f32]
+  camera.fieldOfView = 67
   camera.initialized = true

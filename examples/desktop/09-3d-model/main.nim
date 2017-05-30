@@ -17,7 +17,7 @@ import
 type
   App = ref object
     assetIds: Table[string, Hash]
-    modelBatch: ModelBatch
+    #modelBatch: ModelBatch
     camera: Camera
 
 proc resize*(e: EventArgs) =

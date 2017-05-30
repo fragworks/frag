@@ -29,9 +29,9 @@ type
     ## Variant type for all FRAG assets
     filename*: string
     case assetType*: AssetType
-    of AssetType.Model:
-      meshes*: seq[Mesh]
-      numIndices*, numVertices*: int
+    #of AssetType.Model:
+    #  meshes*: seq[Mesh]
+    #  numIndices*, numVertices*: int
     of AssetType.Sound:
       snd*: snd.Sound
       when defined(js):
@@ -126,4 +126,4 @@ type
   TextureRegion* = ref Asset
   TextureAtlas* = ref Asset
   TiledMap* = ref Asset
-  Model* = ref Asset
+  #Model* = ref Asset
