@@ -256,8 +256,8 @@ proc update*(self: AssetManager): bool =
     let nextLoadRequest = self.assetLoadRequests.popFirst()
 
     case nextLoadRequest.assetType
-    of AssetType.Model:
-      self.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn model.load(nextLoadRequest.filepath))
+    #of AssetType.Model:
+      #self.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn model.load(nextLoadRequest.filepath))
     of AssetType.Sound:
       self.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn sound.load(nextLoadRequest.filepath))
     of AssetType.Texture:
