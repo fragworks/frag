@@ -17,6 +17,8 @@ import
   
 when defined(windows):
   import
+    dx/fs_default_dx9,
+    dx/vs_default_dx9,
     dx/fs_default_dx11,
     dx/vs_default_dx11
 
@@ -225,6 +227,9 @@ proc init*(spriteBatch: SpriteBatch, maxSprites: int, view: uint8) =
   var vsh, fsh : bgfx_shader_handle_t
   when defined(windows):
     case bgfx_get_renderer_type()
+    of BGFX_RENDERER_TYPE_DIRECT3D9:
+      vsh = bgfx_create_shader(bgfx_make_ref(addr vs_default_dx9.vs[0], uint32 sizeof(vs_default_dx9.vs)))
+      fsh = bgfx_create_shader(bgfx_make_ref(addr fs_default_dx9.fs[0], uint32 sizeof(fs_default_dx9.fs)))
     of BGFX_RENDERER_TYPE_DIRECT3D11:
       vsh = bgfx_create_shader(bgfx_make_ref(addr vs_default_dx11.vs[0], uint32 sizeof(vs_default_dx11.vs)))
       fsh = bgfx_create_shader(bgfx_make_ref(addr fs_default_dx11.fs[0], uint32 sizeof(fs_default_dx11.fs)))
