@@ -51,7 +51,7 @@ proc update*(camera: Camera) =
     
   else:
     let aspect = camera.viewportWidth / camera.viewportHeight
-    mat4Proj()
+    #mtxProj(camera.fi)
 
 proc zoomIn*(camera: Camera) =
   camera.zoom += 0.2
