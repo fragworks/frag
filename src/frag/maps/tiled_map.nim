@@ -45,7 +45,7 @@ proc render*(tiledMapLayer: TiledMapLayer, tiledMap: TiledMap, spriteBatch: Spri
   let layerTileWidth = tiledMapLayer.tileWidth.float * unitScale
   let layerTileHeight = tiledMapLayer.tileHeight.float * unitScale
   
-  var y = layerHeight.float * layerTileHeight
+  var y = layerHeight.float * layerTileHeight - layerTileHeight
 
   for row in 0..<layerHeight:
     var x = 0.0
@@ -61,8 +61,8 @@ proc render*(tiledMapLayer: TiledMapLayer, tiledMap: TiledMap, spriteBatch: Spri
 
         let x1 = x.float * unitScale
         let y1 = y.float * unitScale
-        let x2 = x1 + region.regionWidth.float * unitScale
-        let y2 = y1 + region.regionHeight.float * unitScale
+        let x2 = x1 + (region.regionWidth.float * unitScale)
+        let y2 = y1 + (region.regionHeight.float * unitScale)
 
         let u1 = region.u
         let v1 = region.v2
@@ -119,11 +119,11 @@ proc render*(tiledMapLayer: TiledMapLayer, tiledMap: TiledMap, spriteBatch: Spri
       x += layerTileWidth
     y -= layerTileHeight
 
-proc render*(tiledMap: TiledMap, spriteBatch: SpriteBatch, camera: Camera, color: uint32 = 0xffffffff'u32) =
+proc render*(tiledMap: TiledMap, spriteBatch: SpriteBatch, camera: Camera, unitScale: float = 1.0, color: uint32 = 0xffffffff'u32) =
   let viewBounds = getViewBounds(tiledMap, spriteBatch, camera)
   
   for layer in tiledMap.layers:
-    layer.render(tiledMap, spriteBatch, viewBounds, color)
+    layer.render(tiledMap, spriteBatch, viewBounds, color, unitScale)
 
 proc findTile*(tiledMap: TiledMap, tileId: int): Tile =
   for tileset in tiledMap.tilesets:

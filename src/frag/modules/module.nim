@@ -42,6 +42,8 @@ type
       assetManager*: AssetManager
     of ModuleType.Input:
       pressedKeys*, releasedKeys*: seq[cint]
+      clickedButtons*, releasedButtons*: seq[uint8]
+      mouseState*: uint8
       state*: ptr array[0 .. SDL_NUM_SCANCODES.int, uint8]
     of ModuleType.Graphics:
       rootWindow*: window.Window

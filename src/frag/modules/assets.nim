@@ -15,6 +15,7 @@ import
   ../graphics/two_d/texture,
   ../graphics/two_d/texture_atlas,
   ../graphics/two_d/texture_region,
+  ../graphics/three_d/model,
   ../logger,
   ../maps/tiled_map,
   module,
@@ -255,6 +256,8 @@ proc update*(self: AssetManager): bool =
     let nextLoadRequest = self.assetLoadRequests.popFirst()
 
     case nextLoadRequest.assetType
+    of AssetType.Model:
+      self.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn model.load(nextLoadRequest.filepath))
     of AssetType.Sound:
       self.assetLoadsInProgress.add(nextLoadRequest.assetId, spawn sound.load(nextLoadRequest.filepath))
     of AssetType.Texture:

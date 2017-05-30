@@ -73,7 +73,7 @@ proc initApp(app: App, ctx: Frag) =
     app.camera = Camera()
     app.camera.init(0)
     app.camera.ortho(1.0, WIDTH, HEIGHT)
-    app.camera.zoom = 2.0
+    app.camera.zoom = 1.0
 
     logDebug "App initialized."
 

@@ -13,12 +13,17 @@ let defaultKeyboardState = sdl.getKeyboardState(nil)
 proc init*(this: Input): bool =
   this.pressedKeys = @[]
   this.releasedKeys = @[]
+  this.clickedButtons = @[]
+  this.releasedButtons = @[]
   return true
 
 proc update*(this: Input) =
   this.pressedKeys.setLen(0)
   this.releasedKeys.setLen(0)
+  this.clickedButtons.setLen(0)
+  this.releasedButtons.setLen(0)
   this.state = defaultKeyboardState
+  this.mouseState = getMouseState(nil, nil)
 
 proc onKeyDown*(this: Input, event: sdl.Event) =
   this.pressedKeys.add(event.key.keysym.sym)
@@ -27,10 +32,10 @@ proc onKeyUp*(this: Input, event: sdl.Event) =
   this.releasedKeys.add(event.key.keysym.sym)
 
 proc onMouseButtonDown*(this: Input, event: sdl.Event) =
-  discard
+  this.clickedButtons.add(event.button.button)
 
 proc onMouseButtonUp*(this: Input, event: sdl.Event) =
-  discard
+  this.releasedButtons.add(event.button.button)
 
 proc onMouseMotion*(this: Input, event: sdl.Event) =
   discard
@@ -52,5 +57,14 @@ proc down*(this: Input, name: string, raw: bool = false): bool =
 proc pressed*(this: Input, name: string, raw: bool = false): bool =
   this.getKey(name, raw) in this.pressedKeys
 
+proc clicked*(this: Input, button: uint8): bool =
+  button in this.clickedButtons
+
+proc down*(this: Input, button: uint8, raw: bool = false): bool =
+  bool this.mouseState and SDL_BUTTON(button)
+
 proc released*(this: Input, name: string, raw: bool = false): bool =
   this.getKey(name, raw) in this.releasedKeys
+
+proc released*(this: Input, button: uint8): bool =
+  button in this.releasedButtons

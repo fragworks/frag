@@ -50,7 +50,8 @@ proc update*(camera: Camera) =
     fpumath.mtxMul(camera.combined, camera.view, camera.projection)
     
   else:
-    discard
+    let aspect = camera.viewportWidth / camera.viewportHeight
+    mat4Proj()
 
 proc zoomIn*(camera: Camera) =
   camera.zoom += 0.2

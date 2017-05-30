@@ -57,7 +57,7 @@ proc init*(texture: Texture) =
     else:
       texture.handle = bgfx.bgfx_create_texture_2d(uint16 texture.width, uint16 texture.height, false, 1, BGFX_TEXTURE_FORMAT_RGB8, 0, bgfx_copy(addr texture.data[0], uint32 texture.width * texture.height * 3))
 
-proc loadPNG*(filename: string) : Texture {.procvar.} =
+proc loadPNG*(filename: string) : Texture =
   var texture = Texture(assetType: AssetType.Texture)
   texture.filename = filename
 
