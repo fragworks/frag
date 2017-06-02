@@ -14,7 +14,7 @@
 type
   AssetType* {.pure.} = enum
     ## Asset types supported by FRAG
-    #Model
+    Model
     Sound
     Texture
     TextureRegion 

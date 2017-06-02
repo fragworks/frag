@@ -190,6 +190,7 @@ proc startFrag*[T](app: T, config: Config) =
           sdlEvent.sdlEventType = SDLEventType.MouseMotion
           sdlEvent.input = ctx.input
           sdlEvent.gui = ctx.gui
+          sdlEvent.userData = cast[pointer](app)
         elif event.kind == sdl.WindowEvent:
           case event.window.event
           of WINDOWEVENT_RESIZED:

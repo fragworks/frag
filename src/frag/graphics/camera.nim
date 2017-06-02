@@ -16,13 +16,13 @@ type
     of CameraType.Orthographic:
       zoom*: float
     projection*: Mat4
-    view: Mat4
+    view*: Mat4
     combined*: Mat4
     invProjView: Mat4
     nearPlane, farPlane: float
     viewportX*, viewportY*: float
     viewportWidth*, viewportHeight*: float
-    position*, direction, lookAt, up*: Vec3
+    position*, direction*, lookAt, up*: Vec3
     initialized*: bool
     viewId*: uint8
 
@@ -51,13 +51,24 @@ proc update*(camera: Camera) =
     
   else:
     let aspect = camera.viewportWidth / camera.viewportHeight
-    #mtxProj(camera.fieldOfView)
+    mtxProj(camera.projection, 60.0, 960.0 / 540.0, 0.1, 100.0)
+    var tmp : Vec3
+    fpumath.vec3Add(tmp, camera.position, camera.direction)
+    mtxLookAt(camera.view, camera.position, tmp, camera.up)
+    mtxMul(camera.combined, camera.view, camera.projection)
+
 
 proc zoomIn*(camera: Camera) =
   camera.zoom += 0.2
 
 proc zoomOut*(camera: Camera) =
   camera.zoom -= 0.2
+
+proc perspective*(camera: Camera, fieldOfViewY = 67.0, viewportWidth, viewportHeight: float) =
+  camera.fieldOfview = fieldOfViewY
+  camera.viewportWidth = viewportWidth
+  camera.viewportHeight = viewportHeight
+  camera.update()
 
 proc ortho*(camera: Camera, farPlane, viewportWidth, viewportHeight: float, yDown: bool = false) =
   if not camera.initialized:
@@ -67,6 +78,9 @@ proc ortho*(camera: Camera, farPlane, viewportWidth, viewportHeight: float, yDow
   if yDown:
     camera.up[1] = -1.0f32
     camera.direction[2] = 1.0f32
+  else:
+    camera.up[1] = 1.0f32
+    camera.direction[2] = -1.0f32
 
   if camera.cameraType == CameraType.Perspective:
     camera.cameraType = CameraType.Orthographic
@@ -118,7 +132,6 @@ proc init*(camera: Camera, viewId: uint8) =
   camera.viewportWidth = 0
   camera.viewportheight = 0
   camera.position = [0.0'f32, 0.0'f32, 0.0'f32]
-  camera.direction = [0.0'f32, 0.0'f32, -1.0'f32]
+  camera.direction = [0.0'f32, 0.0'f32, 1.0'f32]
   camera.up = [0.0'f32, 1.0'f32, 0.0'f32]
-  camera.fieldOfView = 67
   camera.initialized = true

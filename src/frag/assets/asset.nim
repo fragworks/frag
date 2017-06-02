@@ -21,17 +21,17 @@ import
   sound.sound as snd
 
 import
-  asset_types,
-  ../graphics/three_d/mesh
+  asset_types
 
 type
   Asset* = object
     ## Variant type for all FRAG assets
     filename*: string
     case assetType*: AssetType
-    #of AssetType.Model:
-    #  meshes*: seq[Mesh]
-    #  numIndices*, numVertices*: int
+    of AssetType.Model:
+      meshes*: seq[Mesh]
+      numIndices*, numVertices*: int
+      texturesLoaded*: seq[Texture]
     of AssetType.Sound:
       snd*: snd.Sound
       when defined(js):
@@ -120,10 +120,24 @@ type
     name*: string
     w*, h*: int
     u*, u2*, v*, v2*: float
+  
+  Mesh* = object
+    vertexCount*, indexCount*: int
+    vertices*: seq[PosTexVertex]
+    indices*: seq[uint16]
+    firstVertex*, firstIndex*: int
+    materialIndex*: int
+    textures*: seq[Texture]
+
+  PosTexVertex* {.packed, pure.} = object
+    x*, y*, z*: float32
+    normX*, normY*, normZ*: float32
+    tangentX*, tangentY*, tangentZ*: float32
+    u*, v*: float32
 
   Sound* = ref Asset
   Texture* = ref Asset
   TextureRegion* = ref Asset
   TextureAtlas* = ref Asset
   TiledMap* = ref Asset
-  #Model* = ref Asset
+  Model* = ref Asset

@@ -40,10 +40,16 @@ proc resize*(e: EventArgs) =
   let app = cast[App](event.userData)
   app.camera.updateViewport(sdlEventData.window.data1.float, sdlEventData.window.data2.float)
 
+proc mouseMoved*(e: EventArgs) =
+  let event = SDLEventMessage(e).event
+  let sdlEventData = event.sdlEventData
+  discard
+
 proc initApp(app: App, ctx: Frag) =
   logDebug "Initializing app..."
 
   ctx.events.on(SDLEventType.WindowResize, resize)
+  ctx.events.on(SDLEventType.MouseMotion, mouseMoved)
 
   app.assetIds = initTable[string, Hash]()
 
