@@ -39,7 +39,7 @@ proc loadMaterialTextures(model: Model, mat: PMaterial, textureType: TTextureTyp
       let filename = splitPath(model.filename).head & DirSep & $str
       
       var tex = texture.load(filename)
-      tex.init()
+      #tex.init()
       result.add(tex)
       model.texturesLoaded.add(tex)
 

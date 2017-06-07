@@ -197,7 +197,7 @@ proc render*(imgui: var IMGUI) =
         else:
           bgfx_set_texture(0, imgui.dev.uh, imgui.dev.fah, high(uint32))
 
-        bgfx_set_transient_vertex_buffer( addr tvb, 0, vertexCount )
+        bgfx_set_transient_vertex_buffer(0, addr tvb, 0, vertexCount )
         bgfx_set_transient_index_buffer( addr tib, offset, cmd.elem_count)
 
         discard bgfx_submit(imgui.viewId, imgui.dev.sph, 0, false)

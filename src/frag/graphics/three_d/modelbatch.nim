@@ -167,7 +167,7 @@ proc screenSpaceQuad(self: ModelBatch, width, height, texelHalf: float, originBo
     ]
     
     copyMem(vb.data, addr vertices[0], sizeof(PosTexCoord0Vertex) * 3)
-    bgfx_set_transient_vertex_buffer(addr vb, 0, 3)
+    bgfx_set_transient_vertex_buffer(0, addr vb, 0, 3)
 
 proc toAabb(aabb: var Aabb, sphere: Sphere) =
   let radius = sphere.radius
@@ -378,7 +378,7 @@ proc flush*(self: var ModelBatch, camera: Camera) =
 
         discard bgfx_set_transform(addr mtx3[0], 1)
 
-        bgfx_set_dynamic_vertex_buffer(self.vbh, renderable.firstVertex.uint32, renderable.vertexCount.uint32)
+        bgfx_set_dynamic_vertex_buffer(0, self.vbh, renderable.firstVertex.uint32, renderable.vertexCount.uint32)
         bgfx_set_dynamic_index_buffer(self.ibh, renderable.firstIndex.uint32, renderable.indexCount.uint32)
 
         bgfx_set_texture(0, self.texHandle, renderable.textureHandles[0], high(uint32))
@@ -529,7 +529,7 @@ proc `end`*(self: var ModelBatch, width, height: uint16, camera: Camera) =
     )
     discard bgfx_set_transform(addr mtx[0], 1)
     
-    bgfx_set_vertex_buffer(self.dvbh, 0, cubeVertices.len.uint32)
+    bgfx_set_vertex_buffer(0, self.dvbh, 0, cubeVertices.len.uint32)
     bgfx_set_index_buffer(self.dibh, 0, 6)
     bgfx_set_texture(0, self.texHandle, self.gBufferTex[i], uint32.high)
     bgfx_set_state(BGFX_STATE_RGB_WRITE, 0)

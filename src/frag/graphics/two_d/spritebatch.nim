@@ -59,7 +59,7 @@ proc flush(spriteBatch: SpriteBatch) =
   copyMem(vb.data, addr spriteBatch.vertices[0], sizeof(PosUVColorVertex) * spriteBatch.vertices.len)
 
   bgfx_set_texture(0, spriteBatch.texHandle, spriteBatch.lastTexture.handle, high(uint32))
-  bgfx_set_transient_vertex_buffer(addr vb, 0u32, uint32 spriteBatch.vertices.len)
+  bgfx_set_transient_vertex_buffer(0, addr vb, 0u32, uint32 spriteBatch.vertices.len)
   bgfx_set_index_buffer(spriteBatch.ibh, 0, uint32 spriteCount * 6)
 
   var mtx: fpumath.Mat4
@@ -70,6 +70,8 @@ proc flush(spriteBatch: SpriteBatch) =
   if spriteBatch.blendingEnabled:
     bgfx_set_state(0'u64 or BGFX_STATE_RGB_WRITE or BGFX_STATE_ALPHA_WRITE or BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA
       , BGFX_STATE_BLEND_INV_SRC_ALPHA), 0)
+  else:
+    bgfx_set_state(BGFX_STATE_DEFAULT, 0)
 
   discard bgfx_submit(spriteBatch.view, spriteBatch.programHandle, 0, false)
 

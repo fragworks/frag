@@ -69,8 +69,6 @@ proc initApp(app: App, ctx: Frag) =
 
   app.assetIds.add(filename, ctx.assets.load(filename, AssetType.Model))
 
-  
-
   app.camera = Camera()
   app.camera.init(0)
   app.camera.perspective(60.0, 960, 540)
@@ -103,7 +101,7 @@ proc updateApp(app:App, ctx: Frag, deltaTime: float) =
     vec3Sub(app.camera.position, app.camera.position, vec3Mul(tmp, 10 * deltaTime))
 
 proc renderApp(app: App, ctx: Frag, deltaTime: float) =
-  #ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, colors.Color(0x303030ff), 1.0, 0)
+  ctx.graphics.clearView(0, ClearMode.Color.ord or ClearMode.Depth.ord, colors.Color(0x303030ff), 1.0, 0)
 
   let model = assets.get[Model](ctx.assets, app.assetIds["cyborg/cyborg.obj"])
 

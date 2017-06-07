@@ -188,6 +188,10 @@ proc tiledMapReady(self: AssetManager, tiledMap: TiledMap) =
       cells: mapCells
     ))
 
+proc modelReady(self: AssetManager, model: Model) =
+  for tex in model.texturesLoaded:
+    texture.init(tex)
+
 proc textureReady(self: AssetManager, tex: Texture) =
   texture.init(tex)
 
@@ -238,6 +242,9 @@ proc updateLoadsInProgress(self: AssetManager) =
         self.assetLoadsInProgress.del(assetId)
 
         case asset.assetType
+        of AssetType.Model:
+          let model = cast[Model](asset)
+          self.modelReady(model)
         of AssetType.Texture:
           let tex = cast[Texture](asset)
           self.textureReady(tex)
